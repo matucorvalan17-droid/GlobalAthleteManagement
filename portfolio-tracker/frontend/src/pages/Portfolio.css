@@ -1,0 +1,114 @@
+.portfolio-page {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.portfolio-layout {
+  display: grid;
+  grid-template-columns: 340px 1fr;
+  gap: 16px;
+  align-items: start;
+}
+
+@media (max-width: 900px) {
+  .portfolio-layout { grid-template-columns: 1fr; }
+}
+
+.assets-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  padding: 16px;
+}
+
+.section-title {
+  font-size: 15px;
+  font-weight: 600;
+  margin-bottom: 12px;
+  padding: 0 4px;
+}
+
+.asset-item {
+  padding: 14px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  transition: background 0.15s;
+  border: 1px solid transparent;
+}
+
+.asset-item:hover {
+  background: var(--bg-hover);
+}
+
+.asset-item.active {
+  background: rgba(108, 99, 255, 0.08);
+  border-color: rgba(108, 99, 255, 0.3);
+}
+
+.asset-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.asset-symbol {
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.asset-name-sub {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-top: 1px;
+}
+
+.asset-metrics {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.metric {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.metric-label {
+  font-size: 11px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.metric-value {
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.asset-detail {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.detail-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.detail-header h3 {
+  font-size: 17px;
+  font-weight: 600;
+}
+
+.btn-sm {
+  padding: 8px 14px;
+  font-size: 13px;
+}

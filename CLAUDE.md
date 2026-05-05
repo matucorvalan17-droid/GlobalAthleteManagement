@@ -96,3 +96,33 @@ Soporta 12 ecosistemas de lenguaje, funciona en Windows/macOS/Linux.
 **Cobertura:** 99% propiedades de nodos, 87% documentación oficial.
 **Nota de seguridad:** NUNCA editar workflows de producción directamente con IA.
 **Stack:** TypeScript (91.8%), JavaScript (6.7%)
+
+---
+
+### 6. guia-matthieu/clawfu-skills — 175 Metodologías de Marketing para IA
+**URL:** https://github.com/guia-matthieu/clawfu-skills
+**Propósito:** Librería open source de metodologías de marketing experto (Dunford, Schwartz, Cialdini, Miller) codificadas para agentes IA. MIT License.
+**Cobertura:** 175 skills · 28 categorías · Compatible con Claude, ChatGPT, Cursor, Windsurf.
+
+**Skills clave para tareas de redes sociales (USAR SIEMPRE):**
+
+#### A. Para estructura de carruseles/contenido educativo:
+- **educational-presentation** (Mayer): Una idea por slide, minimizar carga cognitiva, principios C.R.A.P. (Contraste, Repetición, Alineación, Proximidad), regla 60-30-10 de color, texto sans-serif ≥24pt.
+- **storytelling-storybrand** (Donald Miller SB7): Lector = héroe, marca = guía. Estructura: Personaje → Problema (externo/interno/filosófico) → Guía → Plan → CTA → Fracaso evitado → Éxito aspiracional.
+
+#### B. Para copywriting de hooks y títulos:
+- **copywriting-awareness** (Eugene Schwartz): Niveles de consciencia del lector — adaptar el hook según si el lector está Inconsciente, Consciente del problema, Consciente de la solución, Consciente del producto, o Más consciente.
+- **headline-formulas**: Hooks contradictorios, datos sorprendentes, preguntas provocadoras, afirmaciones audaces.
+- **persuasion-principles** (Cialdini): Reciprocidad, compromiso, prueba social, autoridad, simpatía, escasez.
+
+#### C. Para posts y distribución:
+- **linkedin-post**: 4 pilares — Education (Hook→Contexto→3-5 puntos→Aprendizaje→CTA), Case Study, Insight, Behind the Scenes. Test de 3 preguntas: ¿Es visualizable? ¿Es falseable? ¿Es único?
+- **hashtag-analyzer**, **social-analytics**, **ugc-collector** para optimización.
+
+**PROTOCOLO PARA TAREAS DE REDES SOCIALES:**
+1. Identificar tipo de contenido (educativo, caso de estudio, insight, behind the scenes)
+2. Aplicar StoryBrand: lector como héroe, contenido como guía con autoridad + empatía
+3. Usar Schwartz: hook calibrado al nivel de consciencia de la audiencia
+4. Aplicar Mayer: una idea clave por slide, sin sobrecarga visual
+5. Test final de calidad: ¿visualizable? ¿falseable? ¿único?
+6. CTA claro al final (directo o de transición)

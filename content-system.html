@@ -301,7 +301,100 @@
 
   .export-all-btn:hover { background: rgba(201,168,76,0.1); }
 
-  /* ═══════════════════════════════════════
+  /* ── VIEW TOGGLE ── */
+  .view-toggle {
+    display: flex;
+    gap: 4px;
+    margin-left: auto;
+    margin-right: 16px;
+  }
+
+  .toggle-btn {
+    width: 32px;
+    height: 32px;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--gray);
+    border-radius: 3px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    transition: all 0.15s;
+  }
+
+  .toggle-btn.active { border-color: var(--gold); color: var(--gold); background: rgba(201,168,76,0.06); }
+  .toggle-btn:hover { border-color: rgba(201,168,76,0.5); color: var(--light-gray); }
+
+  /* ── GRID VIEW ── */
+  .grid-area {
+    flex: 1;
+    overflow-y: auto;
+    padding: 28px 32px;
+    display: none;
+  }
+
+  .grid-area.visible { display: block; }
+  .slide-area.hidden { display: none; }
+
+  .grid-area::-webkit-scrollbar { width: 4px; }
+  .grid-area::-webkit-scrollbar-track { background: transparent; }
+  .grid-area::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+  .grid-label {
+    font-size: 10px;
+    letter-spacing: 3px;
+    color: var(--gray);
+    text-transform: uppercase;
+    margin-bottom: 20px;
+  }
+
+  .slides-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 16px;
+  }
+
+  .grid-slide-item {
+    cursor: pointer;
+    border-radius: 4px;
+    overflow: hidden;
+    border: 2px solid transparent;
+    transition: border-color 0.15s, transform 0.15s;
+    position: relative;
+  }
+
+  .grid-slide-item:hover { border-color: rgba(201,168,76,0.4); transform: translateY(-2px); }
+  .grid-slide-item.active-grid { border-color: var(--gold); }
+
+  .grid-slide-inner {
+    width: 100%;
+    aspect-ratio: 4/5;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .grid-slide-inner .slide {
+    width: 540px;
+    height: 675px;
+    transform-origin: top left;
+    position: absolute;
+    top: 0;
+    left: 0;
+  }
+
+  .grid-slide-num {
+    position: absolute;
+    bottom: 6px;
+    right: 8px;
+    font-size: 9px;
+    letter-spacing: 2px;
+    color: rgba(255,255,255,0.4);
+    z-index: 20;
+  }
+
+  /* ── EXPORT BAR ── */
      SLIDE TEMPLATES (rendered at 540×675)
      Full res = 1080×1350 (scale 2x on export)
   ═══════════════════════════════════════ */
@@ -713,9 +806,13 @@
       <div class="header-title" id="headerTitle">—</div>
       <div class="header-cat" id="headerCat"></div>
     </div>
+    <div class="view-toggle">
+      <button class="toggle-btn active" id="btnSingle" title="Single view" onclick="setView('single')">&#9646;</button>
+      <button class="toggle-btn" id="btnGrid" title="Grid view" onclick="setView('grid')">&#9783;</button>
+    </div>
   </div>
 
-  <div class="slide-area">
+  <div class="slide-area" id="slideArea">
     <div class="slide-wrapper">
       <div class="slide-viewport" id="slideViewport"></div>
       <div class="slide-controls">
@@ -724,6 +821,11 @@
         <button class="nav-btn" id="btnNext">&#8594;</button>
       </div>
     </div>
+  </div>
+
+  <div class="grid-area" id="gridArea">
+    <div class="grid-label" id="gridLabel">ALL SLIDES</div>
+    <div class="slides-grid" id="slidesGrid"></div>
   </div>
 
   <div class="export-bar">
@@ -1600,6 +1702,89 @@ async function exportAllSlides() {
   btn.innerHTML = '&#8595; Export All Slides';
   btn.disabled = false;
 }
+
+// ═══════════════════════════════════════════════════════════════
+// VIEW TOGGLE
+// ═══════════════════════════════════════════════════════════════
+let currentView = 'single';
+
+function setView(mode) {
+  currentView = mode;
+  const slideArea = document.getElementById('slideArea');
+  const gridArea = document.getElementById('gridArea');
+  const btnSingle = document.getElementById('btnSingle');
+  const btnGrid = document.getElementById('btnGrid');
+
+  if (mode === 'grid') {
+    slideArea.classList.add('hidden');
+    gridArea.classList.add('visible');
+    btnSingle.classList.remove('active');
+    btnGrid.classList.add('active');
+    renderGrid();
+  } else {
+    slideArea.classList.remove('hidden');
+    gridArea.classList.remove('visible');
+    btnSingle.classList.add('active');
+    btnGrid.classList.remove('active');
+    updateUI();
+  }
+}
+
+function renderGrid() {
+  const carousel = CAROUSELS[currentDay];
+  const grid = document.getElementById('slidesGrid');
+  const label = document.getElementById('gridLabel');
+  label.textContent = `${carousel.slides.length} SLIDES — ${carousel.topic.toUpperCase()}`;
+
+  grid.innerHTML = carousel.slides.map((_, i) => {
+    const scaleNeeded = grid.offsetWidth / carousel.slides.length;
+    return `
+      <div class="grid-slide-item ${i === currentSlide ? 'active-grid' : ''}" onclick="selectGridSlide(${i})">
+        <div class="grid-slide-inner" id="grid-inner-${i}"></div>
+        <div class="grid-slide-num">0${i+1}</div>
+      </div>
+    `;
+  }).join('');
+
+  // Render each slide into its grid cell with correct scale
+  carousel.slides.forEach((_, i) => {
+    const inner = document.getElementById(`grid-inner-${i}`);
+    const tempEl = document.createElement('div');
+    renderSlide(carousel, i, tempEl);
+    const slideEl = tempEl.firstElementChild;
+    if (!slideEl) return;
+
+    slideEl.style.width = '540px';
+    slideEl.style.height = '675px';
+    slideEl.style.position = 'absolute';
+    slideEl.style.top = '0';
+    slideEl.style.left = '0';
+
+    inner.appendChild(slideEl);
+
+    // Scale to fill the container
+    const containerW = inner.offsetWidth || 200;
+    const scale = containerW / 540;
+    slideEl.style.transform = `scale(${scale})`;
+    slideEl.style.transformOrigin = 'top left';
+    inner.style.height = `${675 * scale}px`;
+  });
+}
+
+function selectGridSlide(index) {
+  currentSlide = index;
+  // Update active highlight in grid
+  document.querySelectorAll('.grid-slide-item').forEach((el, i) => {
+    el.classList.toggle('active-grid', i === index);
+  });
+  document.getElementById('slideCounter').textContent =
+    `SLIDE ${String(index + 1).padStart(2,'0')} / ${String(CAROUSELS[currentDay].slides.length).padStart(2,'0')}`;
+}
+
+// Re-render grid on resize
+window.addEventListener('resize', () => {
+  if (currentView === 'grid') renderGrid();
+});
 
 // ═══════════════════════════════════════════════════════════════
 // INIT

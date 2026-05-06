@@ -323,9 +323,8 @@ body {
 .slide-cover .cover-content { position:absolute; top:50%; left:0; right:0; transform:translateY(-54%); padding:0 40px; z-index:5; text-align:center; }
 .slide-cover .cover-label { font-size:9px; letter-spacing:5px; color:var(--gold); text-transform:uppercase; font-weight:700; margin-bottom:20px; opacity:.8; }
 .slide-cover .cover-line { width:30px; height:1px; background:var(--gold); margin:0 auto 16px; opacity:.6; }
-.slide-cover .cover-title { font-size:36px; font-weight:800; line-height:1.05; letter-spacing:-.5px; text-transform:uppercase; color:var(--white); margin-bottom:12px; }
-.slide-cover .cover-keyword { font-family:'Playfair Display',Georgia,serif; font-style:italic; font-size:42px; color:var(--gold); line-height:1; display:block; margin-bottom:18px; }
-.slide-cover .cover-subtitle { font-size:11px; color:var(--gray); letter-spacing:1px; line-height:1.6; max-width:320px; margin:0 auto; }
+.slide-cover .cover-title { font-size:34px; font-weight:800; line-height:1.05; letter-spacing:-.5px; text-transform:uppercase; color:var(--white); margin-bottom:14px; }
+.slide-cover .cover-keyword { font-family:'Playfair Display',Georgia,serif; font-style:italic; font-size:40px; color:var(--gold); line-height:1; display:block; margin-bottom:0; }
 .slide-cover .swipe-hint { position:absolute; bottom:28px; left:0; right:0; text-align:center; font-size:9px; letter-spacing:4px; color:rgba(255,255,255,.3); text-transform:uppercase; z-index:5; }
 
 /* INSIGHT */
@@ -361,9 +360,8 @@ body {
 /* ── EXPORT HIDDEN CANVAS ── */
 #export-canvas-wrapper { position:fixed; top:-9999px; left:-9999px; width:1080px; height:1350px; overflow:hidden; z-index:-1; }
 #export-slide { width:1080px; height:1350px; position:relative; overflow:hidden; }
-#export-slide .slide-cover .cover-title { font-size:72px; }
-#export-slide .slide-cover .cover-keyword { font-size:84px; }
-#export-slide .slide-cover .cover-subtitle { font-size:22px; max-width:640px; }
+#export-slide .slide-cover .cover-title { font-size:68px; }
+#export-slide .slide-cover .cover-keyword { font-size:80px; }
 #export-slide .slide-cover .cover-label { font-size:18px; }
 #export-slide .slide-cover .handle { font-size:18px; top:56px; }
 #export-slide .slide-cover .swipe-hint { font-size:18px; bottom:56px; letter-spacing:8px; }
@@ -441,121 +439,121 @@ const CAROUSELS = [
   {
     day: 1, topic: "The Moment Scouts Stop Watching You", category: "Scouting",
     slides: [
-      { type:"cover", label:"Scouting Intelligence", titleLines:["THE MOMENT","SCOUTS STOP"], keyword:"Watching You", subtitle:"What happens in the first 5 minutes that decides your career" },
+      { type:"cover", label:"Scouting Intelligence", titleLines:["THE MOMENT","SCOUTS STOP","WATCHING YOU"], keyword:"In Five Minutes" },
       { type:"insight", variant:"a", counter:"01 / 06", keyword:"Body Language", title:"YOUR ATTITUDE BEFORE THE BALL ARRIVES", body:"Scouts don't wait for mistakes. They read how you carry yourself when the game isn't in your zone. Slumped shoulders end evaluations before a touch is made." },
       { type:"insight", variant:"b", counter:"02 / 06", keyword:"Effort", title:"ONE SPRINT WITHOUT POSSESSION", body:"Not pressing when you should. Not tracking back. That single moment of laziness ends the evaluation. Scouts mark the timestamp and close the notebook." },
       { type:"insight", variant:"c", counter:"03 / 06", keyword:"Reaction", title:"HOW YOU RESPOND AFTER LOSING THE BALL", body:"A player who stops for 3 seconds after a mistake reveals everything about their competitive ceiling. Elite players react before the emotion does." },
       { type:"insight", variant:"d", counter:"04 / 06", keyword:"Positioning", title:"WHERE YOU STAND WHEN OTHERS HAVE THE BALL", body:"Off-ball intelligence is the highest form of football IQ. Scouts see it before they see your touch. Most players only perform when the ball is at their feet." },
       { type:"insight", variant:"e", counter:"05 / 06", keyword:"Communication", title:"DO YOU TALK WITHOUT THE BALL?", body:"Elite environments run on verbal leadership. Silent players are invisible players in the scout's notebook. The voice is a data point, not a personality trait." },
-      { type:"cta", main:["SCOUTS DON'T EVALUATE","SKILLS. THEY EVALUATE","Habits."], keyword_index:2, question:"What habit would a scout catch on you right now? Save this and answer honestly." }
+      { type:"cta", main:["IT'S NOT ABOUT","YOUR TOUCH.","It's Your Habits."], keyword_index:2, question:"Save this. Name one habit a scout would catch on you today — be honest." }
     ]
   },
   {
     day: 2, topic: "Why the 4-3-3 Is Dying in Modern Football", category: "Tactics",
     slides: [
-      { type:"cover", label:"Tactical Analysis", titleLines:["WHY THE 4-3-3","IS DYING IN"], keyword:"Modern Football", subtitle:"The system that built dynasties is losing the tactical war" },
+      { type:"cover", label:"Tactical Analysis", titleLines:["WHY THE 4-3-3","IS DYING IN","MODERN FOOTBALL"], keyword:"A Tactical Shift" },
       { type:"insight", variant:"a", counter:"01 / 06", keyword:"Midfield", title:"IT LEAVES TOO MUCH SPACE IN THE CENTER", body:"The 4-3-3 was designed for controlled possession. Against high-press systems, the central triangle collapses under coordinated pressure. The math doesn't add up." },
       { type:"insight", variant:"b", counter:"02 / 06", keyword:"Wingers", title:"THE MODERN WINGER IS UNPLAYABLE IN THIS SYSTEM", body:"Today's wingers cut inside, overload half-spaces, and demand freedom. The 4-3-3 asks them to stay wide. That positional mismatch costs goals every week." },
       { type:"insight", variant:"c", counter:"03 / 06", keyword:"Fullbacks", title:"INVERTED FULLBACKS BREAK THE STRUCTURE", body:"When fullbacks push high and inside, the back four becomes a back two. High defensive lines become suicidal without the defensive width to cover transitions." },
       { type:"insight", variant:"d", counter:"04 / 06", keyword:"Adaptability", title:"TOP CLUBS SHIFT SHAPES WITHIN THE SAME PHASE", body:"Pep's City moves between 3-2-5, 4-2-4, and 2-3-5 in the same possession sequence. It's not a system anymore. It's a language. The 4-3-3 is a fixed phrase." },
       { type:"insight", variant:"e", counter:"05 / 06", keyword:"Extinction", title:"RIGID SYSTEMS AT THE TOP LEVEL ARE BEING PUNISHED", body:"The teams still running an unchanged 4-3-3 are conceding more, pressing less effectively, and losing winnable games. Flexibility wins. Fixed shapes lose." },
-      { type:"cta", main:["FOOTBALL DIDN'T","CHANGE THE GAME.","The Game Changed Football."], keyword_index:2, question:"What system do you think has replaced the 4-3-3 at the elite level? Drop your answer." }
+      { type:"cta", main:["THE BEST TEAMS","DON'T HAVE A","System. They Have a Language."], keyword_index:2, question:"Which team plays the most evolved football right now? One name — drop it below." }
     ]
   },
   {
     day: 3, topic: "The Transfer Market Is Broken. Here's Why.", category: "News",
     slides: [
-      { type:"cover", label:"Football Business", titleLines:["THE TRANSFER","MARKET IS"], keyword:"Broken.", subtitle:"And clubs keep paying the price — in debt, desperation, and bad deals" },
+      { type:"cover", label:"Football Business", titleLines:["THE TRANSFER","MARKET IS","BROKEN."], keyword:"And Clubs Pay The Price" },
       { type:"insight", variant:"a", counter:"01 / 06", keyword:"Inflation", title:"FEES HAVE NO LOGICAL CEILING ANYMORE", body:"€100M players became €200M players in 5 years with no performance correlation. The market has zero regulation and every club plays along to not fall behind." },
       { type:"insight", variant:"b", counter:"02 / 06", keyword:"Agents", title:"INTERMEDIARIES TAKE MORE THAN THE PLAYERS IN SOME DEALS", body:"In several high-profile transfers, agent fees exceed 20% of the total deal. The player is the product. The agent is the actual business running the operation." },
       { type:"insight", variant:"c", counter:"03 / 06", keyword:"Debt", title:"CLUBS ARE BUYING PLAYERS THEY CANNOT AFFORD", body:"FFP was meant to stop this. Creative accounting replaced compliance. The debt stays hidden in amortization spreadsheets — until the financial cliff arrives." },
       { type:"insight", variant:"d", counter:"04 / 06", keyword:"Risk", title:"MOST BIG-MONEY SIGNINGS FAIL TO DELIVER ROI", body:"Over 65% of transfers above €50M underperform expectations within 2 years. Clubs know the odds. They pay anyway. Pride and pressure replace logic in the boardroom." },
       { type:"insight", variant:"e", counter:"05 / 06", keyword:"Alternative", title:"THE CLUBS WINNING ARE BUILDING, NOT BUYING", body:"Atalanta, Brighton, Sporting CP — all built through data-driven development and structure. They sell at market peak and reinvest with margin. The auction floor is for the desperate." },
-      { type:"cta", main:["THE TRANSFER MARKET","DOESN'T PRODUCE","Champions. Systems Do."], keyword_index:2, question:"What's the most broken transfer you can remember? The one that makes no sense in hindsight." }
+      { type:"cta", main:["THE CLUBS WINNING","THE TRANSFER RACE","Never Entered It."], keyword_index:2, question:"Name one club that built smart without spending big. Let's make a list." }
     ]
   },
   {
     day: 4, topic: "What Agents Never Tell You at 16", category: "Business",
     slides: [
-      { type:"cover", label:"The Business of Football", titleLines:["WHAT AGENTS","NEVER TELL"], keyword:"You at 16", subtitle:"The conversations that shape careers — and the ones that never happen" },
+      { type:"cover", label:"The Business of Football", titleLines:["WHAT AGENTS","NEVER TELL","YOU AT 16"], keyword:"The Career Conversation" },
       { type:"insight", variant:"a", counter:"01 / 06", keyword:"Contracts", title:"A FIRST CONTRACT IS RARELY A GOOD CONTRACT", body:"You're 16. Grateful. Technically represented but unprotected in practice. The club knows your leverage is zero and structures the deal accordingly. Read everything." },
       { type:"insight", variant:"b", counter:"02 / 06", keyword:"Image Rights", title:"YOU'RE SIGNING AWAY YOUR FACE FOR YEARS", body:"Image rights clauses are buried in the contract. Most players don't understand what they're giving up until they become commercially valuable. By then, it's too late." },
       { type:"insight", variant:"c", counter:"03 / 06", keyword:"Release Clauses", title:"SOME CLAUSES ARE DESIGNED TO KEEP YOU, NOT PROTECT YOU", body:"A €50M release clause on a 17-year-old isn't protection. It's a lock. Understanding the difference between floor and ceiling in your contract is a non-negotiable skill." },
       { type:"insight", variant:"d", counter:"04 / 06", keyword:"Loyalty", title:"YOUR AGENT'S LOYALTY IS TO THE DEAL, NOT TO YOU", body:"Agents are paid by the transaction. When a deal benefits them more than you, that conflict is rarely disclosed. The relationship is professional, not personal. Act accordingly." },
       { type:"insight", variant:"e", counter:"05 / 06", keyword:"Education", title:"FINANCIAL LITERACY IS YOUR FIRST CAREER SKILL", body:"Most players go broke within 5 years of retiring. Not because they had no money — because nobody taught them. The pitch ends. The contract doesn't disappear with it." },
-      { type:"cta", main:["YOUR CONTRACT","IS YOUR CAREER.","Read Every Line."], keyword_index:2, question:"What do you wish someone had told you — or what do you wish young players knew — about contracts at 16?" }
+      { type:"cta", main:["YOUR CONTRACT","IS YOUR CAREER.","Read Every Line."], keyword_index:2, question:"Share this with a young player who needs to see it. Tag them below — this one saves careers." }
     ]
   },
   {
     day: 5, topic: "Why Brazil Stopped Producing World-Class 10s", category: "Facts",
     slides: [
-      { type:"cover", label:"Football History", titleLines:["WHY BRAZIL","STOPPED PRODUCING"], keyword:"World-Class 10s", subtitle:"The country that invented the position is no longer elite at it" },
+      { type:"cover", label:"Football History", titleLines:["WHY BRAZIL","STOPPED","PRODUCING 10s"], keyword:"The End of an Era" },
       { type:"insight", variant:"a", counter:"01 / 06", keyword:"Structure", title:"ACADEMIES OPTIMIZED FOR EXPORTS, NOT DEVELOPMENT", body:"Brazilian clubs sell talent at 15-17 before development peaks. The system is built around transaction velocity, not player maturity. The pipeline became a conveyor belt." },
       { type:"insight", variant:"b", counter:"02 / 06", keyword:"Tactics", title:"THE NO.10 ROLE WAS ERASED IN EUROPEAN FOOTBALL", body:"When Neymar's generation arrived, European clubs had already shifted to high-press vertical systems. There is no space for a classic 10 in a 4-2-3-1 built for counter-pressing." },
       { type:"insight", variant:"c", counter:"03 / 06", keyword:"Street Football", title:"THE ENVIRONMENT THAT CREATED 10s IS GONE", body:"Zico, Rivaldo, Ronaldinho emerged from unstructured, improvisational play. Brazil's youth now train in structured academies. The chaos is sanitized. The creativity goes with it." },
       { type:"insight", variant:"d", counter:"04 / 06", keyword:"Filtering", title:"SCOUTS PRIORITIZE ATHLETIC PROFILES AT AGE 14", body:"The creative, slight, technical playmaker is filtered out early in favor of athletic, positional players. At 14, the selection bias kicks in. Brazil's scouting system does it too." },
       { type:"insight", variant:"e", counter:"05 / 06", keyword:"Identity", title:"BRAZIL CHOSE RESULTS OVER IDENTITY AT THE WORLD CUP", body:"Since 2014, Brazil's national teams have been functional, pragmatic, compact. That is not Brazilian football. The identity was traded for tournament survival. The 10 was the first casualty." },
-      { type:"cta", main:["YOU CAN'T PRODUCE","ARTISTS IN A","Factory."], keyword_index:2, question:"Who is the last true world-class Brazilian 10 in your opinion? Name them — and explain why they were the last." }
+      { type:"cta", main:["YOU CAN'T","MANUFACTURE","Genius."], keyword_index:2, question:"Who is the last real Brazilian 10? One name — make your case in the comments." }
     ]
   },
   {
     day: 6, topic: "The Hidden Metric Every Elite Team Measures", category: "Data",
     slides: [
-      { type:"cover", label:"Advanced Analytics", titleLines:["THE HIDDEN METRIC","EVERY ELITE"], keyword:"Team Measures", subtitle:"It's not goals, assists, or xG — and it's reshaping how clubs evaluate talent" },
+      { type:"cover", label:"Advanced Analytics", titleLines:["THE HIDDEN","METRIC EVERY","ELITE TEAM MEASURES"], keyword:"It's Not xG" },
       { type:"insight", variant:"a", counter:"01 / 06", keyword:"PPDA", title:"PASSES ALLOWED PER DEFENSIVE ACTION", body:"PPDA measures pressing aggressiveness. Liverpool's peak season registered 7.2. The league average sits above 11. The gap reveals which clubs treat defense as a weapon, not a fallback." },
       { type:"insight", variant:"b", counter:"02 / 06", keyword:"Off-Ball Runs", title:"THIRD-MAN RUNS THAT NEVER TOUCH THE BALL", body:"Elite analytics teams track runs that pull defenders and create space for others. These players never appear in the shot map. But they are the most valuable players on the pitch." },
       { type:"insight", variant:"c", counter:"03 / 06", keyword:"Recovery Speed", title:"HOW FAST DO YOU RETURN TO DEFENSIVE SHAPE?", body:"Sprint data post-possession-loss exposes defensive accountability at the individual level. Coaches know in hours. Players who coast in transition are identified within one match week." },
       { type:"insight", variant:"d", counter:"04 / 06", keyword:"Contextual xG", title:"NOT ALL xG MODELS ARE EQUAL", body:"Advanced clubs build contextual xG that factors in defender proximity, goalkeeper positioning, and game state. Standard xG is public. The proprietary models are where the edge lives." },
       { type:"insight", variant:"e", counter:"05 / 06", keyword:"Momentum", title:"SHOT SEQUENCE DATA PREDICTS RESULTS BEFORE GOALS", body:"Teams generating sustained shot sequences — even without scoring — statistically outperform their league table position over a full season. Process predicts outcomes. Goals are the lag indicator." },
-      { type:"cta", main:["THE BEST TEAMS","MEASURE WHAT","Others Ignore."], keyword_index:2, question:"What metric do you think is the most underused in football analysis right now? This is a real question." }
+      { type:"cta", main:["THE BEST TEAMS","COUNT WHAT","Others Can't See."], keyword_index:2, question:"What's the most underrated stat in football? Drop your answer — I read every comment." }
     ]
   },
   {
     day: 7, topic: "What Elite Players Do the Night Before a Match", category: "Mentality",
     slides: [
-      { type:"cover", label:"Elite Performance", titleLines:["WHAT ELITE PLAYERS","DO THE NIGHT"], keyword:"Before a Match", subtitle:"The preparation that happens before the pitch that most players ignore" },
+      { type:"cover", label:"Elite Performance", titleLines:["WHAT ELITE","PLAYERS DO THE","NIGHT BEFORE"], keyword:"The Invisible Prep" },
       { type:"insight", variant:"a", counter:"01 / 06", keyword:"Visualization", title:"THEY REPLAY THE GAME BEFORE IT STARTS", body:"Mental rehearsal activates the same neural pathways as physical movement. Ronaldo visualizes specific goals. Messi rehearses pressing triggers. The match starts the night before." },
       { type:"insight", variant:"b", counter:"02 / 06", keyword:"Sleep", title:"SLEEP IS A NON-NEGOTIABLE PERFORMANCE VARIABLE", body:"LeBron sleeps 12 hours before games. Elite footballers target 9-10. Sleep deprivation costs 30% of reaction speed and increases injury risk by 60%. It is not rest. It is training." },
       { type:"insight", variant:"c", counter:"03 / 06", keyword:"Nutrition", title:"THE LAST MEAL IS CALCULATED, NOT CHOSEN", body:"Carb loading timing, precise hydration, zero new foods. Every variable is controlled 16 hours before kickoff. The decision was made in the pre-season protocol. Not the restaurant menu." },
       { type:"insight", variant:"d", counter:"04 / 06", keyword:"Focus", title:"PHONES GO AWAY. INPUT IS CONTROLLED.", body:"Elite performers understand attention is a finite resource. Protecting it the night before isn't superstition. It's documented sports science. Every scroll is borrowed from match concentration." },
       { type:"insight", variant:"e", counter:"05 / 06", keyword:"Routine", title:"CONSISTENCY BUILDS PSYCHOLOGICAL SECURITY", body:"Pre-match routines reduce anxiety by eliminating decision-making. The routine becomes a neural trigger for performance state. Disrupting it disrupts the brain's preparation sequence." },
-      { type:"cta", main:["YOUR PERFORMANCE","ON SATURDAY STARTS","Friday Night."], keyword_index:2, question:"What's your night-before routine? Share one thing you do that most players don't." }
+      { type:"cta", main:["SATURDAY'S GAME","STARTS ON","Friday Night."], keyword_index:2, question:"What's the one thing in your pre-match routine you never skip? Share it — someone needs this." }
     ]
   },
   {
     day: 8, topic: "Why Possession Stats Are Lying to You", category: "Data",
     slides: [
-      { type:"cover", label:"Data Literacy", titleLines:["WHY POSSESSION","STATS ARE"], keyword:"Lying to You", subtitle:"The most quoted number in football analysis is also the most misleading" },
+      { type:"cover", label:"Data Literacy", titleLines:["WHY POSSESSION","STATS ARE","LYING TO YOU"], keyword:"The Biggest Myth" },
       { type:"insight", variant:"a", counter:"01 / 06", keyword:"Context", title:"POSSESSION WITHOUT TERRITORY IS WORTHLESS", body:"A team can record 60% possession by recycling the ball in their own half for 90 minutes. Territory, verticality, and proximity to goal matter infinitely more than raw ball share." },
       { type:"insight", variant:"b", counter:"02 / 06", keyword:"Intent", title:"THE BEST DEFENSIVE TEAMS WANT YOU TO HAVE THE BALL", body:"Chelsea 2005, Atletico 2014, Inter 2010 — deliberately conceding possession to sit compact and counter is a calculated strategy, not a failure. Their stats looked like weakness. It was a trap." },
       { type:"insight", variant:"c", counter:"03 / 06", keyword:"Progression", title:"HOW MANY OF THOSE PASSES WENT FORWARD?", body:"Progressive passing percentage reveals actual intent. A team with 65% possession but 28% progressive passes isn't attacking. They're stalling. Two very different games, same stat line." },
       { type:"insight", variant:"d", counter:"04 / 06", keyword:"Danger Zones", title:"ONLY FINAL-THIRD POSSESSION CREATES GOALS", body:"The only possession that statistically correlates with goal creation is in and around the opponent's box. Everything outside that zone is noise that fills post-match analysis packages." },
       { type:"insight", variant:"e", counter:"05 / 06", keyword:"Scoreline", title:"POSSESSION IS REACTIVE TO THE SCORE, NOT THE TACTIC", body:"Losing teams accumulate possession because they're forced to chase the game. The winning possession stat is often owned by the team that is losing. The number hides the entire story." },
-      { type:"cta", main:["STOP CHASING","THE BALL.","Chase the Space."], keyword_index:2, question:"What stat do you actually use to evaluate a team's performance? One metric. Drop it below." }
+      { type:"cta", main:["STOP WATCHING","THE BALL.","Watch the Space."], keyword_index:2, question:"What stat actually tells you if a team is elite? One answer only — go." }
     ]
   },
   {
     day: 9, topic: "What 90% of Academy Players Are Missing", category: "Development",
     slides: [
-      { type:"cover", label:"Player Development", titleLines:["WHAT 90% OF","ACADEMY PLAYERS"], keyword:"Are Missing", subtitle:"The gap between talent and professional football is not technical. It never was." },
+      { type:"cover", label:"Player Development", titleLines:["WHAT 90% OF","ACADEMY PLAYERS","ARE MISSING"], keyword:"It's Not Technical" },
       { type:"insight", variant:"a", counter:"01 / 06", keyword:"Coachability", title:"THE ABILITY TO BE CORRECTED IN REAL TIME", body:"Coaches consistently rank coachability above technical ability. A player who applies feedback within the same session compresses years of development into months. Most can't do it." },
       { type:"insight", variant:"b", counter:"02 / 06", keyword:"Decision Speed", title:"TECHNICAL SKILL MEANS NOTHING AT THE WRONG PACE", body:"The decision must arrive before the touch. Most academy players are technically excellent but cognitively slow under pressure. Professional football operates 0.3 seconds faster than they think." },
       { type:"insight", variant:"c", counter:"03 / 06", keyword:"Physicality", title:"NOT SIZE — THE ABILITY TO PROTECT THE BALL", body:"Professional football is a contact sport at every position. Players who lose 80% of physical duels in youth football cannot survive the step up. The contact level multiplies. The technique doesn't save you." },
       { type:"insight", variant:"d", counter:"04 / 06", keyword:"Leadership", title:"CAN YOU ORGANIZE THE PLAYERS AROUND YOU?", body:"Coaches look for players who make others better. Selfish talent is the most common resource in any academy. Connective talent — the kind that elevates a team — is rare and commands a premium." },
       { type:"insight", variant:"e", counter:"05 / 06", keyword:"Consistency", title:"ONE BRILLIANT GAME MEANS NOTHING", body:"Professional football is 38-50 games across all conditions. Scouts evaluate you in bad weather, away grounds, tired legs, and losing form. Can you perform every week? Most can't answer yes." },
-      { type:"cta", main:["TALENT GETS","YOU NOTICED.","Character Gets You Signed."], keyword_index:2, question:"Which of these five do you think is hardest to develop? Be honest — which one is your gap?" }
+      { type:"cta", main:["TALENT GETS","YOU NOTICED.","Character Gets You Signed."], keyword_index:2, question:"Which of these 5 is the hardest to develop? Tag a player who needs to see this." }
     ]
   },
   {
     day: 10, topic: "The Pressing Revolution That Changed Football Forever", category: "Tactics",
     slides: [
-      { type:"cover", label:"Tactical History", titleLines:["THE PRESSING","REVOLUTION THAT"], keyword:"Changed Football", subtitle:"How gegenpressing rewrote the rules of the game — and where it goes next" },
+      { type:"cover", label:"Tactical History", titleLines:["THE PRESSING","REVOLUTION THAT","CHANGED FOOTBALL"], keyword:"What Comes Next" },
       { type:"insight", variant:"a", counter:"01 / 06", keyword:"Gegenpressing", title:"WIN THE BALL IN 5 SECONDS OR SPRINT", body:"Klopp's Dortmund proved that immediate counter-pressing after losing the ball was more dangerous than any rehearsed set piece. It exposed a universal tactical blind spot." },
       { type:"insight", variant:"b", counter:"02 / 06", keyword:"Physics", title:"THE BEST MOMENT TO WIN THE BALL IS RIGHT AFTER LOSING IT", body:"When possession changes, the opponent is disorganized for 3-5 seconds. Their defensive shape is broken, their midfield is transitioning. Elite pressing teams weaponize that exact window every time." },
       { type:"insight", variant:"c", counter:"03 / 06", keyword:"Fitness", title:"PRESSING REQUIRES A DIFFERENT TYPE OF ATHLETE", body:"High-intensity distance covered per 90 minutes doubled in Europe's top leagues from 2008 to 2020. The game became an interval sport. Technical players without an aerobic engine became extinct at elite level." },
       { type:"insight", variant:"d", counter:"04 / 06", keyword:"Triggers", title:"PRESSING IS ORGANIZED, NOT CHAOTIC", body:"Every elite pressing system is built on triggers: a bad touch, a back pass to the goalkeeper, a specific zone entry. Players press the trigger signal, not the ball. The chaos is a controlled illusion." },
       { type:"insight", variant:"e", counter:"05 / 06", keyword:"Evolution", title:"NOW EVERYONE PRESSES — THE ADVANTAGE IS GONE", body:"When all teams press, the counter-press loses its competitive edge. The new frontier is pressing efficiency: knowing precisely when NOT to press is now the rarest tactical intelligence at the top level." },
-      { type:"cta", main:["THE TEAMS THAT WON","WITH PRESSING ARE","Looking Beyond It."], keyword_index:2, question:"Which club do you think has the best pressing system in world football right now? Name them and why." }
+      { type:"cta", main:["THE GAME CHANGED.","NOW THE QUESTION IS:","Who Comes Next?"], keyword_index:2, question:"Which club has the most intelligent pressing system right now? Name them — and say why." }
     ]
   }
 ];
@@ -576,7 +574,6 @@ function buildSlide(slide) {
         <div class="cover-line"></div>
         <div class="cover-title">${slide.titleLines.join('<br>')}</div>
         <span class="cover-keyword">${slide.keyword}</span>
-        <div class="cover-subtitle">${slide.subtitle}</div>
       </div>
       <div class="swipe-hint">Swipe &rarr;</div>
     </div>`;

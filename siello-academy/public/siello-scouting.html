@@ -49,10 +49,28 @@ input[type=range]:focus{outline:none}
 <script type="text/babel">
 const {useState,useEffect,useRef} = React;
 
-// ─── GLOBAL LOGO STORAGE ──────────────────────────────────────────
-const LOGO_KEY = 'siello_logo_global';
-function loadGlobalLogo(){ return localStorage.getItem(LOGO_KEY)||'' }
-function saveGlobalLogo(v){ localStorage.setItem(LOGO_KEY,v) }
+// ─── HARDCODED LOGOS ──────────────────────────────────────────────
+const SIELLO_URL = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(
+  '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 310 92">' +
+  '<defs><linearGradient id="g" x1="0" y1="0" x2="0" y2="1">' +
+  '<stop offset="0%" stop-color="#FFE040"/><stop offset="50%" stop-color="#F5A623"/>' +
+  '<stop offset="100%" stop-color="#9A5E00"/></linearGradient></defs>' +
+  '<path d="M4 7Q4 2 9 2L71 2Q76 2 76 7L76 55Q76 80 40 92Q4 80 4 55Z" fill="url(#g)"/>' +
+  '<path d="M4 7Q4 2 9 2L71 2Q76 2 76 7L76 36Q40 42 4 36Z" fill="rgba(255,255,255,0.08)"/>' +
+  '<path d="M22 18Q40 9 58 18" fill="none" stroke="rgba(255,255,255,0.7)" stroke-width="2.8" stroke-linecap="round"/>' +
+  '<path d="M27 25Q40 18 53 25" fill="none" stroke="rgba(255,255,255,0.55)" stroke-width="2.1" stroke-linecap="round"/>' +
+  '<path d="M15 47L50 33Q60 29 62 36Q63 43 54 46L22 59Z" fill="rgba(255,255,255,0.88)"/>' +
+  '<path d="M63 51L28 65Q18 68 16 61Q15 54 25 51L58 38Z" fill="rgba(255,255,255,0.88)"/>' +
+  '<text x="86" y="56" font-family="Arial Black,Impact,Helvetica,sans-serif" font-size="42" font-weight="900" fill="#F5A623" letter-spacing="1">SIELLO</text>' +
+  '<text x="95" y="75" font-family="Helvetica,Arial,sans-serif" font-size="13" font-weight="500" fill="#F5A623" letter-spacing="6">ACADEMY</text>' +
+  '</svg>'
+);
+
+const NIKE_URL = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(
+  '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 90">' +
+  '<path d="M8,62 C6,68 8,76 18,70 C36,62 58,50 82,37 C106,24 132,13 156,9 C180,5 202,8 214,19 C192,27 170,35 148,43 C126,51 104,57 80,63 C60,68 38,72 20,72 C12,72 8,68 8,62Z" fill="#111111"/>' +
+  '</svg>'
+);
 
 // ─── NATIONALITY → FLAG ───────────────────────────────────────────
 const FLAGS = {
@@ -271,17 +289,14 @@ function HexChart({attrs,values,color,size=200}){
 }
 
 // ─── SIDEBAR ──────────────────────────────────────────────────────
-function Sidebar({view,onNav,lang,setLang,sielloLogo}){
+function Sidebar({view,onNav,lang,setLang}){
   return(
     <aside style={{position:'fixed',left:0,top:0,height:'100%',width:58,
       background:'var(--surface)',borderRight:'1px solid var(--border)',
       display:'flex',flexDirection:'column',zIndex:50}}>
       <div style={{padding:'12px 0 10px',borderBottom:'1px solid var(--border)',
         display:'flex',justifyContent:'center',alignItems:'center'}}>
-        {sielloLogo
-          ? <img src={sielloLogo} style={{height:32,objectFit:'contain'}}/>
-          : <span style={{fontWeight:900,fontSize:13,color:'var(--gold)',letterSpacing:'.05em'}}>SA</span>
-        }
+        <img src={SIELLO_URL} style={{height:28,objectFit:'contain'}}/>
       </div>
       <nav style={{flex:1,padding:'10px 6px',display:'flex',flexDirection:'column',gap:3}}>
         {[{k:'dashboard',icon:'≡',tip:'Dashboard'},{k:'new',icon:'+',tip:'Nuevo Reporte'}].map(({k,icon,tip})=>{
@@ -315,35 +330,8 @@ function Sidebar({view,onNav,lang,setLang,sielloLogo}){
   );
 }
 
-// ─── LOGO UPLOAD BANNER ───────────────────────────────────────────
-function LogoBanner({sielloLogo,onLogoChange}){
-  const ref=useRef();
-  function handleFile(e){
-    const f=e.target.files?.[0]; if(!f) return;
-    const r=new FileReader(); r.onload=ev=>{
-      saveGlobalLogo(ev.target.result);
-      onLogoChange(ev.target.result);
-    }; r.readAsDataURL(f);
-  }
-  if(sielloLogo) return null;
-  return(
-    <div style={{margin:'0 0 20px',padding:'12px 16px',borderRadius:10,
-      background:'rgba(245,166,35,.06)',border:'1px solid rgba(245,166,35,.2)',
-      display:'flex',alignItems:'center',gap:12}}>
-      <div style={{fontSize:12,fontWeight:600,color:'var(--gold)',flex:1}}>
-        Subí el logo de Siello Academy para mostrarlo en los reportes
-      </div>
-      <input ref={ref} type="file" accept="image/*" style={{display:'none'}} onChange={handleFile}/>
-      <button className="btn-gold" style={{padding:'7px 14px',fontSize:12,flexShrink:0}}
-        onClick={()=>ref.current?.click()}>
-        Cargar Logo
-      </button>
-    </div>
-  );
-}
-
 // ─── DASHBOARD ────────────────────────────────────────────────────
-function Dashboard({reports,lang,onNew,onOpen,onDelete,sielloLogo,onLogoChange}){
+function Dashboard({reports,lang,onNew,onOpen,onDelete}){
   const stats={
     total:reports.length,
     elite:reports.filter(r=>r.scoutingStatus==='ELITE_POTENTIAL').length,
@@ -361,15 +349,8 @@ function Dashboard({reports,lang,onNew,onOpen,onDelete,sielloLogo,onLogoChange})
     <div className="grid-bg" style={{minHeight:'100vh',padding:'32px'}}>
       {/* Header */}
       <div style={{display:'flex',alignItems:'center',gap:16,marginBottom:28}}>
-        {sielloLogo
-          ? <img src={sielloLogo} style={{height:38,objectFit:'contain'}}/>
-          : <div style={{fontSize:18,fontWeight:900,color:'var(--gold)',letterSpacing:'.05em'}}>
-              SIELLO ACADEMY
-            </div>
-        }
+        <img src={SIELLO_URL} style={{height:38,objectFit:'contain'}}/>
       </div>
-
-      <LogoBanner sielloLogo={sielloLogo} onLogoChange={onLogoChange}/>
 
       {/* Stats */}
       <div style={{display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap:12,marginBottom:28}}>
@@ -489,37 +470,26 @@ function Lbl({text}){
 }
 
 // ─── STEP 1 ───────────────────────────────────────────────────────
-function Step1({report,onChange,lang,sielloLogo,onLogoChange}){
+function Step1({report,onChange,lang}){
   const u=f=>e=>onChange({[f]:e.target.value});
   const STATUSES=['ELITE_POTENTIAL','SIGN_NOW','FOLLOW','INITIAL_FILTER','PASS','PENDING'];
   const L={
     es:{photo:'Foto del Jugador',logo:'Logo del Club',name:'Nombre Completo',
       dob:'Fecha de Nacimiento',nat:'Nacionalidad',pos:'Posición',foot:'Pie Dominante',
       club:'Club Actual',h:'Altura (cm)',w:'Peso (kg)',date:'Fecha de Evaluación',
-      status:'Estado del Scouting',score:'Score General',sel:'Seleccionar posición',
-      sielloLogo:'Logo Siello Academy'},
+      status:'Estado del Scouting',score:'Score General',sel:'Seleccionar posición'},
     en:{photo:'Player Photo',logo:'Club Logo',name:'Full Name',
       dob:'Date of Birth',nat:'Nationality',pos:'Position',foot:'Dominant Foot',
       club:'Current Club',h:'Height (cm)',w:'Weight (kg)',date:'Evaluation Date',
-      status:'Scouting Status',score:'Overall Score',sel:'Select position',
-      sielloLogo:'Siello Academy Logo'},
+      status:'Scouting Status',score:'Overall Score',sel:'Select position'},
   }[lang];
-
-  const sielloRef=useRef();
-  function handleSielloFile(e){
-    const f=e.target.files?.[0]; if(!f) return;
-    const r=new FileReader(); r.onload=ev=>{
-      saveGlobalLogo(ev.target.result);
-      onLogoChange(ev.target.result);
-    }; r.readAsDataURL(f);
-  }
 
   return(
     <div style={{display:'flex',flexDirection:'column',gap:22}}>
       {/* Images row */}
       <div>
         <div style={{fontSize:10,fontWeight:700,letterSpacing:'.15em',color:'var(--muted)',marginBottom:12}}>IMÁGENES</div>
-        <div style={{display:'grid',gridTemplateColumns:'1fr 1fr 1fr',gap:12}}>
+        <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:12}}>
           <div>
             <Lbl text={L.photo}/>
             <PhotoUpload value={report.playerPhoto} onChange={v=>onChange({playerPhoto:v})} label={L.photo}/>
@@ -527,26 +497,6 @@ function Step1({report,onChange,lang,sielloLogo,onLogoChange}){
           <div>
             <Lbl text={L.logo}/>
             <PhotoUpload value={report.clubLogo} onChange={v=>onChange({clubLogo:v})} label={L.logo}/>
-          </div>
-          <div>
-            <Lbl text={L.sielloLogo}/>
-            <div onClick={()=>sielloRef.current?.click()}
-              style={{position:'relative',width:'100%',aspectRatio:'4/3',borderRadius:10,
-                background:'var(--surface3)',border:'2px dashed rgba(245,166,35,.3)',
-                display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',
-                cursor:'pointer',overflow:'hidden'}}
-              onMouseEnter={e=>e.currentTarget.style.borderColor='rgba(245,166,35,.6)'}
-              onMouseLeave={e=>e.currentTarget.style.borderColor='rgba(245,166,35,.3)'}>
-              <input ref={sielloRef} type="file" accept="image/*" style={{display:'none'}}
-                onChange={handleSielloFile}/>
-              {sielloLogo
-                ? <img src={sielloLogo} style={{padding:8,maxWidth:'100%',maxHeight:'100%',objectFit:'contain'}}/>
-                : <div style={{textAlign:'center',padding:12}}>
-                    <div style={{fontSize:12,color:'var(--gold)',fontWeight:700,marginBottom:4}}>SA</div>
-                    <div style={{fontSize:10,color:'var(--muted)'}}>Logo Academia</div>
-                  </div>
-              }
-            </div>
           </div>
         </div>
       </div>
@@ -734,7 +684,7 @@ function Step4({report,onChange,lang}){
 }
 
 // ─── REPORT FORM ──────────────────────────────────────────────────
-function ReportForm({report,onUpdate,onPreview,onBack,lang,sielloLogo,onLogoChange}){
+function ReportForm({report,onUpdate,onPreview,onBack,lang}){
   const [step,setStep]=useState(0);
   const [saved,setSaved]=useState(false);
   function handleChange(updates){
@@ -774,8 +724,7 @@ function ReportForm({report,onUpdate,onPreview,onBack,lang,sielloLogo,onLogoChan
       </div>
       {/* Content */}
       <div style={{flex:1,overflowY:'auto',padding:'20px'}}>
-        {step===0&&<Step1 report={report} onChange={handleChange} lang={lang}
-          sielloLogo={sielloLogo} onLogoChange={onLogoChange}/>}
+        {step===0&&<Step1 report={report} onChange={handleChange} lang={lang}/>}
         {step===1&&<Step2 report={report} onChange={handleChange} lang={lang}/>}
         {step===2&&<Step3 report={report} onChange={handleChange} lang={lang}/>}
         {step===3&&<Step4 report={report} onChange={handleChange} lang={lang}/>}
@@ -831,7 +780,7 @@ function PdfDiv({label}){
 }
 
 // ─── REPORT PREVIEW ───────────────────────────────────────────────
-function ReportPreview({report,lang,onEdit,sielloLogo}){
+function ReportPreview({report,lang,onEdit}){
   const [exporting,setExporting]=useState(false);
   const age=calcAge(report.dateOfBirth);
   const flag=getFlag(report.nationality);
@@ -924,15 +873,15 @@ function ReportPreview({report,lang,onEdit,sielloLogo}){
               {/* Left */}
               <div style={{flex:1,padding:'26px 28px 22px'}}>
                 {/* Logo row */}
-                <div style={{display:'flex',alignItems:'center',gap:12,marginBottom:16}}>
-                  {sielloLogo
-                    ? <img src={sielloLogo} style={{height:30,objectFit:'contain'}}/>
-                    : <span style={{fontWeight:900,fontSize:13,color:'#F5A623',
-                        letterSpacing:'.08em'}}>SIELLO ACADEMY</span>
-                  }
+                <div style={{display:'flex',alignItems:'center',gap:14,marginBottom:16}}>
+                  <img src={SIELLO_URL} style={{height:30,objectFit:'contain'}}/>
+                  <div style={{width:1,height:20,background:'rgba(255,255,255,0.12)'}}/>
+                  <img src={NIKE_URL} style={{height:20,objectFit:'contain'}}/>
                   {report.clubLogo&&(
-                    <img src={report.clubLogo} style={{height:24,objectFit:'contain',
-                      borderRadius:3,marginLeft:4}}/>
+                    <>
+                      <div style={{width:1,height:20,background:'rgba(255,255,255,0.12)'}}/>
+                      <img src={report.clubLogo} style={{height:24,objectFit:'contain',borderRadius:3}}/>
+                    </>
                   )}
                   <div style={{flex:1}}/>
                   <div style={{padding:'3px 8px',borderRadius:3,
@@ -1139,18 +1088,10 @@ function ReportPreview({report,lang,onEdit,sielloLogo}){
             <div style={{marginTop:28,paddingTop:16,
               borderTop:`1px solid ${P.border}`,
               display:'flex',alignItems:'center',justifyContent:'space-between'}}>
-              <div style={{display:'flex',alignItems:'center',gap:10}}>
-                {sielloLogo
-                  ? <img src={sielloLogo} style={{height:24,objectFit:'contain'}}/>
-                  : <span style={{fontWeight:900,fontSize:11,color:P.gold,
-                      letterSpacing:'.06em',fontFamily:'Helvetica,Arial,sans-serif'}}>
-                      SIELLO ACADEMY
-                    </span>
-                }
-                <span style={{fontSize:9,color:P.line,
-                  fontFamily:'Helvetica,Arial,sans-serif'}}>|</span>
-                <span style={{fontSize:9,color:P.faint,
-                  fontFamily:'Helvetica,Arial,sans-serif'}}>Siello Football Group</span>
+              <div style={{display:'flex',alignItems:'center',gap:12}}>
+                <img src={SIELLO_URL} style={{height:22,objectFit:'contain'}}/>
+                <div style={{width:1,height:16,background:P.border}}/>
+                <img src={NIKE_URL} style={{height:14,objectFit:'contain'}}/>
               </div>
               <div style={{fontSize:8,color:P.line,textAlign:'right',
                 fontFamily:'Helvetica,Arial,sans-serif',letterSpacing:'.06em'}}>
@@ -1171,7 +1112,6 @@ function App(){
   const [view,setView]=useState('dashboard');
   const [reports,setReports]=useState(()=>loadReports());
   const [currentId,setCurrentId]=useState(null);
-  const [sielloLogo,setSielloLogo]=useState(()=>loadGlobalLogo());
 
   const current=reports.find(r=>r.id===currentId)||null;
 
@@ -1195,15 +1135,14 @@ function App(){
 
   return(
     <div style={{display:'flex',height:'100vh',overflow:'hidden'}}>
-      <Sidebar view={view} onNav={handleNav} lang={lang} setLang={setLang} sielloLogo={sielloLogo}/>
+      <Sidebar view={view} onNav={handleNav} lang={lang} setLang={setLang}/>
       <main style={{flex:1,marginLeft:58,height:'100%',overflow:'hidden',
         display:'flex',flexDirection:'column'}}>
 
         {view==='dashboard'&&(
           <div style={{flex:1,overflowY:'auto'}}>
             <Dashboard reports={reports} lang={lang}
-              onNew={handleNew} onOpen={handleOpen} onDelete={handleDelete}
-              sielloLogo={sielloLogo} onLogoChange={setSielloLogo}/>
+              onNew={handleNew} onOpen={handleOpen} onDelete={handleDelete}/>
           </div>
         )}
 
@@ -1247,12 +1186,9 @@ function App(){
                 ? <ReportForm report={current} onUpdate={upsert}
                     onPreview={()=>setView('preview')}
                     onBack={()=>setView('dashboard')}
-                    lang={lang}
-                    sielloLogo={sielloLogo}
-                    onLogoChange={setSielloLogo}/>
+                    lang={lang}/>
                 : <ReportPreview report={current} lang={lang}
-                    onEdit={()=>setView('form')}
-                    sielloLogo={sielloLogo}/>
+                    onEdit={()=>setView('form')}/>
               }
             </div>
           </>

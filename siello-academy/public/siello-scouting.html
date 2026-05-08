@@ -3,50 +3,43 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Siello Academy — Scouting Platform</title>
-<link rel="preconnect" href="https://fonts.googleapis.com"/>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+<title>Siello Academy — Performance Reports</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 :root{
   --gold:#F5A623;--gold-dark:#D4880A;--gold-light:#FFC85C;
   --bg:#080808;--surface:#111114;--surface2:#18181C;--surface3:#222228;
   --border:#2A2A32;--borderl:#3A3A44;
-  --teal:#14B8A6;--red:#EF4444;--indigo:#818CF8;--yellow:#FCD34D;
+  --teal:#14B8A6;--indigo:#818CF8;--red:#F87171;
   --text:#F4F4F5;--muted:#71717A;--dim:#3F3F46;
+  --font:Helvetica,Arial,sans-serif;
 }
-html,body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;-webkit-font-smoothing:antialiased;overflow-x:hidden;height:100%}
+html,body{background:var(--bg);color:var(--text);font-family:var(--font);-webkit-font-smoothing:antialiased;overflow-x:hidden;height:100%}
 #root{height:100%}
-::-webkit-scrollbar{width:4px;height:4px}
+::-webkit-scrollbar{width:4px}
 ::-webkit-scrollbar-track{background:var(--surface)}
 ::-webkit-scrollbar-thumb{background:var(--borderl);border-radius:2px}
-input,select,textarea{font-family:'Inter',sans-serif;font-size:13px;color:var(--text)}
-input:focus,select:focus,textarea:focus{outline:2px solid rgba(245,166,35,0.4)}
+input,select,textarea{font-family:var(--font);font-size:13px;color:var(--text)}
 textarea{resize:none}
 input[type=range]{-webkit-appearance:none;appearance:none;background:transparent;cursor:pointer;width:100%}
 input[type=range]::-webkit-slider-track{background:var(--surface3);height:4px;border-radius:2px}
 input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;background:var(--gold);height:16px;width:16px;border-radius:50%;margin-top:-6px;box-shadow:0 0 8px rgba(245,166,35,.4)}
-.gold-gradient{background:linear-gradient(135deg,#FFC85C,#F5A623);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-.grid-bg{background-image:linear-gradient(rgba(245,166,35,.02) 1px,transparent 1px),linear-gradient(90deg,rgba(245,166,35,.02) 1px,transparent 1px);background-size:32px 32px}
-.btn-gold{background:linear-gradient(135deg,var(--gold),var(--gold-dark));color:#000;border:none;cursor:pointer;font-family:'Inter',sans-serif;font-weight:600;border-radius:8px;transition:opacity .2s,transform .1s}
-.btn-gold:hover{opacity:.9}
+input[type=range]:focus{outline:none}
+.grid-bg{background-image:linear-gradient(rgba(245,166,35,.015) 1px,transparent 1px),linear-gradient(90deg,rgba(245,166,35,.015) 1px,transparent 1px);background-size:32px 32px}
+.btn-gold{background:linear-gradient(135deg,var(--gold),var(--gold-dark));color:#000;border:none;cursor:pointer;font-family:var(--font);font-weight:700;border-radius:8px;transition:opacity .15s,transform .1s}
+.btn-gold:hover{opacity:.88}
 .btn-gold:active{transform:scale(.97)}
-.btn-ghost{background:var(--surface2);border:1px solid var(--border);color:var(--muted);cursor:pointer;font-family:'Inter',sans-serif;border-radius:8px;transition:all .2s}
+.btn-ghost{background:var(--surface2);border:1px solid var(--border);color:var(--muted);cursor:pointer;font-family:var(--font);border-radius:8px;transition:all .15s}
 .btn-ghost:hover{border-color:var(--borderl);color:var(--text)}
-.input-field{background:var(--surface3);border:1px solid var(--border);color:var(--text);border-radius:8px;padding:10px 12px;width:100%;transition:border-color .2s}
-.input-field:focus{border-color:rgba(245,166,35,.4);outline:none;box-shadow:0 0 0 2px rgba(245,166,35,.08)}
+.input-field{background:var(--surface3);border:1px solid var(--border);color:var(--text);border-radius:8px;padding:10px 12px;width:100%;font-family:var(--font)}
+.input-field:focus{border-color:rgba(245,166,35,.5);outline:none;box-shadow:0 0 0 2px rgba(245,166,35,.08)}
 .card{background:var(--surface2);border:1px solid var(--border);border-radius:12px}
-.section-header{display:flex;align-items:center;gap:12px;margin-bottom:16px}
-.section-header::before,.section-header::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,rgba(245,166,35,.4),transparent)}
-.section-header::before{background:linear-gradient(90deg,transparent,rgba(245,166,35,.4))}
-.section-label{font-size:9px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);white-space:nowrap}
 @keyframes spin{to{transform:rotate(360deg)}}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.4}}
 </style>
 </head>
 <body>
 <div id="root"></div>
-
 <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
 <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
 <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
@@ -54,90 +47,45 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;background:var(-
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
 <script type="text/babel">
-const {useState, useEffect, useRef, useCallback} = React;
+const {useState,useEffect,useRef} = React;
 
-// ─── TRANSLATIONS ────────────────────────────────────────────────
-const T = {
-  es:{
-    dashboard:'Dashboard',newReport:'Nuevo Reporte',history:'Historial',
-    welcomeSub:'Scouting Intelligence Platform',
-    totalReports:'Reportes Totales',elitePlayers:'Potencial Elite',followList:'En Seguimiento',
-    recentActivity:'Actividad Reciente',noReports:'No hay reportes aún',
-    noReportsDesc:'Creá tu primer reporte de scouting',createFirst:'Crear Reporte',
-    playerInfo:'Datos del Jugador',evaluation:'Evaluación',
-    textSections:'Observaciones',teamSuggestions:'Equipos',preview:'Vista Previa',
-    fullName:'Nombre Completo',dateOfBirth:'Fecha de Nacimiento',nationality:'Nacionalidad',
-    position:'Posición',dominantFoot:'Pie Dominante',height:'Altura (cm)',weight:'Peso (kg)',
-    currentClub:'Club Actual',evaluationDate:'Fecha Evaluación',
-    playerPhoto:'Foto del Jugador',clubLogo:'Logo del Club',
-    scoutingStatus:'Estado del Scouting',overallScore:'Score General',
-    coreMatrix:'Core Matrix',
-    tecnica:'Técnica',tactica:'Táctica',fisico:'Físico',mentalidad:'Mentalidad',
-    intensidad:'Intensidad',tomaDecisiones:'Decisiones',potencial:'Potencial',
-    adaptabilidad:'Adaptabilidad',juegoSinBalon:'Sin Balón',juegoConBalon:'Con Balón',
-    velocidad:'Velocidad',potencia:'Potencia',resistencia:'Resistencia',aceleracion:'Aceleración',
-    saltoCabeceo:'Salto/Cabeceo',controlPase:'Control y Pase',tecnicaDominio:'Dominio',
-    regate:'Regate',finalizacion:'Finalización',centros:'Centros',
-    liderazgo:'Liderazgo',presionTrasPerdida:'Presión',concienciaEspacial:'Espacial',
-    lecturaJuego:'Lectura de Juego',personalidad:'Personalidad',tomaDedecisiones:'Decisiones',
-    posicionamiento:'Posicionamiento',equilibrioDefensivo:'Equilibrio',
-    transiciones:'Transiciones',presionAlta:'Presión Alta',coberturas:'Coberturas',lecturaEspacios:'Espacios',
-    executiveSummary:'Executive Summary',playerContext:'Contexto del Jugador',
-    technicalObservations:'Observaciones Técnicas',tacticalObservations:'Observaciones Tácticas',
-    physicalObservations:'Observaciones Físicas',mentalityBehavior:'Mentalidad y Comportamiento',
-    roleFit:'Role Fit',finalConclusion:'Conclusión Final',finalRecommendation:'Recomendación Final',
-    suggestedTeams:'Posibles Equipos en España',club:'Club',category:'Categoría',
-    observations:'Observaciones',estimatedLevel:'Nivel Estimado',addTeam:'Añadir Club',
-    exportPDF:'Exportar PDF',save:'Guardar',next:'Siguiente',back:'Atrás',
-    edit:'Editar',delete:'Eliminar',cancel:'Cancelar',
-    uploadPhoto:'Subir Foto',uploadLogo:'Subir Logo',
-    ELITE_POTENTIAL:'ELITE POTENTIAL',FOLLOW:'FOLLOW',PASS:'PASS',
-    SIGN_NOW:'SIGN NOW',INITIAL_FILTER:'INITIAL FILTER',PENDING:'PENDING',
-    performanceDashboard:'Performance Dashboard',coreVsSnapshot:'Core VS Snapshot',
-    quickAssessment:'Quick Assessment',physicalAttr:'Atributos Físicos',
-    technicalAttr:'Atributos Técnicos',mentalAttr:'Atributos Mentales',tacticalAttr:'Atributos Tácticos',
-  },
-  en:{
-    dashboard:'Dashboard',newReport:'New Report',history:'History',
-    welcomeSub:'Scouting Intelligence Platform',
-    totalReports:'Total Reports',elitePlayers:'Elite Potential',followList:'Follow List',
-    recentActivity:'Recent Activity',noReports:'No reports yet',
-    noReportsDesc:'Create your first scouting report',createFirst:'Create Report',
-    playerInfo:'Player Data',evaluation:'Evaluation',
-    textSections:'Observations',teamSuggestions:'Teams',preview:'Preview',
-    fullName:'Full Name',dateOfBirth:'Date of Birth',nationality:'Nationality',
-    position:'Position',dominantFoot:'Dominant Foot',height:'Height (cm)',weight:'Weight (kg)',
-    currentClub:'Current Club',evaluationDate:'Evaluation Date',
-    playerPhoto:'Player Photo',clubLogo:'Club Logo',
-    scoutingStatus:'Scouting Status',overallScore:'Overall Score',
-    coreMatrix:'Core Matrix',
-    tecnica:'Technical',tactica:'Tactical',fisico:'Physical',mentalidad:'Mentality',
-    intensidad:'Intensity',tomaDecisiones:'Decisions',potencial:'Potential',
-    adaptabilidad:'Adaptability',juegoSinBalon:'Off Ball',juegoConBalon:'On Ball',
-    velocidad:'Speed',potencia:'Power',resistencia:'Endurance',aceleracion:'Acceleration',
-    saltoCabeceo:'Jump/Header',controlPase:'Control & Pass',tecnicaDominio:'Ball Mastery',
-    regate:'Dribbling',finalizacion:'Finishing',centros:'Crosses',
-    liderazgo:'Leadership',presionTrasPerdida:'Press',concienciaEspacial:'Spatial',
-    lecturaJuego:'Game Reading',personalidad:'Personality',tomaDedecisiones:'Decisions',
-    posicionamiento:'Positioning',equilibrioDefensivo:'Balance',
-    transiciones:'Transitions',presionAlta:'High Press',coberturas:'Cover Shadows',lecturaEspacios:'Spaces',
-    executiveSummary:'Executive Summary',playerContext:'Player Context',
-    technicalObservations:'Technical Observations',tacticalObservations:'Tactical Observations',
-    physicalObservations:'Physical Observations',mentalityBehavior:'Mentality & Behavior',
-    roleFit:'Role Fit',finalConclusion:'Final Conclusion',finalRecommendation:'Final Recommendation',
-    suggestedTeams:'Possible Teams in Spain',club:'Club',category:'Category',
-    observations:'Observations',estimatedLevel:'Estimated Level',addTeam:'Add Club',
-    exportPDF:'Export PDF',save:'Save',next:'Next',back:'Back',
-    edit:'Edit',delete:'Delete',cancel:'Cancel',
-    uploadPhoto:'Upload Photo',uploadLogo:'Upload Logo',
-    ELITE_POTENTIAL:'ELITE POTENTIAL',FOLLOW:'FOLLOW',PASS:'PASS',
-    SIGN_NOW:'SIGN NOW',INITIAL_FILTER:'INITIAL FILTER',PENDING:'PENDING',
-    performanceDashboard:'Performance Dashboard',coreVsSnapshot:'Core VS Snapshot',
-    quickAssessment:'Quick Assessment',physicalAttr:'Physical Attributes',
-    technicalAttr:'Technical Attributes',mentalAttr:'Mental Attributes',tacticalAttr:'Tactical Attributes',
-  }
-};
-const t = (lang,key) => T[lang][key] || key;
+// ─── LOGO SVG ─────────────────────────────────────────────────────
+function SielloLogo({h=36,white=false}){
+  const c = white ? '#FFFFFF' : '#F5A623';
+  return (
+    <svg height={h} viewBox="0 0 172 46" style={{display:'block',flexShrink:0}}>
+      <path d="M4,4 L38,4 C38,4 38,30 21,42 C4,30 4,4 4,4 Z"
+        fill={white?"rgba(255,255,255,0.9)":"url(#sg)"} stroke="none"/>
+      <defs>
+        <linearGradient id="sg" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stopColor="#FFC85C"/>
+          <stop offset="100%" stopColor="#D4880A"/>
+        </linearGradient>
+      </defs>
+      <text x="21" y="25" textAnchor="middle" dominantBaseline="middle"
+        fontFamily="Helvetica,Arial,sans-serif" fontWeight="900" fontSize="20" fill={white?"#111":"#000"}>S</text>
+      <text x="47" y="20" fontFamily="Helvetica,Arial,sans-serif"
+        fontWeight="900" fontSize="18" fill={c} letterSpacing="1">SIELLO</text>
+      <text x="48" y="36" fontFamily="Helvetica,Arial,sans-serif"
+        fontWeight="400" fontSize="9" fill={c} letterSpacing="5">ACADEMY</text>
+    </svg>
+  );
+}
+
+function SielloShield({size=36}){
+  return (
+    <svg width={size} height={size} viewBox="0 0 42 42">
+      <defs>
+        <linearGradient id="shg" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stopColor="#FFC85C"/><stop offset="100%" stopColor="#D4880A"/>
+        </linearGradient>
+      </defs>
+      <path d="M4,4 L38,4 C38,4 38,30 21,40 C4,30 4,4 4,4 Z" fill="url(#shg)"/>
+      <text x="21" y="23" textAnchor="middle" dominantBaseline="middle"
+        fontFamily="Helvetica,Arial,sans-serif" fontWeight="900" fontSize="20" fill="#000">S</text>
+    </svg>
+  );
+}
 
 // ─── CONSTANTS ────────────────────────────────────────────────────
 const STATUS_CFG = {
@@ -148,54 +96,105 @@ const STATUS_CFG = {
   PASS:{bg:'rgba(239,68,68,.08)',color:'#F87171',border:'rgba(239,68,68,.2)'},
   PENDING:{bg:'rgba(113,113,122,.1)',color:'#A1A1AA',border:'rgba(113,113,122,.2)'},
 };
+const STATUS_LABELS = {
+  es:{ELITE_POTENTIAL:'ELITE POTENTIAL',SIGN_NOW:'SIGN NOW',FOLLOW:'FOLLOW',
+    INITIAL_FILTER:'INITIAL FILTER',PASS:'PASS',PENDING:'PENDIENTE'},
+  en:{ELITE_POTENTIAL:'ELITE POTENTIAL',SIGN_NOW:'SIGN NOW',FOLLOW:'FOLLOW',
+    INITIAL_FILTER:'INITIAL FILTER',PASS:'PASS',PENDING:'PENDING'},
+};
 
 const POSITIONS = ['Portero','Defensa Central','Lateral Derecho','Lateral Izquierdo',
   'Mediocentro Defensivo','Mediocentro','Mediocentro Ofensivo',
   'Extremo Derecho','Extremo Izquierdo','Delantero Centro','Segunda Punta'];
 
-const CORE_KEYS = ['tecnica','tactica','fisico','mentalidad','intensidad',
-  'tomaDecisiones','potencial','adaptabilidad','juegoSinBalon','juegoConBalon'];
+// ─── ATTRIBUTE GROUPS ─────────────────────────────────────────────
+const ATTR_GROUPS = [
+  {
+    id:'fisicos', color:'#14B8A6',
+    label:{es:'VALORES FÍSICOS',en:'PHYSICAL VALUES'},
+    attrs:[
+      {key:'velocidad',     label:'VELOCIDAD'},
+      {key:'potencia',      label:'POTENCIA'},
+      {key:'agresividad',   label:'AGRESIVIDAD'},
+      {key:'resistencia',   label:'RESISTENCIA\nLARGA DISTANCIA'},
+      {key:'aceleracion',   label:'ACELERACIÓN'},
+      {key:'equilibrioAD',  label:'EQUILIBRIO\nATAQUE-DEFENSA'},
+    ]
+  },
+  {
+    id:'tecnicos', color:'#818CF8',
+    label:{es:'VALORES TÉCNICOS',en:'TECHNICAL VALUES'},
+    attrs:[
+      {key:'controlPase',   label:'CONTROL Y PASE'},
+      {key:'tecnicaPieND',  label:'TÉCNICA PIE\nNO DOMINANTE'},
+      {key:'desmarque',     label:'DESMARQUE'},
+      {key:'finalizacion',  label:'FINALIZACIÓN'},
+      {key:'regate',        label:'REGATE'},
+      {key:'movEspacio',    label:'MOVIMIENTO\nAL ESPACIO'},
+    ]
+  },
+  {
+    id:'mentales', color:'#F5A623',
+    label:{es:'VALORES MENTALES',en:'MENTAL VALUES'},
+    attrs:[
+      {key:'liderazgo',     label:'LIDERAZGO'},
+      {key:'personalidad',  label:'PERSONALIDAD'},
+      {key:'tomaDecisiones',label:'TOMA DE\nDECISIONES'},
+      {key:'respuestaPresion',label:'RESPUESTA\nBAJO PRESIÓN'},
+      {key:'autocontrol',   label:'AUTOCONTROL'},
+    ]
+  },
+  {
+    id:'tacticos', color:'#F87171',
+    label:{es:'VALORES TÁCTICOS',en:'TACTICAL VALUES'},
+    attrs:[
+      {key:'concienciaEsp', label:'CONCIENCIA\nESPACIAL'},
+      {key:'transiciones',  label:'TRANSICIONES'},
+      {key:'presionTrasP',  label:'PRESIÓN TRAS\nPÉRDIDA'},
+      {key:'temporizacion', label:'TEMPORIZACIÓN'},
+      {key:'lecturaJuego',  label:'LECTURA\nDE JUEGO'},
+    ]
+  },
+];
 
-const ATTR_GROUPS = {
-  physicalAttr:['velocidad','potencia','resistencia','aceleracion','saltoCabeceo'],
-  technicalAttr:['controlPase','tecnicaDominio','regate','finalizacion','centros'],
-  mentalAttr:['liderazgo','presionTrasPerdida','concienciaEspacial','lecturaJuego','personalidad'],
-  tacticalAttr:['posicionamiento','equilibrioDefensivo','transiciones','presionAlta','coberturas'],
-};
+const ALL_ATTR_KEYS = ATTR_GROUPS.flatMap(g => g.attrs.map(a => a.key));
 
-const TEXT_FIELDS = ['executiveSummary','playerContext','technicalObservations',
-  'tacticalObservations','physicalObservations','mentalityBehavior',
-  'roleFit','finalConclusion','finalRecommendation'];
-
-function defaultCoreScores(){
-  return Object.fromEntries(CORE_KEYS.map(k=>[k,5]));
-}
 function defaultAttrs(){
-  return Object.fromEntries(
-    Object.values(ATTR_GROUPS).flat().map(k=>[k,5])
-  );
+  return Object.fromEntries(ALL_ATTR_KEYS.map(k => [k, 5]));
 }
+
+const TEXT_FIELDS = [
+  {key:'executiveSummary', label:{es:'Executive Summary', en:'Executive Summary'}, rows:4},
+  {key:'playerContext',    label:{es:'Contexto del Jugador', en:'Player Context'}, rows:3},
+  {key:'technicalObs',    label:{es:'Observaciones Técnicas', en:'Technical Observations'}, rows:3},
+  {key:'tacticalObs',     label:{es:'Observaciones Tácticas', en:'Tactical Observations'}, rows:3},
+  {key:'physicalObs',     label:{es:'Observaciones Físicas', en:'Physical Observations'}, rows:3},
+  {key:'mentality',       label:{es:'Mentalidad y Comportamiento', en:'Mentality & Behavior'}, rows:3},
+  {key:'roleFit',         label:{es:'Role Fit', en:'Role Fit'}, rows:3},
+  {key:'conclusion',      label:{es:'Conclusión Final', en:'Final Conclusion'}, rows:3},
+  {key:'recommendation',  label:{es:'Recomendación Final', en:'Final Recommendation'}, rows:3},
+];
+
+// ─── STORAGE ──────────────────────────────────────────────────────
+const STORE_KEY = 'siello_v3';
+function loadReports(){try{return JSON.parse(localStorage.getItem(STORE_KEY)||'[]')}catch{return[]}}
+function saveReports(r){localStorage.setItem(STORE_KEY,JSON.stringify(r))}
+
 function newReport(){
-  const id = Math.random().toString(36).slice(2);
+  const id = crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).slice(2)+Date.now();
   return {
     id, createdAt:new Date().toISOString(), updatedAt:new Date().toISOString(),
-    playerName:'',dateOfBirth:'',nationality:'',position:'',
-    dominantFoot:'Diestro',height:'',weight:'',currentClub:'',
+    playerName:'', dateOfBirth:'', nationality:'', position:'',
+    dominantFoot:'Diestro', height:'', weight:'', currentClub:'',
     evaluationDate:new Date().toISOString().split('T')[0],
-    playerPhoto:'',clubLogo:'',
-    overallScore:0,scoutingStatus:'PENDING',
-    coreScores:defaultCoreScores(),attributes:defaultAttrs(),
-    executiveSummary:'',playerContext:'',technicalObservations:'',
-    tacticalObservations:'',physicalObservations:'',mentalityBehavior:'',
-    roleFit:'',finalConclusion:'',finalRecommendation:'',
+    playerPhoto:'', clubLogo:'',
+    overallScore:0, scoutingStatus:'PENDING',
+    attributes:defaultAttrs(),
+    executiveSummary:'', playerContext:'', technicalObs:'', tacticalObs:'',
+    physicalObs:'', mentality:'', roleFit:'', conclusion:'', recommendation:'',
     suggestedTeams:[],
   };
 }
-
-// ─── STORAGE ──────────────────────────────────────────────────────
-const STORE_KEY = 'siello_reports_v2';
-function loadReports(){try{return JSON.parse(localStorage.getItem(STORE_KEY)||'[]')}catch{return[]}}
-function saveReports(r){localStorage.setItem(STORE_KEY,JSON.stringify(r))}
 
 // ─── HELPERS ──────────────────────────────────────────────────────
 function barColor(v){
@@ -207,119 +206,89 @@ function barColor(v){
 function calcAge(dob){
   if(!dob) return null;
   const b=new Date(dob), now=new Date();
-  let age=now.getFullYear()-b.getFullYear();
-  if(now.getMonth()-b.getMonth()<0||(now.getMonth()-b.getMonth()===0&&now.getDate()<b.getDate())) age--;
-  return age;
+  let a=now.getFullYear()-b.getFullYear();
+  if(now.getMonth()<b.getMonth()||(now.getMonth()===b.getMonth()&&now.getDate()<b.getDate())) a--;
+  return a;
 }
 function fmtDate(iso,lang){
   try{return new Intl.DateTimeFormat(lang==='es'?'es-ES':'en-US',{day:'2-digit',month:'short',year:'numeric'}).format(new Date(iso))}
-  catch{return iso}
+  catch{return iso||''}
 }
 
-// ─── UI ATOMS ─────────────────────────────────────────────────────
+// ─── STATUS BADGE ─────────────────────────────────────────────────
 function StatusBadge({status,lang,size='md'}){
-  const cfg = STATUS_CFG[status] || STATUS_CFG.PENDING;
-  const pad = size==='sm'?'3px 8px':size==='lg'?'6px 14px':'4px 10px';
-  const fs = size==='lg'?11:9;
+  const cfg=STATUS_CFG[status]||STATUS_CFG.PENDING;
+  const label=STATUS_LABELS[lang]?.[status]||status;
+  const pad=size==='sm'?'3px 8px':size==='lg'?'6px 14px':'4px 10px';
+  const fs=size==='lg'?11:9;
   return (
     <span style={{display:'inline-flex',alignItems:'center',gap:6,padding:pad,
       borderRadius:20,background:cfg.bg,border:`1px solid ${cfg.border}`,
-      color:cfg.color,fontSize:fs,fontWeight:700,letterSpacing:'0.12em',textTransform:'uppercase'}}>
-      <span style={{width:5,height:5,borderRadius:'50%',background:cfg.color,flexShrink:0,
-        animation:'pulse 2s infinite'}}/>
-      {t(lang,status)}
+      color:cfg.color,fontSize:fs,fontWeight:700,letterSpacing:'0.12em',
+      textTransform:'uppercase',fontFamily:'Helvetica,Arial,sans-serif'}}>
+      <span style={{width:5,height:5,borderRadius:'50%',background:cfg.color,
+        animation:'blink 2s infinite',flexShrink:0}}/>
+      {label}
     </span>
   );
 }
 
-function ScorePill({score,size='md'}){
-  const c=barColor(score);
-  const s = size==='sm'?32:size==='lg'?64:48;
-  const fs = size==='sm'?12:size==='lg'?24:16;
-  return (
-    <div style={{width:s,height:s,borderRadius:'50%',display:'flex',alignItems:'center',
-      justifyContent:'center',fontFamily:"'Outfit',sans-serif",fontWeight:900,fontSize:fs,
-      color:c,border:`2px solid ${c}`,background:`radial-gradient(circle,${c}22 0%,transparent 70%)`,
-      boxShadow:`0 0 14px ${c}40`,flexShrink:0}}>
-      {score.toFixed(1)}
-    </div>
-  );
-}
+// ─── HEXAGON CHART ────────────────────────────────────────────────
+function HexChart({attrs,values,color,size=220}){
+  const n=attrs.length;
+  const cx=size/2, cy=size/2;
+  const R=size*0.32;
+  const Rl=size*0.46;
 
-function FormField({label,children}){
-  return (
-    <div>
-      <label style={{display:'block',fontSize:11,fontWeight:500,color:'var(--muted)',marginBottom:6}}>{label}</label>
-      {children}
-    </div>
-  );
-}
-
-function PhotoUpload({value,onChange,label,placeholder}){
-  const ref = useRef();
-  function handleFile(e){
-    const f=e.target.files?.[0]; if(!f) return;
-    const r=new FileReader(); r.onload=ev=>onChange(ev.target.result); r.readAsDataURL(f);
-  }
-  return (
-    <div onClick={()=>ref.current?.click()} style={{
-      position:'relative',width:'100%',aspectRatio:'4/3',borderRadius:10,
-      background:'var(--surface3)',border:'2px dashed var(--border)',
-      display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',
-      cursor:'pointer',overflow:'hidden',transition:'border-color .2s'}}
-      onMouseEnter={e=>e.currentTarget.style.borderColor='rgba(245,166,35,.4)'}
-      onMouseLeave={e=>e.currentTarget.style.borderColor='var(--border)'}>
-      <input ref={ref} type="file" accept="image/*" style={{display:'none'}} onChange={handleFile}/>
-      {value
-        ? <img src={value} style={{position:'absolute',inset:0,width:'100%',height:'100%',objectFit:'cover'}}/>
-        : <div style={{textAlign:'center',padding:12}}>
-            <div style={{width:36,height:36,borderRadius:8,background:'rgba(245,166,35,.08)',
-              display:'flex',alignItems:'center',justifyContent:'center',margin:'0 auto 8px',fontSize:18}}>📷</div>
-            <div style={{fontSize:11,color:'var(--muted)'}}>{label}</div>
-          </div>
-      }
-    </div>
-  );
-}
-
-// ─── RADAR CHART ──────────────────────────────────────────────────
-function RadarChart({scores,lang,size=220}){
-  const center=size/2, radius=size*0.35;
-  const keys = CORE_KEYS;
-  const n = keys.length;
-  function pt(score,i,frac=1){
+  function pt(i,frac=1){
     const a=(i*2*Math.PI/n)-Math.PI/2;
-    const r=(score/10)*radius*frac;
-    return {x:center+r*Math.cos(a),y:center+r*Math.sin(a)};
+    return {x:cx+frac*R*Math.cos(a), y:cy+frac*R*Math.sin(a), a};
   }
-  function axPt(i,frac=1){
-    const a=(i*2*Math.PI/n)-Math.PI/2;
-    return {x:center+frac*radius*Math.cos(a),y:center+frac*radius*Math.sin(a)};
-  }
-  const scorePts = keys.map((k,i)=>pt(scores[k],i));
-  const polygon = scorePts.map(p=>`${p.x},${p.y}`).join(' ');
-  const gridLevels=[2,4,6,8,10];
+
+  const gridLvls=[2,4,6,8,10];
+  const scorePoly=attrs.map(({key},i)=>pt(i,(values[key]||0)/10));
+  const scoreStr=scorePoly.map(p=>`${p.x.toFixed(1)},${p.y.toFixed(1)}`).join(' ');
+
   return (
     <svg width={size} height={size} style={{overflow:'visible'}}>
-      {gridLevels.map(lv=>(
+      {/* Grid polygons */}
+      {gridLvls.map(lv=>(
         <polygon key={lv}
-          points={keys.map((_,i)=>{const p=axPt(i,lv/10);return `${p.x},${p.y}`}).join(' ')}
-          fill="none" stroke="#1E1E2E" strokeWidth="1"/>
+          points={attrs.map((_,i)=>{const p=pt(i,lv/10);return `${p.x.toFixed(1)},${p.y.toFixed(1)}`}).join(' ')}
+          fill="none" stroke="#1E1E28" strokeWidth="1"/>
       ))}
-      {keys.map((_,i)=>{const p=axPt(i);return(
-        <line key={i} x1={center} y1={center} x2={p.x} y2={p.y} stroke="#1E1E2E" strokeWidth="1"/>
-      )})}
-      <polygon points={polygon} fill="rgba(245,166,35,.12)" stroke="#F5A623" strokeWidth="1.5"/>
-      {scorePts.map((p,i)=>(
-        <circle key={i} cx={p.x} cy={p.y} r="3" fill="#F5A623"/>
+      {/* Axes */}
+      {attrs.map((_,i)=>{
+        const p=pt(i);
+        return <line key={i} x1={cx.toFixed(1)} y1={cy.toFixed(1)}
+          x2={p.x.toFixed(1)} y2={p.y.toFixed(1)} stroke="#1E1E28" strokeWidth="1"/>;
+      })}
+      {/* Score polygon */}
+      <polygon points={scoreStr}
+        fill={color+'25'} stroke={color} strokeWidth="1.5"/>
+      {/* Dots */}
+      {scorePoly.map((p,i)=>(
+        <circle key={i} cx={p.x.toFixed(1)} cy={p.y.toFixed(1)} r="3.5"
+          fill={color} stroke="#080810" strokeWidth="1.5"/>
       ))}
-      {keys.map((k,i)=>{
-        const lp=axPt(i,1.22);
-        const anchor = lp.x<center-5?'end':lp.x>center+5?'start':'middle';
-        return(
-          <text key={k} x={lp.x} y={lp.y} textAnchor={anchor} dominantBaseline="middle"
-            fill="#6B7280" fontSize="8" fontFamily="Inter">
-            {t(lang,k)}
+      {/* Labels */}
+      {attrs.map(({key,label},i)=>{
+        const {x,y,a}=pt(i,1);
+        const lx=cx+(Rl)*Math.cos(a);
+        const ly=cy+(Rl)*Math.sin(a);
+        const cos=Math.cos(a), sin=Math.sin(a);
+        const anchor=cos>0.25?'start':cos<-0.25?'end':'middle';
+        const parts=label.split('\n');
+        const lineH=9;
+        const totalH=parts.length*lineH;
+        const yOff=sin<-0.2?-totalH:sin>0.2?0:-totalH/2;
+        return (
+          <text key={i} textAnchor={anchor}
+            fontFamily="Helvetica,Arial,sans-serif" fontSize="7.5"
+            fontWeight="600" fill="#8B949E" letterSpacing="0.04em">
+            {parts.map((part,j)=>(
+              <tspan key={j} x={lx.toFixed(1)} y={(ly+yOff+j*lineH).toFixed(1)}>{part}</tspan>
+            ))}
           </text>
         );
       })}
@@ -327,67 +296,45 @@ function RadarChart({scores,lang,size=220}){
   );
 }
 
-// ─── HORIZONTAL BAR ───────────────────────────────────────────────
-function HBar({label,value,max=10}){
-  const c=barColor(value), pct=(value/max)*100;
-  return (
-    <div style={{display:'flex',alignItems:'center',gap:10}}>
-      <span style={{fontSize:10,width:90,textAlign:'right',flexShrink:0,color:'#9CA3AF'}}>{label}</span>
-      <div style={{flex:1,height:5,borderRadius:3,background:'#1F1F28',position:'relative'}}>
-        <div style={{position:'absolute',left:0,top:0,height:'100%',borderRadius:3,
-          width:`${pct}%`,background:`linear-gradient(90deg,${c}70,${c})`,
-          boxShadow:`0 0 6px ${c}60`,transition:'width .4s ease'}}/>
-      </div>
-      <span style={{fontSize:10,fontWeight:700,width:28,flexShrink:0,color:c}}>{value.toFixed(1)}</span>
-    </div>
-  );
-}
-
 // ─── SIDEBAR ──────────────────────────────────────────────────────
-function Sidebar({view,setView,lang,setLang}){
-  const navItems=[
-    {key:'dashboard',icon:'⊞',label:t(lang,'dashboard')},
-    {key:'new',icon:'+',label:t(lang,'newReport')},
+function Sidebar({view,onNav,lang,setLang}){
+  const nav=[
+    {k:'dashboard',icon:'≡',tip:'Dashboard'},
+    {k:'new',icon:'+',tip:'Nuevo Reporte'},
   ];
   return (
-    <aside style={{position:'fixed',left:0,top:0,height:'100%',width:60,
+    <aside style={{position:'fixed',left:0,top:0,height:'100%',width:58,
       background:'var(--surface)',borderRight:'1px solid var(--border)',
       display:'flex',flexDirection:'column',zIndex:50}}>
-      {/* Logo */}
-      <div style={{padding:'18px 12px',borderBottom:'1px solid var(--border)',
-        display:'flex',justifyContent:'center'}}>
-        <div style={{width:36,height:36,borderRadius:8,
-          background:'linear-gradient(135deg,#F5A623,#D4880A)',
-          display:'flex',alignItems:'center',justifyContent:'center',
-          fontFamily:"'Outfit',sans-serif",fontWeight:900,fontSize:18,color:'#000'}}>
-          S
-        </div>
+      <div style={{padding:'14px 0',borderBottom:'1px solid var(--border)',
+        display:'flex',justifyContent:'center',alignItems:'center'}}>
+        <SielloShield size={34}/>
       </div>
-      {/* Nav */}
-      <nav style={{flex:1,padding:'12px 8px',display:'flex',flexDirection:'column',gap:4}}>
-        {navItems.map(item=>{
-          const active = view===item.key||(item.key==='dashboard'&&view==='report');
+      <nav style={{flex:1,padding:'10px 6px',display:'flex',flexDirection:'column',gap:3}}>
+        {nav.map(({k,icon,tip})=>{
+          const active=view===k||(k==='dashboard'&&(view==='form'||view==='preview'));
           return (
-            <button key={item.key} onClick={()=>setView(item.key)}
-              title={item.label}
-              style={{width:'100%',padding:'10px 0',borderRadius:8,border:'none',cursor:'pointer',
-                background:active?'rgba(245,166,35,.08)':'transparent',
-                color:active?'var(--gold)':'var(--muted)',fontSize:16,
-                transition:'all .2s',display:'flex',alignItems:'center',justifyContent:'center'}}>
-              {item.icon}
+            <button key={k} onClick={()=>onNav(k)} title={tip}
+              style={{width:'100%',height:40,borderRadius:8,border:'none',cursor:'pointer',
+                fontFamily:'var(--font)',fontWeight:700,fontSize:18,
+                background:active?'rgba(245,166,35,.1)':'transparent',
+                color:active?'var(--gold)':'var(--dim)',transition:'all .15s',
+                display:'flex',alignItems:'center',justifyContent:'center',
+                letterSpacing:'-1px'}}>
+              {icon}
             </button>
           );
         })}
       </nav>
-      {/* Lang */}
-      <div style={{padding:'12px 8px',borderTop:'1px solid var(--border)',
-        display:'flex',flexDirection:'column',gap:4}}>
+      <div style={{padding:'10px 6px',borderTop:'1px solid var(--border)',
+        display:'flex',flexDirection:'column',gap:3}}>
         {['es','en'].map(l=>(
           <button key={l} onClick={()=>setLang(l)}
-            style={{padding:'5px 0',borderRadius:6,border:'none',cursor:'pointer',
+            style={{padding:'4px 0',borderRadius:5,border:'none',cursor:'pointer',
               fontSize:9,fontWeight:700,letterSpacing:'.1em',textTransform:'uppercase',
-              background:lang===l?'rgba(245,166,35,.1)':'transparent',
-              color:lang===l?'var(--gold)':'var(--dim)',transition:'all .2s'}}>
+              fontFamily:'var(--font)',
+              background:lang===l?'rgba(245,166,35,.12)':'transparent',
+              color:lang===l?'var(--gold)':'var(--dim)',transition:'all .15s'}}>
             {l}
           </button>
         ))}
@@ -401,68 +348,75 @@ function Dashboard({reports,lang,onNew,onOpen,onDelete}){
   const stats={
     total:reports.length,
     elite:reports.filter(r=>r.scoutingStatus==='ELITE_POTENTIAL').length,
-    follow:reports.filter(r=>r.scoutingStatus==='FOLLOW'||r.scoutingStatus==='SIGN_NOW').length,
+    follow:reports.filter(r=>['FOLLOW','SIGN_NOW'].includes(r.scoutingStatus)).length,
   };
+  const lbl={
+    es:{total:'Reportes Totales',elite:'Potencial Elite',follow:'En Seguimiento',
+      activity:'Actividad Reciente',empty:'No hay reportes',emptySub:'Creá tu primer reporte',
+      create:'Crear Reporte',new:'Nuevo Reporte'},
+    en:{total:'Total Reports',elite:'Elite Potential',follow:'Follow List',
+      activity:'Recent Activity',empty:'No reports yet',emptySub:'Create your first report',
+      create:'Create Report',new:'New Report'},
+  }[lang];
   return (
-    <div className="grid-bg" style={{minHeight:'100vh',padding:'32px 32px 32px'}}>
+    <div className="grid-bg" style={{minHeight:'100vh',padding:'36px 32px'}}>
       {/* Header */}
       <div style={{marginBottom:32}}>
-        <div style={{fontSize:10,fontWeight:600,letterSpacing:'.2em',textTransform:'uppercase',
-          color:'var(--gold)',opacity:.7,marginBottom:4}}>{t(lang,'welcomeSub')}</div>
-        <h1 style={{fontFamily:"'Outfit',sans-serif",fontWeight:900,fontSize:36,color:'#fff',marginBottom:4}}>
-          Siello Academy
-        </h1>
-        <p style={{fontSize:13,color:'var(--muted)'}}>Sistema de generación de reportes premium</p>
+        <SielloLogo h={32}/>
+        <p style={{fontSize:12,color:'var(--muted)',marginTop:10,letterSpacing:'.05em'}}>
+          {lang==='es'?'Plataforma de generación de reportes premium':'Premium report generation platform'}
+        </p>
       </div>
 
       {/* Stats */}
-      <div style={{display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap:16,marginBottom:32}}>
+      <div style={{display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap:14,marginBottom:32}}>
         {[
-          {label:t(lang,'totalReports'),value:stats.total,color:'var(--gold)'},
-          {label:t(lang,'elitePlayers'),value:stats.elite,color:'var(--teal)'},
-          {label:t(lang,'followList'),value:stats.follow,color:'var(--indigo)'},
+          {label:lbl.total, value:stats.total, color:'var(--gold)'},
+          {label:lbl.elite, value:stats.elite, color:'var(--teal)'},
+          {label:lbl.follow,value:stats.follow,color:'var(--indigo)'},
         ].map(s=>(
-          <div key={s.label} className="card" style={{padding:'20px 16px'}}>
-            <div style={{fontFamily:"'Outfit',sans-serif",fontWeight:900,fontSize:32,color:s.color}}>{s.value}</div>
-            <div style={{fontSize:11,color:'var(--muted)',marginTop:4}}>{s.label}</div>
+          <div key={s.label} className="card" style={{padding:'18px 16px'}}>
+            <div style={{fontSize:30,fontWeight:900,color:s.color,marginBottom:4}}>
+              {s.value}
+            </div>
+            <div style={{fontSize:11,color:'var(--muted)'}}>{s.label}</div>
           </div>
         ))}
       </div>
 
-      {/* List */}
-      <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:16}}>
-        <h2 style={{fontFamily:"'Outfit',sans-serif",fontWeight:600,fontSize:15}}>{t(lang,'recentActivity')}</h2>
-        <button className="btn-gold" style={{padding:'8px 16px',fontSize:13,display:'flex',
-          alignItems:'center',gap:6}} onClick={onNew}>
-          + {t(lang,'newReport')}
+      {/* List header */}
+      <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:14}}>
+        <h2 style={{fontSize:14,fontWeight:700,color:'var(--text)'}}>{lbl.activity}</h2>
+        <button className="btn-gold" style={{padding:'8px 16px',fontSize:12}} onClick={onNew}>
+          + {lbl.new}
         </button>
       </div>
 
+      {/* List */}
       {reports.length===0
-        ? <div className="card" style={{padding:64,textAlign:'center'}}>
-            <div style={{fontSize:32,marginBottom:12}}>📋</div>
-            <h3 style={{fontFamily:"'Outfit',sans-serif",fontWeight:600,fontSize:18,marginBottom:8}}>
-              {t(lang,'noReports')}
-            </h3>
-            <p style={{fontSize:13,color:'var(--muted)',marginBottom:24}}>{t(lang,'noReportsDesc')}</p>
+        ? <div className="card" style={{padding:'56px 32px',textAlign:'center'}}>
+            <div style={{fontSize:36,marginBottom:12,opacity:.3}}>&#9776;</div>
+            <h3 style={{fontSize:18,fontWeight:700,marginBottom:8}}>{lbl.empty}</h3>
+            <p style={{fontSize:13,color:'var(--muted)',marginBottom:24}}>{lbl.emptySub}</p>
             <button className="btn-gold" style={{padding:'10px 24px',fontSize:13}} onClick={onNew}>
-              {t(lang,'createFirst')}
+              {lbl.create}
             </button>
           </div>
         : <div style={{display:'flex',flexDirection:'column',gap:8}}>
-            {reports.map((r,i)=>(
-              <div key={r.id} className="card" onClick={()=>onOpen(r.id)}
-                style={{padding:'14px 16px',cursor:'pointer',display:'flex',
-                  alignItems:'center',gap:14,transition:'border-color .2s'}}
+            {reports.map(r=>(
+              <div key={r.id} className="card"
+                onClick={()=>onOpen(r.id)}
+                style={{padding:'13px 16px',cursor:'pointer',display:'flex',
+                  alignItems:'center',gap:14,transition:'border-color .15s'}}
                 onMouseEnter={e=>e.currentTarget.style.borderColor='rgba(245,166,35,.25)'}
                 onMouseLeave={e=>e.currentTarget.style.borderColor='var(--border)'}>
-                {/* Photo */}
-                <div style={{width:44,height:44,borderRadius:10,overflow:'hidden',
-                  background:'var(--surface3)',border:'1px solid var(--border)',flexShrink:0,
-                  display:'flex',alignItems:'center',justifyContent:'center'}}>
+                {/* Avatar */}
+                <div style={{width:42,height:42,borderRadius:9,overflow:'hidden',
+                  background:'var(--surface3)',border:'1px solid var(--border)',
+                  flexShrink:0,display:'flex',alignItems:'center',justifyContent:'center'}}>
                   {r.playerPhoto
                     ? <img src={r.playerPhoto} style={{width:'100%',height:'100%',objectFit:'cover'}}/>
-                    : <span style={{fontFamily:"'Outfit',sans-serif",fontWeight:700,color:'var(--gold)',fontSize:16}}>
+                    : <span style={{fontSize:16,fontWeight:900,color:'var(--gold)'}}>
                         {r.playerName?.charAt(0)?.toUpperCase()||'?'}
                       </span>
                   }
@@ -470,7 +424,7 @@ function Dashboard({reports,lang,onNew,onOpen,onDelete}){
                 {/* Info */}
                 <div style={{flex:1,minWidth:0}}>
                   <div style={{display:'flex',alignItems:'center',gap:8,marginBottom:3}}>
-                    <span style={{fontWeight:600,fontSize:14,
+                    <span style={{fontWeight:700,fontSize:14,
                       overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>
                       {r.playerName||'Sin nombre'}
                     </span>
@@ -481,13 +435,24 @@ function Dashboard({reports,lang,onNew,onOpen,onDelete}){
                     {[r.position,r.currentClub,fmtDate(r.updatedAt,lang)].filter(Boolean).join(' · ')}
                   </div>
                 </div>
-                <ScorePill score={r.overallScore||0} size="sm"/>
-                <button onClick={e=>{e.stopPropagation();if(confirm('¿Eliminar?'))onDelete(r.id)}}
-                  style={{background:'none',border:'none',cursor:'pointer',color:'var(--dim)',
-                    fontSize:14,padding:'4px 8px',borderRadius:6,transition:'color .2s'}}
-                  onMouseEnter={e=>e.currentTarget.style.color='#F87171'}
+                {/* Score pill */}
+                <div style={{
+                  width:36,height:36,borderRadius:'50%',flexShrink:0,
+                  display:'flex',alignItems:'center',justifyContent:'center',
+                  fontWeight:900,fontSize:13,
+                  color:barColor(r.overallScore||0),
+                  border:`2px solid ${barColor(r.overallScore||0)}`,
+                  background:`radial-gradient(circle,${barColor(r.overallScore||0)}20 0%,transparent 70%)`}}>
+                  {(r.overallScore||0).toFixed(1)}
+                </div>
+                {/* Delete */}
+                <button
+                  onClick={e=>{e.stopPropagation();if(confirm(lang==='es'?'Eliminar reporte?':'Delete report?'))onDelete(r.id)}}
+                  style={{background:'none',border:'none',cursor:'pointer',
+                    color:'var(--dim)',fontSize:16,padding:'4px 8px',transition:'color .15s'}}
+                  onMouseEnter={e=>e.currentTarget.style.color='var(--red)'}
                   onMouseLeave={e=>e.currentTarget.style.color='var(--dim)'}>
-                  ✕
+                  x
                 </button>
               </div>
             ))}
@@ -497,172 +462,157 @@ function Dashboard({reports,lang,onNew,onOpen,onDelete}){
   );
 }
 
-// ─── STEP 1: PLAYER INFO ──────────────────────────────────────────
-function Step1_PlayerInfo({report,onChange,lang}){
-  const u = f => e => onChange({[f]:e.target.value});
+// ─── FORM: PLAYER INFO ────────────────────────────────────────────
+function PhotoUpload({value,onChange,label}){
+  const ref=useRef();
+  function handleFile(e){
+    const f=e.target.files?.[0]; if(!f) return;
+    const r=new FileReader(); r.onload=ev=>onChange(ev.target.result); r.readAsDataURL(f);
+  }
+  return (
+    <div onClick={()=>ref.current?.click()}
+      style={{position:'relative',width:'100%',aspectRatio:'4/3',borderRadius:10,
+        background:'var(--surface3)',border:'2px dashed var(--border)',
+        display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',
+        cursor:'pointer',overflow:'hidden'}}
+      onMouseEnter={e=>e.currentTarget.style.borderColor='rgba(245,166,35,.5)'}
+      onMouseLeave={e=>e.currentTarget.style.borderColor='var(--border)'}>
+      <input ref={ref} type="file" accept="image/*" style={{display:'none'}} onChange={handleFile}/>
+      {value
+        ? <img src={value} style={{position:'absolute',inset:0,width:'100%',height:'100%',objectFit:'cover'}}/>
+        : <div style={{textAlign:'center',padding:12}}>
+            <div style={{fontSize:22,marginBottom:8,opacity:.4}}>[ ]</div>
+            <div style={{fontSize:11,color:'var(--muted)'}}>{label}</div>
+          </div>
+      }
+    </div>
+  );
+}
+
+function Lbl({text}){
+  return <label style={{display:'block',fontSize:10,fontWeight:600,color:'var(--muted)',
+    letterSpacing:'.06em',textTransform:'uppercase',marginBottom:6}}>{text}</label>;
+}
+
+function Step1({report,onChange,lang}){
+  const u=f=>e=>onChange({[f]:e.target.value});
+  const L={
+    es:{imgs:'IMÁGENES',data:'DATOS DEL JUGADOR',global:'EVALUACIÓN GLOBAL',
+      photo:'Foto del Jugador',logo:'Logo del Club',name:'Nombre Completo',
+      dob:'Fecha de Nacimiento',nat:'Nacionalidad',pos:'Posición',foot:'Pie Dominante',
+      club:'Club Actual',h:'Altura (cm)',w:'Peso (kg)',date:'Fecha de Evaluación',
+      status:'Estado del Scouting',score:'Score General',selPos:'Seleccionar posición'},
+    en:{imgs:'IMAGES',data:'PLAYER DATA',global:'GLOBAL EVALUATION',
+      photo:'Player Photo',logo:'Club Logo',name:'Full Name',
+      dob:'Date of Birth',nat:'Nationality',pos:'Position',foot:'Dominant Foot',
+      club:'Current Club',h:'Height (cm)',w:'Weight (kg)',date:'Evaluation Date',
+      status:'Scouting Status',score:'Overall Score',selPos:'Select position'},
+  }[lang];
   const STATUSES=['ELITE_POTENTIAL','SIGN_NOW','FOLLOW','INITIAL_FILTER','PASS','PENDING'];
   return (
     <div style={{display:'flex',flexDirection:'column',gap:24}}>
       {/* Photos */}
       <div>
-        <div style={{fontSize:10,fontWeight:700,letterSpacing:'.15em',textTransform:'uppercase',
-          color:'var(--muted)',marginBottom:12}}>IMÁGENES</div>
+        <div style={{fontSize:10,fontWeight:700,letterSpacing:'.15em',color:'var(--muted)',marginBottom:12}}>{L.imgs}</div>
         <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:12}}>
-          <FormField label={t(lang,'playerPhoto')}>
-            <PhotoUpload value={report.playerPhoto}
-              onChange={v=>onChange({playerPhoto:v})} label={t(lang,'uploadPhoto')}/>
-          </FormField>
-          <FormField label={t(lang,'clubLogo')}>
-            <PhotoUpload value={report.clubLogo}
-              onChange={v=>onChange({clubLogo:v})} label={t(lang,'uploadLogo')}/>
-          </FormField>
+          <div><Lbl text={L.photo}/><PhotoUpload value={report.playerPhoto} onChange={v=>onChange({playerPhoto:v})} label={L.photo}/></div>
+          <div><Lbl text={L.logo}/><PhotoUpload value={report.clubLogo} onChange={v=>onChange({clubLogo:v})} label={L.logo}/></div>
         </div>
       </div>
       {/* Data */}
       <div>
-        <div style={{fontSize:10,fontWeight:700,letterSpacing:'.15em',textTransform:'uppercase',
-          color:'var(--muted)',marginBottom:12}}>DATOS DEL JUGADOR</div>
+        <div style={{fontSize:10,fontWeight:700,letterSpacing:'.15em',color:'var(--muted)',marginBottom:12}}>{L.data}</div>
         <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:12}}>
-          <FormField label={t(lang,'fullName')}>
-            <input className="input-field" value={report.playerName} onChange={u('playerName')} placeholder="Carlos García"/>
-          </FormField>
-          <FormField label={t(lang,'dateOfBirth')}>
-            <input type="date" className="input-field" value={report.dateOfBirth} onChange={u('dateOfBirth')}/>
-          </FormField>
-          <FormField label={t(lang,'nationality')}>
-            <input className="input-field" value={report.nationality} onChange={u('nationality')} placeholder="Argentino"/>
-          </FormField>
-          <FormField label={t(lang,'position')}>
+          <div><Lbl text={L.name}/><input className="input-field" value={report.playerName} onChange={u('playerName')} placeholder="Carlos García"/></div>
+          <div><Lbl text={L.dob}/><input type="date" className="input-field" value={report.dateOfBirth} onChange={u('dateOfBirth')}/></div>
+          <div><Lbl text={L.nat}/><input className="input-field" value={report.nationality} onChange={u('nationality')} placeholder="Argentino"/></div>
+          <div>
+            <Lbl text={L.pos}/>
             <select className="input-field" value={report.position} onChange={u('position')}>
-              <option value="">Seleccionar...</option>
+              <option value="">{L.selPos}</option>
               {POSITIONS.map(p=><option key={p} value={p}>{p}</option>)}
             </select>
-          </FormField>
-          <FormField label={t(lang,'dominantFoot')}>
+          </div>
+          <div>
+            <Lbl text={L.foot}/>
             <select className="input-field" value={report.dominantFoot} onChange={u('dominantFoot')}>
               {['Diestro','Zurdo','Ambidiestro'].map(f=><option key={f} value={f}>{f}</option>)}
             </select>
-          </FormField>
-          <FormField label={t(lang,'currentClub')}>
-            <input className="input-field" value={report.currentClub} onChange={u('currentClub')} placeholder="Club Atlético XYZ"/>
-          </FormField>
-          <FormField label={t(lang,'height')}>
-            <input type="number" className="input-field" value={report.height} onChange={u('height')} placeholder="176"/>
-          </FormField>
-          <FormField label={t(lang,'weight')}>
-            <input type="number" className="input-field" value={report.weight} onChange={u('weight')} placeholder="72"/>
-          </FormField>
-          <FormField label={t(lang,'evaluationDate')}>
-            <input type="date" className="input-field" value={report.evaluationDate} onChange={u('evaluationDate')}/>
-          </FormField>
+          </div>
+          <div><Lbl text={L.club}/><input className="input-field" value={report.currentClub} onChange={u('currentClub')} placeholder="Club Atlético XYZ"/></div>
+          <div><Lbl text={L.h}/><input type="number" className="input-field" value={report.height} onChange={u('height')} placeholder="176"/></div>
+          <div><Lbl text={L.w}/><input type="number" className="input-field" value={report.weight} onChange={u('weight')} placeholder="72"/></div>
+          <div><Lbl text={L.date}/><input type="date" className="input-field" value={report.evaluationDate} onChange={u('evaluationDate')}/></div>
         </div>
       </div>
       {/* Status + Score */}
       <div>
-        <div style={{fontSize:10,fontWeight:700,letterSpacing:'.15em',textTransform:'uppercase',
-          color:'var(--muted)',marginBottom:12}}>EVALUACIÓN GLOBAL</div>
+        <div style={{fontSize:10,fontWeight:700,letterSpacing:'.15em',color:'var(--muted)',marginBottom:12}}>{L.global}</div>
         <div style={{display:'flex',flexWrap:'wrap',gap:8,marginBottom:16}}>
           {STATUSES.map(s=>(
             <button key={s} onClick={()=>onChange({scoutingStatus:s})}
-              style={{opacity:report.scoutingStatus===s?1:.4,background:'none',border:'none',cursor:'pointer',
-                transition:'opacity .2s',padding:0}}>
+              style={{background:'none',border:'none',cursor:'pointer',padding:0,
+                opacity:report.scoutingStatus===s?1:.4,transition:'opacity .15s'}}>
               <StatusBadge status={s} lang={lang}/>
             </button>
           ))}
         </div>
-        <FormField label={`${t(lang,'overallScore')} — ${report.overallScore.toFixed(1)}/10`}>
-          <div style={{display:'flex',alignItems:'center',gap:12,marginTop:8}}>
-            <input type="range" min={0} max={10} step={.1} value={report.overallScore}
-              onChange={e=>onChange({overallScore:parseFloat(e.target.value)})}
-              style={{flex:1}}/>
-            <span style={{fontFamily:"'Outfit',sans-serif",fontWeight:900,fontSize:22,
-              color:barColor(report.overallScore),width:40,textAlign:'right'}}>
-              {report.overallScore.toFixed(1)}
-            </span>
-          </div>
-        </FormField>
+        <Lbl text={`${L.score} — ${report.overallScore.toFixed(1)}/10`}/>
+        <div style={{display:'flex',alignItems:'center',gap:12,marginTop:8}}>
+          <input type="range" min={0} max={10} step={.1}
+            value={report.overallScore}
+            onChange={e=>onChange({overallScore:parseFloat(e.target.value)})}
+            style={{flex:1}}/>
+          <span style={{fontWeight:900,fontSize:22,width:40,textAlign:'right',
+            color:barColor(report.overallScore)}}>
+            {report.overallScore.toFixed(1)}
+          </span>
+        </div>
       </div>
     </div>
   );
 }
 
-// ─── STEP 2: EVALUATION ───────────────────────────────────────────
-function CoreSlider({label,value,onChange}){
-  const c=barColor(value), pct=(value/10)*100;
-  return (
-    <div className="card" style={{padding:'14px 16px'}}>
-      <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:10}}>
-        <span style={{fontSize:11,fontWeight:600,textTransform:'uppercase',letterSpacing:'.1em',color:'var(--muted)'}}>
-          {label}
-        </span>
-        <span style={{fontFamily:"'Outfit',sans-serif",fontWeight:900,fontSize:20,color:c}}>
-          {value.toFixed(1)}
-        </span>
-      </div>
-      <div style={{height:6,borderRadius:3,background:'var(--surface)',marginBottom:8,position:'relative'}}>
-        <div style={{position:'absolute',left:0,top:0,height:'100%',borderRadius:3,
-          width:`${pct}%`,background:`linear-gradient(90deg,${c}60,${c})`,
-          boxShadow:`0 0 8px ${c}60`,transition:'width .3s'}}/>
-      </div>
-      <input type="range" min={0} max={10} step={.1} value={value}
-        onChange={e=>onChange(parseFloat(e.target.value))}/>
-    </div>
-  );
-}
-
-function AttrSlider({label,value,onChange}){
-  const c=barColor(value), pct=(value/10)*100;
+// ─── FORM: EVALUATION ─────────────────────────────────────────────
+function AttrSlider({label,value,onChange,color}){
+  const c=color||barColor(value);
+  const pct=(value/10)*100;
   return (
     <div>
-      <div style={{display:'flex',justifyContent:'space-between',marginBottom:4}}>
-        <span style={{fontSize:11,color:'var(--muted)'}}>{label}</span>
+      <div style={{display:'flex',justifyContent:'space-between',marginBottom:5}}>
+        <span style={{fontSize:11,fontWeight:600,color:'var(--muted)'}}>{label.replace('\n',' ')}</span>
         <span style={{fontSize:11,fontWeight:700,color:c}}>{value.toFixed(1)}</span>
       </div>
       <div style={{height:4,borderRadius:2,background:'var(--surface3)',marginBottom:4,position:'relative'}}>
         <div style={{position:'absolute',left:0,top:0,height:'100%',borderRadius:2,
-          width:`${pct}%`,background:`linear-gradient(90deg,${c}70,${c})`}}/>
+          width:`${pct}%`,background:`linear-gradient(90deg,${c}60,${c})`}}/>
       </div>
       <input type="range" min={0} max={10} step={.1} value={value}
-        onChange={e=>onChange(parseFloat(e.target.value))}/>
+        onChange={e=>onChange(parseFloat(e.target.value))}
+        style={{width:'100%'}}/>
     </div>
   );
 }
 
-function Step2_Evaluation({report,onChange,lang}){
-  const uc = (key,val) => onChange({coreScores:{...report.coreScores,[key]:val}});
-  const ua = (key,val) => onChange({attributes:{...report.attributes,[key]:val}});
+function Step2({report,onChange,lang}){
+  const upd=(k,v)=>onChange({attributes:{...report.attributes,[k]:v}});
   return (
     <div style={{display:'flex',flexDirection:'column',gap:24}}>
-      {/* Core Matrix */}
-      <div>
-        <div style={{display:'flex',alignItems:'center',gap:8,marginBottom:16}}>
-          <div style={{width:3,height:18,borderRadius:2,background:'var(--gold)'}}/>
-          <span style={{fontFamily:"'Outfit',sans-serif",fontWeight:700,fontSize:14,
-            textTransform:'uppercase',letterSpacing:'.1em'}}>
-            {t(lang,'coreMatrix')}
-          </span>
-        </div>
-        <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:10}}>
-          {CORE_KEYS.map(k=>(
-            <CoreSlider key={k} label={t(lang,k)} value={report.coreScores[k]}
-              onChange={v=>uc(k,v)}/>
-          ))}
-        </div>
-      </div>
-      {/* Attribute groups */}
-      {Object.entries(ATTR_GROUPS).map(([gKey,keys])=>(
-        <div key={gKey}>
-          <div style={{display:'flex',alignItems:'center',gap:8,marginBottom:12}}>
-            <div style={{width:3,height:14,borderRadius:2,background:'rgba(245,166,35,.4)'}}/>
-            <span style={{fontSize:11,fontWeight:600,textTransform:'uppercase',
-              letterSpacing:'.1em',color:'var(--muted)'}}>
-              {t(lang,gKey)}
+      {ATTR_GROUPS.map(g=>(
+        <div key={g.id}>
+          <div style={{display:'flex',alignItems:'center',gap:8,marginBottom:14}}>
+            <div style={{width:3,height:16,borderRadius:2,background:g.color}}/>
+            <span style={{fontSize:12,fontWeight:700,letterSpacing:'.1em',textTransform:'uppercase',color:'var(--text)'}}>
+              {g.label[lang]}
             </span>
           </div>
-          <div className="card" style={{padding:'16px',display:'flex',flexDirection:'column',gap:14}}>
-            {keys.map(k=>(
-              <AttrSlider key={k} label={t(lang,k)} value={report.attributes[k]}
-                onChange={v=>ua(k,v)}/>
+          <div className="card" style={{padding:16,display:'flex',flexDirection:'column',gap:14}}>
+            {g.attrs.map(({key,label})=>(
+              <AttrSlider key={key}
+                label={label.replace('\n',' ')}
+                value={report.attributes[key]||5}
+                onChange={v=>upd(key,v)}
+                color={g.color}/>
             ))}
           </div>
         </div>
@@ -671,85 +621,75 @@ function Step2_Evaluation({report,onChange,lang}){
   );
 }
 
-// ─── STEP 3: TEXT SECTIONS ────────────────────────────────────────
-function Step3_Text({report,onChange,lang}){
+// ─── FORM: TEXT SECTIONS ──────────────────────────────────────────
+function Step3({report,onChange,lang}){
   return (
     <div style={{display:'flex',flexDirection:'column',gap:16}}>
       {TEXT_FIELDS.map(f=>(
-        <div key={f}>
-          <label style={{display:'block',fontSize:10,fontWeight:700,letterSpacing:'.15em',
-            textTransform:'uppercase',color:'var(--muted)',marginBottom:8}}>
-            {t(lang,f)}
-          </label>
-          <textarea rows={f==='executiveSummary'?4:3}
-            value={report[f]}
-            onChange={e=>onChange({[f]:e.target.value})}
-            placeholder={`${t(lang,f)}...`}
+        <div key={f.key}>
+          <Lbl text={f.label[lang]}/>
+          <textarea rows={f.rows}
+            value={report[f.key]||''}
+            onChange={e=>onChange({[f.key]:e.target.value})}
+            placeholder={f.label[lang]+'...'}
             className="input-field"
-            style={{display:'block',lineHeight:1.7}}/>
+            style={{display:'block',lineHeight:1.65}}/>
         </div>
       ))}
     </div>
   );
 }
 
-// ─── STEP 4: TEAMS ────────────────────────────────────────────────
-function Step4_Teams({report,onChange,lang}){
+// ─── FORM: TEAMS ──────────────────────────────────────────────────
+function Step4({report,onChange,lang}){
   const add=()=>onChange({suggestedTeams:[...report.suggestedTeams,{club:'',category:'',observations:'',estimatedLevel:''}]});
   const upd=(i,u)=>onChange({suggestedTeams:report.suggestedTeams.map((t,j)=>j===i?{...t,...u}:t)});
   const rem=i=>onChange({suggestedTeams:report.suggestedTeams.filter((_,j)=>j!==i)});
+  const L={
+    es:{title:'Posibles Equipos en España',sub:'Clubes españoles donde podría encajar el jugador',
+      add:'Añadir Club',empty:'No hay clubes. Añadí el primero.',
+      club:'Club',cat:'Categoría',level:'Nivel Estimado',obs:'Observaciones'},
+    en:{title:'Possible Teams in Spain',sub:'Spanish clubs where the player could fit',
+      add:'Add Club',empty:'No clubs yet. Add the first one.',
+      club:'Club',cat:'Category',level:'Estimated Level',obs:'Observations'},
+  }[lang];
   return (
     <div style={{display:'flex',flexDirection:'column',gap:12}}>
-      <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:8}}>
+      <div style={{display:'flex',alignItems:'flex-start',justifyContent:'space-between',marginBottom:6}}>
         <div>
-          <h3 style={{fontFamily:"'Outfit',sans-serif",fontWeight:700,fontSize:15,marginBottom:4}}>
-            {t(lang,'suggestedTeams')}
-          </h3>
-          <p style={{fontSize:12,color:'var(--muted)'}}>
-            {lang==='es'?'Clubes españoles donde podría encajar':'Spanish clubs where player could fit'}
-          </p>
+          <h3 style={{fontSize:15,fontWeight:700,marginBottom:4}}>{L.title}</h3>
+          <p style={{fontSize:12,color:'var(--muted)'}}>{L.sub}</p>
         </div>
-        <button className="btn-gold" style={{padding:'8px 14px',fontSize:12}} onClick={add}>
-          + {t(lang,'addTeam')}
+        <button className="btn-gold" style={{padding:'8px 14px',fontSize:12,flexShrink:0}} onClick={add}>
+          + {L.add}
         </button>
       </div>
       {report.suggestedTeams.length===0&&(
         <div className="card" style={{padding:40,textAlign:'center'}}>
-          <div style={{fontSize:28,marginBottom:8}}>🏟️</div>
-          <p style={{fontSize:13,color:'var(--muted)'}}>
-            {lang==='es'?'No hay clubes aún. Añadí el primero.':'No clubs yet. Add the first one.'}
-          </p>
+          <div style={{fontSize:28,opacity:.3,marginBottom:8}}>&#9633;</div>
+          <p style={{fontSize:13,color:'var(--muted)'}}>{L.empty}</p>
         </div>
       )}
       {report.suggestedTeams.map((team,i)=>(
         <div key={i} className="card" style={{padding:16,display:'flex',flexDirection:'column',gap:10}}>
           <div style={{display:'flex',alignItems:'center',justifyContent:'space-between'}}>
             <div style={{display:'flex',alignItems:'center',gap:8}}>
-              <div style={{width:24,height:24,borderRadius:6,background:'rgba(245,166,35,.1)',
+              <div style={{width:22,height:22,borderRadius:5,background:'rgba(245,166,35,.1)',
                 display:'flex',alignItems:'center',justifyContent:'center',
-                fontSize:12,fontWeight:700,color:'var(--gold)'}}>
-                {i+1}
-              </div>
-              <span style={{fontSize:14,fontWeight:600}}>{team.club||'Club sin nombre'}</span>
+                fontSize:11,fontWeight:700,color:'var(--gold)'}}>{i+1}</div>
+              <span style={{fontSize:14,fontWeight:700}}>{team.club||L.club}</span>
             </div>
-            <button onClick={()=>rem(i)} style={{background:'none',border:'none',cursor:'pointer',
-              color:'var(--dim)',fontSize:16,padding:'2px 8px',borderRadius:4,transition:'color .2s'}}
-              onMouseEnter={e=>e.currentTarget.style.color='#F87171'}
-              onMouseLeave={e=>e.currentTarget.style.color='var(--dim)'}>×</button>
+            <button onClick={()=>rem(i)}
+              style={{background:'none',border:'none',cursor:'pointer',
+                color:'var(--dim)',fontSize:16,padding:'2px 8px',transition:'color .15s'}}
+              onMouseEnter={e=>e.currentTarget.style.color='var(--red)'}
+              onMouseLeave={e=>e.currentTarget.style.color='var(--dim)'}>x</button>
           </div>
           <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:10}}>
-            <FormField label={t(lang,'club')}>
-              <input className="input-field" value={team.club} onChange={e=>upd(i,{club:e.target.value})} placeholder="CF Rayo Vallecano"/>
-            </FormField>
-            <FormField label={t(lang,'category')}>
-              <input className="input-field" value={team.category} onChange={e=>upd(i,{category:e.target.value})} placeholder="Segunda División B"/>
-            </FormField>
-            <FormField label={t(lang,'estimatedLevel')}>
-              <input className="input-field" value={team.estimatedLevel} onChange={e=>upd(i,{estimatedLevel:e.target.value})} placeholder="Alta probabilidad"/>
-            </FormField>
-            <FormField label={t(lang,'observations')}>
-              <input className="input-field" value={team.observations} onChange={e=>upd(i,{observations:e.target.value})} placeholder="Observaciones..."/>
-            </FormField>
+            <div><Lbl text={L.club}/><input className="input-field" value={team.club} onChange={e=>upd(i,{club:e.target.value})} placeholder="CF Rayo Vallecano"/></div>
+            <div><Lbl text={L.cat}/><input className="input-field" value={team.category} onChange={e=>upd(i,{category:e.target.value})} placeholder="Segunda División B"/></div>
+            <div><Lbl text={L.level}/><input className="input-field" value={team.estimatedLevel} onChange={e=>upd(i,{estimatedLevel:e.target.value})} placeholder="Alta probabilidad"/></div>
+            <div><Lbl text={L.obs}/><input className="input-field" value={team.observations} onChange={e=>upd(i,{observations:e.target.value})} placeholder="Observaciones..."/></div>
           </div>
         </div>
       ))}
@@ -761,75 +701,85 @@ function Step4_Teams({report,onChange,lang}){
 function ReportForm({report,onUpdate,onPreview,onBack,lang}){
   const [step,setStep]=useState(0);
   const [saved,setSaved]=useState(false);
-  const STEPS=[
-    {key:'playerInfo',label:t(lang,'playerInfo')},
-    {key:'evaluation',label:t(lang,'evaluation')},
-    {key:'textSections',label:t(lang,'textSections')},
-    {key:'teamSuggestions',label:t(lang,'teamSuggestions')},
-  ];
-  function handleSave(){onUpdate(report);setSaved(true);setTimeout(()=>setSaved(false),2000)}
-  function handleNext(){handleSave();if(step<STEPS.length-1)setStep(s=>s+1)}
+
+  // *** BUG FIX: merge partial updates with full report before calling onUpdate
+  function handleChange(updates){
+    onUpdate({...report,...updates,updatedAt:new Date().toISOString()});
+  }
+
+  function handleSave(){setSaved(true);setTimeout(()=>setSaved(false),2000)}
+  function handleNext(){handleSave();if(step<3)setStep(s=>s+1)}
+
+  const STEPS_L={
+    es:['Datos','Evaluación','Observaciones','Equipos'],
+    en:['Player','Evaluation','Observations','Teams'],
+  }[lang];
+
   return (
     <div style={{display:'flex',flexDirection:'column',height:'100%'}}>
       {/* Steps */}
-      <div style={{padding:'20px 24px 16px',borderBottom:'1px solid var(--border)',flexShrink:0}}>
-        <div style={{display:'flex',alignItems:'center',gap:6}}>
-          {STEPS.map((s,i)=>(
-            <React.Fragment key={s.key}>
-              <button onClick={()=>setStep(i)} style={{display:'flex',alignItems:'center',gap:6,
-                background:'none',border:'none',cursor:'pointer'}}>
-                <div style={{width:22,height:22,borderRadius:'50%',display:'flex',
-                  alignItems:'center',justifyContent:'center',fontSize:10,fontWeight:700,
-                  transition:'all .2s',flexShrink:0,
+      <div style={{padding:'18px 22px 14px',borderBottom:'1px solid var(--border)',flexShrink:0}}>
+        <div style={{display:'flex',alignItems:'center',gap:4}}>
+          {STEPS_L.map((s,i)=>(
+            <React.Fragment key={i}>
+              <button onClick={()=>setStep(i)}
+                style={{display:'flex',alignItems:'center',gap:5,background:'none',
+                  border:'none',cursor:'pointer',padding:'2px 4px'}}>
+                <div style={{width:20,height:20,borderRadius:'50%',display:'flex',
+                  alignItems:'center',justifyContent:'center',fontSize:9,fontWeight:700,
+                  flexShrink:0,transition:'all .15s',fontFamily:'var(--font)',
                   background:i===step?'var(--gold)':i<step?'rgba(245,166,35,.3)':'var(--surface3)',
                   color:i===step?'#000':i<step?'var(--gold)':'var(--muted)'}}>
                   {i<step?'✓':i+1}
                 </div>
-                <span style={{fontSize:11,fontWeight:500,
-                  color:i===step?'var(--text)':'var(--muted)',whiteSpace:'nowrap'}}>
-                  {s.label}
-                </span>
+                <span style={{fontSize:11,fontWeight:600,whiteSpace:'nowrap',
+                  color:i===step?'var(--text)':'var(--muted)'}}>{s}</span>
               </button>
-              {i<STEPS.length-1&&(
-                <div style={{flex:1,height:1,background:i<step?'var(--gold)':'var(--border)',minWidth:16}}/>
-              )}
+              {i<3&&<div style={{flex:1,height:1,minWidth:8,
+                background:i<step?'var(--gold)':'var(--border)'}}/>}
             </React.Fragment>
           ))}
         </div>
       </div>
+
       {/* Content */}
-      <div style={{flex:1,overflowY:'auto',padding:'24px'}}>
-        {step===0&&<Step1_PlayerInfo report={report} onChange={onUpdate} lang={lang}/>}
-        {step===1&&<Step2_Evaluation report={report} onChange={onUpdate} lang={lang}/>}
-        {step===2&&<Step3_Text report={report} onChange={onUpdate} lang={lang}/>}
-        {step===3&&<Step4_Teams report={report} onChange={onUpdate} lang={lang}/>}
+      <div style={{flex:1,overflowY:'auto',padding:'22px'}}>
+        {step===0&&<Step1 report={report} onChange={handleChange} lang={lang}/>}
+        {step===1&&<Step2 report={report} onChange={handleChange} lang={lang}/>}
+        {step===2&&<Step3 report={report} onChange={handleChange} lang={lang}/>}
+        {step===3&&<Step4 report={report} onChange={handleChange} lang={lang}/>}
       </div>
+
       {/* Footer */}
-      <div style={{padding:'16px 24px',borderTop:'1px solid var(--border)',background:'var(--surface)',
-        display:'flex',alignItems:'center',justifyContent:'space-between',gap:8,flexShrink:0}}>
-        <button className="btn-ghost" style={{padding:'8px 14px',fontSize:13,display:'flex',alignItems:'center',gap:6}}
+      <div style={{padding:'14px 22px',borderTop:'1px solid var(--border)',
+        background:'var(--surface)',display:'flex',alignItems:'center',
+        justifyContent:'space-between',gap:8,flexShrink:0}}>
+        <button className="btn-ghost" style={{padding:'8px 14px',fontSize:12}}
           onClick={step===0?onBack:()=>setStep(s=>s-1)}>
-          ← {step===0?'Dashboard':t(lang,'back')}
+          {step===0?'Dashboard':'← '+(lang==='es'?'Atrás':'Back')}
         </button>
         <div style={{display:'flex',gap:8}}>
-          <button className="btn-ghost" style={{padding:'8px 14px',fontSize:13,
-            color:saved?'var(--teal)':'var(--muted)',
-            borderColor:saved?'rgba(20,184,166,.3)':'var(--border)'}}
+          <button className="btn-ghost"
+            style={{padding:'8px 14px',fontSize:12,
+              color:saved?'var(--teal)':'var(--muted)',
+              borderColor:saved?'rgba(20,184,166,.3)':'var(--border)'}}
             onClick={handleSave}>
-            {saved?'✓ Guardado':'💾 '+t(lang,'save')}
+            {saved?(lang==='es'?'Guardado':'Saved'):(lang==='es'?'Guardar':'Save')}
           </button>
-          <button className="btn-ghost" style={{padding:'8px 14px',fontSize:13,
-            color:'var(--gold)',borderColor:'rgba(245,166,35,.2)'}} onClick={onPreview}>
-            👁 {t(lang,'preview')}
+          <button className="btn-ghost"
+            style={{padding:'8px 14px',fontSize:12,color:'var(--gold)',
+              borderColor:'rgba(245,166,35,.2)'}}
+            onClick={onPreview}>
+            {lang==='es'?'Vista Previa':'Preview'}
           </button>
-          {step<STEPS.length-1
-            ? <button className="btn-gold" style={{padding:'8px 16px',fontSize:13}}
+          {step<3
+            ? <button className="btn-gold" style={{padding:'8px 16px',fontSize:12}}
                 onClick={handleNext}>
-                {t(lang,'next')} →
+                {lang==='es'?'Siguiente':'Next'} →
               </button>
-            : <button className="btn-gold" style={{padding:'8px 16px',fontSize:13}}
-                onClick={()=>{handleSave();onPreview()}}>
-                👁 {t(lang,'preview')}
+            : <button className="btn-gold" style={{padding:'8px 16px',fontSize:12}}
+                onClick={onPreview}>
+                {lang==='es'?'Ver Reporte':'View Report'}
               </button>
           }
         </div>
@@ -838,19 +788,32 @@ function ReportForm({report,onUpdate,onPreview,onBack,lang}){
   );
 }
 
-// ─── PDF SECTION HEADER ───────────────────────────────────────────
-function PDFSectionHeader({label}){
+// ─── PDF SECTION DIVIDER ──────────────────────────────────────────
+function PdfSection({label}){
   return (
-    <div style={{display:'flex',alignItems:'center',gap:12,marginBottom:14}}>
-      <div style={{flex:1,height:1,background:'linear-gradient(90deg,transparent,rgba(245,166,35,.4))'}}/>
-      <span style={{fontSize:8,fontWeight:700,letterSpacing:'.2em',textTransform:'uppercase',
-        color:'#F5A623',whiteSpace:'nowrap'}}>{label}</span>
-      <div style={{flex:1,height:1,background:'linear-gradient(90deg,rgba(245,166,35,.4),transparent)'}}/>
+    <div style={{display:'flex',alignItems:'center',gap:10,marginBottom:12}}>
+      <div style={{flex:1,height:'1px',background:'linear-gradient(90deg,transparent,rgba(245,166,35,.35))'}}/>
+      <span style={{fontSize:8,fontWeight:700,letterSpacing:'.22em',textTransform:'uppercase',
+        color:'#F5A623',whiteSpace:'nowrap',fontFamily:'Helvetica,Arial,sans-serif'}}>{label}</span>
+      <div style={{flex:1,height:'1px',background:'linear-gradient(90deg,rgba(245,166,35,.35),transparent)'}}/>
     </div>
   );
 }
 
-// ─── REPORT PREVIEW (PDF LAYOUT) ─────────────────────────────────
+function TxtBlock({title,text}){
+  if(!text) return null;
+  return (
+    <div style={{padding:'13px 15px',borderRadius:10,background:'#13131A',border:'1px solid #1E1E28'}}>
+      <div style={{fontSize:7.5,fontWeight:700,letterSpacing:'.18em',textTransform:'uppercase',
+        color:'#F5A623',marginBottom:7,fontFamily:'Helvetica,Arial,sans-serif'}}>{title}</div>
+      <p style={{fontSize:11,color:'#D1D5DB',lineHeight:1.75,margin:0,fontFamily:'Helvetica,Arial,sans-serif'}}>
+        {text}
+      </p>
+    </div>
+  );
+}
+
+// ─── REPORT PREVIEW ───────────────────────────────────────────────
 function ReportPreview({report,lang,onEdit}){
   const [exporting,setExporting]=useState(false);
   const age=calcAge(report.dateOfBirth);
@@ -870,303 +833,289 @@ function ReportPreview({report,lang,onEdit}){
         format:[canvas.width/2,canvas.height/2],compress:true});
       pdf.addImage(canvas.toDataURL('image/jpeg',.95),'JPEG',0,0,canvas.width/2,canvas.height/2);
       const name=(report.playerName||'report').replace(/\s+/g,'_');
-      pdf.save(`Siello_${name}_Report.pdf`);
+      pdf.save(`Siello_${name}_Performance_Report.pdf`);
     }finally{setExporting(false)}
   }
 
-  const coreData=CORE_KEYS.map(k=>({key:k,label:t(lang,k),value:report.coreScores[k]}));
-  const physKeys=['velocidad','potencia','resistencia','aceleracion','saltoCabeceo'];
-  const techKeys=['controlPase','tecnicaDominio','regate','finalizacion','centros'];
-  const mentKeys=['liderazgo','presionTrasPerdida','concienciaEspacial','lecturaJuego','personalidad'];
-  const tactKeys=['posicionamiento','equilibrioDefensivo','transiciones','presionAlta','coberturas'];
-
-  const pdCardStyle={padding:'12px 14px',borderRadius:8,background:'#0E0E18'};
-  const metricColor=['var(--gold)','var(--indigo)','var(--teal)','var(--gold)'];
-
   return (
     <div style={{display:'flex',flexDirection:'column',height:'100%'}}>
-      {/* Top bar */}
+      {/* Topbar */}
       <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',
-        padding:'16px 24px',borderBottom:'1px solid var(--border)',background:'var(--surface)',flexShrink:0}}>
+        padding:'14px 22px',borderBottom:'1px solid var(--border)',
+        background:'var(--surface)',flexShrink:0}}>
         <div>
-          <h2 style={{fontFamily:"'Outfit',sans-serif",fontWeight:700,fontSize:15}}>
-            {t(lang,'preview')}
+          <h2 style={{fontSize:14,fontWeight:700}}>
+            {lang==='es'?'Vista Previa del Reporte':'Report Preview'}
           </h2>
           <p style={{fontSize:11,color:'var(--muted)',marginTop:2}}>
-            {lang==='es'?'Vista previa premium':'Premium report preview'}
+            {lang==='es'?'PDF premium listo para exportar':'Premium PDF ready to export'}
           </p>
         </div>
         <div style={{display:'flex',gap:8}}>
-          <button className="btn-ghost" style={{padding:'9px 16px',fontSize:13}} onClick={onEdit}>
-            ✏ {t(lang,'edit')}
+          <button className="btn-ghost" style={{padding:'8px 14px',fontSize:12}} onClick={onEdit}>
+            {lang==='es'?'Editar':'Edit'}
           </button>
-          <button className="btn-gold" style={{padding:'9px 18px',fontSize:13,
+          <button className="btn-gold" style={{padding:'9px 18px',fontSize:12,
             display:'flex',alignItems:'center',gap:6,opacity:exporting?.7:1}}
             onClick={handleExport} disabled={exporting}>
             {exporting
-              ? <><span style={{animation:'spin 1s linear infinite',display:'inline-block'}}>⟳</span> Generando...</>
-              : <><span>⬇</span> {t(lang,'exportPDF')}</>
+              ? <><span style={{animation:'spin 1s linear infinite',display:'inline-block'}}>&#8635;</span>
+                  {lang==='es'?'Generando...':'Generating...'}</>
+              : <>{lang==='es'?'Exportar PDF':'Export PDF'}</>
             }
           </button>
         </div>
       </div>
 
-      {/* Scrollable PDF layout */}
-      <div style={{flex:1,overflowY:'auto',padding:'24px',background:'var(--bg)'}}>
-        <div id="pdf-layout" style={{maxWidth:900,margin:'0 auto',
+      {/* PDF content */}
+      <div style={{flex:1,overflowY:'auto',padding:'24px',background:'#050508'}}>
+        <div id="pdf-layout" style={{
+          maxWidth:920,margin:'0 auto',
           background:'#080810',borderRadius:16,overflow:'hidden',
-          border:'1px solid #1E1E28',fontFamily:"'Inter',sans-serif"}}>
+          border:'1px solid #1A1A26',fontFamily:'Helvetica,Arial,sans-serif'}}>
 
-          {/* ══ HERO ══ */}
+          {/* ═══ HERO ═══ */}
           <div style={{position:'relative',overflow:'hidden'}}>
             <div style={{position:'absolute',inset:0,
-              background:'linear-gradient(135deg,#0A0A12,#0D0D18 60%,#111120)'}}/>
+              background:'linear-gradient(135deg,#090912 0%,#0C0C18 60%,#0F0F1E 100%)'}}/>
+            {/* Gold top line */}
             <div style={{position:'absolute',top:0,left:0,right:0,height:2,
-              background:'linear-gradient(90deg,transparent,#F5A623,transparent)'}}/>
-            <div style={{position:'relative',display:'flex',alignItems:'stretch',minHeight:260}}>
-              {/* Left */}
-              <div style={{flex:1,padding:'28px 28px 24px'}}>
-                {/* Header row */}
-                <div style={{display:'flex',alignItems:'center',gap:10,marginBottom:16}}>
-                  <div style={{width:32,height:32,borderRadius:7,
-                    background:'linear-gradient(135deg,#F5A623,#D4880A)',
-                    display:'flex',alignItems:'center',justifyContent:'center',
-                    fontFamily:"'Outfit',sans-serif",fontWeight:900,fontSize:16,color:'#000'}}>S</div>
+              background:'linear-gradient(90deg,transparent,#F5A623 30%,#F5A623 70%,transparent)'}}/>
+            <div style={{position:'relative',display:'flex',minHeight:260}}>
+              {/* Left info */}
+              <div style={{flex:1,padding:'28px 30px 24px'}}>
+                {/* Top row: logos + report label */}
+                <div style={{display:'flex',alignItems:'center',gap:10,marginBottom:18}}>
+                  <SielloLogo h={28}/>
                   {report.clubLogo&&(
-                    <img src={report.clubLogo} style={{width:28,height:28,objectFit:'contain',borderRadius:5}}/>
+                    <img src={report.clubLogo}
+                      style={{height:26,objectFit:'contain',borderRadius:4}}/>
                   )}
                   <div style={{flex:1}}/>
-                  <div style={{padding:'3px 8px',borderRadius:4,
-                    background:'rgba(245,166,35,.08)',border:'1px solid rgba(245,166,35,.2)',
-                    fontSize:8,fontWeight:700,letterSpacing:'.15em',color:'#F5A623',textTransform:'uppercase'}}>
-                    SCOUTING REPORT · SIELLO ACADEMY
+                  <div style={{padding:'3px 9px',borderRadius:4,
+                    background:'rgba(245,166,35,.07)',border:'1px solid rgba(245,166,35,.18)',
+                    fontSize:8,fontWeight:700,letterSpacing:'.18em',color:'#F5A623',
+                    textTransform:'uppercase',fontFamily:'Helvetica,Arial,sans-serif'}}>
+                    PERFORMANCE REPORT
                   </div>
                 </div>
-                <div style={{marginBottom:8}}>
-                  <StatusBadge status={report.scoutingStatus} lang={lang} size="sm"/>
-                </div>
-                <h1 style={{fontFamily:"'Outfit',sans-serif",fontSize:34,fontWeight:900,
-                  color:'#fff',lineHeight:1.1,marginBottom:12,letterSpacing:'-.02em'}}>
-                  {report.playerName||'Nombre del Jugador'}
+
+                {/* Player name */}
+                <h1 style={{fontFamily:'Helvetica,Arial,sans-serif',fontSize:34,fontWeight:900,
+                  color:'#FFFFFF',lineHeight:1.08,marginBottom:14,letterSpacing:'-.02em'}}>
+                  {report.playerName||(lang==='es'?'Nombre del Jugador':'Player Name')}
                 </h1>
-                <div style={{display:'flex',flexWrap:'wrap',gap:6,marginBottom:16}}>
+
+                {/* Tags */}
+                <div style={{display:'flex',flexWrap:'wrap',gap:6,marginBottom:18}}>
                   {[
-                    age?`${age} años`:null,
-                    report.position,report.nationality,report.dominantFoot,
+                    age?`${age} ${lang==='es'?'años':'y.o.'}`:null,
+                    report.position,
+                    report.nationality,
+                    report.dominantFoot,
                     report.height?`${report.height} cm`:null,
                     report.weight?`${report.weight} kg`:null,
                   ].filter(Boolean).map((tag,i)=>(
-                    <span key={i} style={{padding:'3px 9px',borderRadius:20,
+                    <span key={i} style={{padding:'3px 10px',borderRadius:20,
                       background:'rgba(255,255,255,.05)',border:'1px solid rgba(255,255,255,.08)',
-                      fontSize:11,color:'#D1D5DB'}}>{tag}</span>
+                      fontSize:11,color:'#C9CDD4',fontFamily:'Helvetica,Arial,sans-serif'}}>
+                      {tag}
+                    </span>
                   ))}
                 </div>
-                <div style={{display:'flex',gap:14,alignItems:'center'}}>
-                  {report.currentClub&&(
-                    <div style={{fontSize:11,color:'#6B7280'}}>
-                      <span style={{color:'#F5A623',marginRight:5}}>●</span>{report.currentClub}
-                    </div>
-                  )}
-                  {report.evaluationDate&&(
-                    <div style={{fontSize:11,color:'#6B7280'}}>
-                      📅 {fmtDate(report.evaluationDate,lang)}
-                    </div>
-                  )}
-                </div>
+
+                {/* Date only */}
+                {report.evaluationDate&&(
+                  <div style={{fontSize:11,color:'#5A6070'}}>
+                    {lang==='es'?'Evaluación:':'Evaluation:'}
+                    {' '}<span style={{color:'#7A8090'}}>{fmtDate(report.evaluationDate,lang)}</span>
+                  </div>
+                )}
               </div>
-              {/* Right: Photo */}
-              <div style={{width:210,flexShrink:0,position:'relative',
-                background:'linear-gradient(135deg,#0F0F1A,#1A1A28)'}}>
+
+              {/* Right: photo */}
+              <div style={{width:200,flexShrink:0,position:'relative',
+                background:'linear-gradient(135deg,#0D0D1A,#181828)'}}>
                 {report.playerPhoto
-                  ? <img src={report.playerPhoto} style={{width:'100%',height:'100%',
-                      objectFit:'cover',objectPosition:'top',position:'absolute',inset:0}}/>
+                  ? <img src={report.playerPhoto}
+                      style={{position:'absolute',inset:0,width:'100%',height:'100%',
+                        objectFit:'cover',objectPosition:'top'}}/>
                   : <div style={{width:'100%',height:'100%',minHeight:260,
                       display:'flex',alignItems:'center',justifyContent:'center'}}>
                       <div style={{width:64,height:64,borderRadius:'50%',
-                        background:'rgba(245,166,35,.1)',border:'2px solid rgba(245,166,35,.2)',
+                        background:'rgba(245,166,35,.08)',border:'2px solid rgba(245,166,35,.18)',
                         display:'flex',alignItems:'center',justifyContent:'center',
-                        fontFamily:"'Outfit',sans-serif",fontWeight:900,fontSize:28,color:'#F5A623'}}>
+                        fontFamily:'Helvetica,Arial,sans-serif',fontWeight:900,fontSize:28,
+                        color:'#F5A623'}}>
                         {report.playerName?.charAt(0)?.toUpperCase()||'?'}
                       </div>
                     </div>
                 }
-                {/* Score overlay */}
-                <div style={{position:'absolute',bottom:12,right:12,
-                  background:'rgba(8,8,16,.9)',border:'1px solid rgba(245,166,35,.3)',
-                  borderRadius:10,padding:'6px 10px',
-                  display:'flex',flexDirection:'column',alignItems:'center'}}>
-                  <span style={{fontFamily:"'Outfit',sans-serif",fontWeight:900,fontSize:22,
-                    color:barColor(report.overallScore),lineHeight:1}}>
-                    {report.overallScore.toFixed(1)}
-                  </span>
-                  <span style={{fontSize:7,color:'#6B7280',letterSpacing:'.1em',marginTop:2}}>OVERALL</span>
-                </div>
               </div>
             </div>
           </div>
 
-          {/* ══ CONTENT ══ */}
-          <div style={{padding:'28px 28px 36px'}}>
-
-            {/* Executive Summary */}
-            {report.executiveSummary&&(
-              <div style={{marginBottom:28}}>
-                <PDFSectionHeader label={t(lang,'executiveSummary')}/>
-                <div style={{padding:'14px 18px',borderRadius:10,background:'#0E0E18',
-                  border:'1px solid #1A1A28',borderLeft:'3px solid #F5A623'}}>
-                  <p style={{fontSize:12,color:'#D1D5DB',lineHeight:1.8,margin:0}}>
-                    {report.executiveSummary}
-                  </p>
-                </div>
-              </div>
-            )}
+          {/* ═══ BODY ═══ */}
+          <div style={{padding:'28px 30px 40px'}}>
 
             {/* Performance Dashboard */}
             <div style={{marginBottom:28}}>
-              <PDFSectionHeader label={t(lang,'performanceDashboard')}/>
+              <PdfSection label="PERFORMANCE DASHBOARD"/>
               <div style={{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:10}}>
                 {[
-                  {label:'SIELLO INDEX',value:report.overallScore.toFixed(1),sub:'Score general',c:barColor(report.overallScore)},
-                  {label:t(lang,'position').toUpperCase(),value:report.position||'—',sub:report.dominantFoot,c:'#818CF8'},
-                  {label:'CLUB',value:report.currentClub||'—',sub:report.nationality,c:'#14B8A6'},
-                  {label:'STATUS',value:t(lang,report.scoutingStatus),sub:report.evaluationDate,c:'#F5A623'},
+                  {label:lang==='es'?'FECHA EVALUACIÓN':'EVALUATION DATE',
+                    value:fmtDate(report.evaluationDate,lang)||'—',
+                    sub:lang==='es'?'Última evaluación':'Last evaluation',c:'#F5A623'},
+                  {label:lang==='es'?'POSICIÓN':'POSITION',
+                    value:report.position||'—',
+                    sub:report.dominantFoot,c:'#818CF8'},
+                  {label:lang==='es'?'NACIONALIDAD':'NATIONALITY',
+                    value:report.nationality||'—',
+                    sub:report.currentClub||'',c:'#14B8A6'},
+                  {label:'STATUS',
+                    value:STATUS_LABELS[lang][report.scoutingStatus]||report.scoutingStatus,
+                    sub:'Scouting Status',c:STATUS_CFG[report.scoutingStatus]?.color||'#F5A623'},
                 ].map(card=>(
-                  <div key={card.label} style={{padding:'12px 14px',borderRadius:8,
-                    background:'#0E0E18',border:`1px solid ${card.c}20`}}>
-                    <div style={{fontSize:7,fontWeight:700,letterSpacing:'.15em',
-                      color:card.c,marginBottom:5,textTransform:'uppercase'}}>{card.label}</div>
-                    <div style={{fontFamily:"'Outfit',sans-serif",fontWeight:800,fontSize:16,
-                      color:card.c,lineHeight:1.1,wordBreak:'break-word'}}>{card.value}</div>
-                    {card.sub&&<div style={{fontSize:9,color:'#4B5563',marginTop:3}}>{card.sub}</div>}
+                  <div key={card.label} style={{padding:'12px 14px',borderRadius:9,
+                    background:'#0D0D18',border:`1px solid ${card.c}18`}}>
+                    <div style={{fontSize:7,fontWeight:700,letterSpacing:'.18em',
+                      color:card.c,marginBottom:6,textTransform:'uppercase',
+                      fontFamily:'Helvetica,Arial,sans-serif'}}>{card.label}</div>
+                    <div style={{fontFamily:'Helvetica,Arial,sans-serif',fontWeight:900,
+                      fontSize:15,color:card.c,lineHeight:1.1,wordBreak:'break-word'}}>{card.value}</div>
+                    {card.sub&&<div style={{fontSize:8.5,color:'#3E4658',marginTop:3,
+                      fontFamily:'Helvetica,Arial,sans-serif'}}>{card.sub}</div>}
                   </div>
                 ))}
               </div>
             </div>
 
-            {/* Core Matrix */}
-            <div style={{marginBottom:28}}>
-              <PDFSectionHeader label={t(lang,'coreMatrix')}/>
-              <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:20,
-                background:'#0C0C16',border:'1px solid #1A1A26',borderRadius:12,padding:'20px'}}>
-                {/* Radar */}
-                <div style={{display:'flex',justifyContent:'center'}}>
-                  <RadarChart scores={report.coreScores} lang={lang} size={200}/>
-                </div>
-                {/* Horizontal bars */}
-                <div style={{display:'flex',flexDirection:'column',gap:10,justifyContent:'center'}}>
-                  {coreData.map(d=>(
-                    <HBar key={d.key} label={d.label} value={d.value}/>
-                  ))}
+            {/* Executive Summary */}
+            {report.executiveSummary&&(
+              <div style={{marginBottom:28}}>
+                <PdfSection label="EXECUTIVE SUMMARY"/>
+                <div style={{padding:'15px 18px',borderRadius:10,background:'#0D0D18',
+                  border:'1px solid #1C1C28',borderLeft:'3px solid #F5A623'}}>
+                  <p style={{fontSize:12,color:'#D1D5DB',lineHeight:1.8,margin:0,
+                    fontFamily:'Helvetica,Arial,sans-serif'}}>{report.executiveSummary}</p>
                 </div>
               </div>
-            </div>
+            )}
 
-            {/* Core VS Snapshot */}
+            {/* Hexagon charts — 2x2 grid */}
             <div style={{marginBottom:28}}>
-              <PDFSectionHeader label={t(lang,'coreVsSnapshot')}/>
-              <div style={{background:'#0C0C16',border:'1px solid #1A1A26',borderRadius:12,
-                padding:'18px 20px',display:'grid',gridTemplateColumns:'1fr 1fr',gap:'8px 28px'}}>
-                {coreData.map(d=>(
-                  <HBar key={d.key} label={d.label} value={d.value}/>
+              <PdfSection label={lang==='es'?'ANÁLISIS POR CATEGORÍA':'CATEGORY ANALYSIS'}/>
+              <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16}}>
+                {ATTR_GROUPS.map(g=>(
+                  <div key={g.id} style={{
+                    padding:'18px 16px 16px',borderRadius:12,
+                    background:'#0C0C18',border:`1px solid ${g.color}20`}}>
+                    <div style={{fontSize:9,fontWeight:700,letterSpacing:'.18em',
+                      textTransform:'uppercase',color:g.color,marginBottom:14,
+                      fontFamily:'Helvetica,Arial,sans-serif'}}>
+                      {g.label[lang]}
+                    </div>
+                    <div style={{display:'flex',justifyContent:'center'}}>
+                      <HexChart
+                        attrs={g.attrs}
+                        values={report.attributes}
+                        color={g.color}
+                        size={210}/>
+                    </div>
+                    {/* Score list below chart */}
+                    <div style={{marginTop:12,display:'flex',flexDirection:'column',gap:5}}>
+                      {g.attrs.map(({key,label})=>{
+                        const v=report.attributes[key]||0;
+                        const pct=(v/10)*100;
+                        return (
+                          <div key={key} style={{display:'flex',alignItems:'center',gap:8}}>
+                            <span style={{fontSize:9,width:90,textAlign:'right',flexShrink:0,
+                              color:'#6B7280',fontFamily:'Helvetica,Arial,sans-serif'}}>
+                              {label.replace('\n',' ')}
+                            </span>
+                            <div style={{flex:1,height:3.5,borderRadius:2,background:'#1A1A26'}}>
+                              <div style={{height:'100%',borderRadius:2,
+                                width:`${pct}%`,
+                                background:`linear-gradient(90deg,${g.color}60,${g.color})`}}/>
+                            </div>
+                            <span style={{fontSize:9,fontWeight:700,width:22,flexShrink:0,
+                              color:g.color,fontFamily:'Helvetica,Arial,sans-serif'}}>
+                              {v.toFixed(1)}
+                            </span>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
                 ))}
               </div>
             </div>
 
-            {/* Quick Assessment */}
-            {(report.playerContext||report.technicalObservations||report.tacticalObservations||report.physicalObservations)&&(
+            {/* Observations */}
+            {(report.playerContext||report.technicalObs||report.tacticalObs||report.physicalObs)&&(
               <div style={{marginBottom:28}}>
-                <PDFSectionHeader label={t(lang,'quickAssessment')}/>
+                <PdfSection label={lang==='es'?'OBSERVACIONES':'OBSERVATIONS'}/>
                 <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:10}}>
                   {[
-                    {f:'playerContext'},{f:'technicalObservations'},
-                    {f:'tacticalObservations'},{f:'physicalObservations'},{f:'mentalityBehavior'},
-                  ].filter(({f})=>report[f]).map(({f})=>(
-                    <div key={f} style={{padding:'14px 16px',borderRadius:10,
-                      background:'#13131A',border:'1px solid #1E1E28'}}>
-                      <div style={{fontSize:8,fontWeight:700,letterSpacing:'.15em',textTransform:'uppercase',
-                        color:'#F5A623',marginBottom:8}}>{t(lang,f)}</div>
-                      <p style={{fontSize:11,color:'#D1D5DB',lineHeight:1.7,margin:0}}>{report[f]}</p>
-                    </div>
+                    {k:'playerContext',l:lang==='es'?'Contexto del Jugador':'Player Context'},
+                    {k:'technicalObs',l:lang==='es'?'Observaciones Técnicas':'Technical'},
+                    {k:'tacticalObs',l:lang==='es'?'Observaciones Tácticas':'Tactical'},
+                    {k:'physicalObs',l:lang==='es'?'Observaciones Físicas':'Physical'},
+                    {k:'mentality',l:lang==='es'?'Mentalidad':'Mentality'},
+                  ].map(({k,l})=>report[k]&&(
+                    <TxtBlock key={k} title={l} text={report[k]}/>
                   ))}
                 </div>
               </div>
             )}
 
             {/* Role Fit + Conclusion */}
-            {(report.roleFit||report.finalConclusion)&&(
+            {(report.roleFit||report.conclusion)&&(
               <div style={{marginBottom:28}}>
-                <PDFSectionHeader label={`${t(lang,'roleFit')} & ${t(lang,'finalConclusion')}`}/>
+                <PdfSection label={lang==='es'?'ROLE FIT & CONCLUSIÓN':'ROLE FIT & CONCLUSION'}/>
                 <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:10}}>
-                  {[{f:'roleFit'},{f:'finalConclusion'}].filter(({f})=>report[f]).map(({f})=>(
-                    <div key={f} style={{padding:'14px 16px',borderRadius:10,
-                      background:'#13131A',border:'1px solid #1E1E28'}}>
-                      <div style={{fontSize:8,fontWeight:700,letterSpacing:'.15em',textTransform:'uppercase',
-                        color:'#F5A623',marginBottom:8}}>{t(lang,f)}</div>
-                      <p style={{fontSize:11,color:'#D1D5DB',lineHeight:1.7,margin:0}}>{report[f]}</p>
-                    </div>
-                  ))}
+                  {report.roleFit&&<TxtBlock title="ROLE FIT" text={report.roleFit}/>}
+                  {report.conclusion&&<TxtBlock title={lang==='es'?'CONCLUSIÓN':'CONCLUSION'} text={report.conclusion}/>}
                 </div>
               </div>
             )}
 
-            {/* Final Recommendation */}
-            {report.finalRecommendation&&(
+            {/* Recommendation */}
+            {report.recommendation&&(
               <div style={{marginBottom:28}}>
-                <PDFSectionHeader label={t(lang,'finalRecommendation')}/>
+                <PdfSection label={lang==='es'?'RECOMENDACIÓN FINAL':'FINAL RECOMMENDATION'}/>
                 <div style={{padding:'16px 20px',borderRadius:12,
                   background:'linear-gradient(135deg,rgba(245,166,35,.06),rgba(245,166,35,.02))',
-                  border:'1px solid rgba(245,166,35,.2)'}}>
-                  <p style={{fontSize:12,color:'#E5E7EB',lineHeight:1.8,margin:0}}>
-                    {report.finalRecommendation}
-                  </p>
+                  border:'1px solid rgba(245,166,35,.18)'}}>
+                  <p style={{fontSize:12,color:'#E5E7EB',lineHeight:1.8,margin:0,
+                    fontFamily:'Helvetica,Arial,sans-serif'}}>{report.recommendation}</p>
                 </div>
               </div>
             )}
 
-            {/* Detailed Attributes */}
-            <div style={{marginBottom:28}}>
-              <PDFSectionHeader label={lang==='es'?'ATRIBUTOS DETALLADOS':'DETAILED ATTRIBUTES'}/>
-              <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:14}}>
-                {[
-                  {label:lang==='es'?'FÍSICO':'PHYSICAL',keys:physKeys},
-                  {label:lang==='es'?'TÉCNICO':'TECHNICAL',keys:techKeys},
-                  {label:lang==='es'?'MENTAL':'MENTAL',keys:mentKeys},
-                  {label:lang==='es'?'TÁCTICO':'TACTICAL',keys:tactKeys},
-                ].map(g=>(
-                  <div key={g.label} style={{padding:'14px 16px',borderRadius:10,
-                    background:'#0C0C16',border:'1px solid #1A1A26'}}>
-                    <div style={{fontSize:8,fontWeight:700,letterSpacing:'.15em',
-                      color:'#F5A623',marginBottom:10,textTransform:'uppercase'}}>{g.label}</div>
-                    <div style={{display:'flex',flexDirection:'column',gap:7}}>
-                      {g.keys.map(k=>(
-                        <HBar key={k} label={t(lang,k)} value={report.attributes[k]||5}/>
-                      ))}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-
             {/* Teams */}
-            {report.suggestedTeams.length>0&&(
+            {report.suggestedTeams?.length>0&&(
               <div style={{marginBottom:28}}>
-                <PDFSectionHeader label={t(lang,'suggestedTeams')}/>
-                <div style={{borderRadius:12,overflow:'hidden',border:'1px solid #1A1A26'}}>
+                <PdfSection label={lang==='es'?'POSIBLES EQUIPOS EN ESPAÑA':'POSSIBLE TEAMS IN SPAIN'}/>
+                <div style={{borderRadius:12,overflow:'hidden',border:'1px solid #1A1A24'}}>
                   <div style={{display:'grid',gridTemplateColumns:'2fr 1.5fr 1fr 2fr',
-                    padding:'9px 16px',background:'#0E0E18',borderBottom:'1px solid #1A1A26'}}>
-                    {[t(lang,'club'),t(lang,'category'),t(lang,'estimatedLevel'),t(lang,'observations')].map(h=>(
-                      <div key={h} style={{fontSize:7,fontWeight:700,letterSpacing:'.15em',
-                        color:'#F5A623',textTransform:'uppercase'}}>{h}</div>
+                    padding:'9px 16px',background:'#0D0D18',borderBottom:'1px solid #1A1A24'}}>
+                    {[lang==='es'?'CLUB':'CLUB',lang==='es'?'CATEGORÍA':'CATEGORY',
+                      lang==='es'?'NIVEL':'LEVEL',lang==='es'?'OBSERVACIONES':'OBSERVATIONS'].map(h=>(
+                      <div key={h} style={{fontSize:7,fontWeight:700,letterSpacing:'.18em',
+                        color:'#F5A623',textTransform:'uppercase',
+                        fontFamily:'Helvetica,Arial,sans-serif'}}>{h}</div>
                     ))}
                   </div>
-                  {report.suggestedTeams.map((team,i)=>(
+                  {report.suggestedTeams.map((tm,i)=>(
                     <div key={i} style={{display:'grid',gridTemplateColumns:'2fr 1.5fr 1fr 2fr',
                       padding:'9px 16px',background:i%2===0?'#0A0A14':'#0C0C18',
-                      borderBottom:i<report.suggestedTeams.length-1?'1px solid #151520':'none'}}>
-                      <div style={{fontSize:11,color:'#E5E7EB',fontWeight:500}}>{team.club||'—'}</div>
-                      <div style={{fontSize:11,color:'#9CA3AF'}}>{team.category||'—'}</div>
-                      <div style={{fontSize:11,color:'#14B8A6',fontWeight:600}}>{team.estimatedLevel||'—'}</div>
-                      <div style={{fontSize:10,color:'#6B7280'}}>{team.observations||'—'}</div>
+                      borderBottom:i<report.suggestedTeams.length-1?'1px solid #141420':'none'}}>
+                      <div style={{fontSize:11,color:'#E5E7EB',fontWeight:600,
+                        fontFamily:'Helvetica,Arial,sans-serif'}}>{tm.club||'—'}</div>
+                      <div style={{fontSize:11,color:'#9CA3AF',fontFamily:'Helvetica,Arial,sans-serif'}}>{tm.category||'—'}</div>
+                      <div style={{fontSize:11,color:'#14B8A6',fontWeight:700,fontFamily:'Helvetica,Arial,sans-serif'}}>{tm.estimatedLevel||'—'}</div>
+                      <div style={{fontSize:10,color:'#6B7280',fontFamily:'Helvetica,Arial,sans-serif'}}>{tm.observations||'—'}</div>
                     </div>
                   ))}
                 </div>
@@ -1174,22 +1123,13 @@ function ReportPreview({report,lang,onEdit}){
             )}
 
             {/* Footer */}
-            <div style={{marginTop:32,paddingTop:18,borderTop:'1px solid #1A1A26',
+            <div style={{marginTop:32,paddingTop:18,borderTop:'1px solid #181826',
               display:'flex',alignItems:'center',justifyContent:'space-between'}}>
-              <div style={{display:'flex',alignItems:'center',gap:10}}>
-                <div style={{width:26,height:26,borderRadius:6,
-                  background:'linear-gradient(135deg,#F5A623,#D4880A)',
-                  display:'flex',alignItems:'center',justifyContent:'center',
-                  fontFamily:"'Outfit',sans-serif",fontWeight:900,fontSize:14,color:'#000'}}>S</div>
-                <div>
-                  <div style={{fontFamily:"'Outfit',sans-serif",fontWeight:700,fontSize:10,
-                    color:'#F5A623'}}>SIELLO ACADEMY</div>
-                  <div style={{fontSize:8,color:'#4B5563'}}>Siello Football Group</div>
-                </div>
-              </div>
-              <div style={{fontSize:8,color:'#374151',textAlign:'right'}}>
-                <div>Confidential — Scouting Report</div>
-                <div>{new Date().getFullYear()} · siellofootball.com</div>
+              <SielloLogo h={26}/>
+              <div style={{fontSize:8,color:'#2E3040',textAlign:'right',
+                fontFamily:'Helvetica,Arial,sans-serif'}}>
+                <div>Confidential — Performance Report</div>
+                <div>{new Date().getFullYear()} · Siello Football Group</div>
               </div>
             </div>
           </div>
@@ -1199,17 +1139,17 @@ function ReportPreview({report,lang,onEdit}){
   );
 }
 
-// ─── ROOT APP ─────────────────────────────────────────────────────
+// ─── APP ──────────────────────────────────────────────────────────
 function App(){
   const [lang,setLang]=useState('es');
-  const [view,setView]=useState('dashboard'); // dashboard | form | preview
+  const [view,setView]=useState('dashboard');
   const [reports,setReports]=useState(()=>loadReports());
   const [currentId,setCurrentId]=useState(null);
 
-  const current = reports.find(r=>r.id===currentId)||null;
+  const current=reports.find(r=>r.id===currentId)||null;
 
-  function handleUpdate(updated){
-    const next=reports.map(r=>r.id===updated.id?{...updated,updatedAt:new Date().toISOString()}:r);
+  function upsert(updated){
+    const next=reports.map(r=>r.id===updated.id?updated:r);
     setReports(next);
     saveReports(next);
   }
@@ -1223,10 +1163,7 @@ function App(){
     setView('form');
   }
 
-  function handleOpen(id){
-    setCurrentId(id);
-    setView('form');
-  }
+  function handleOpen(id){setCurrentId(id);setView('form')}
 
   function handleDelete(id){
     const next=reports.filter(r=>r.id!==id);
@@ -1235,57 +1172,66 @@ function App(){
     if(currentId===id){setCurrentId(null);setView('dashboard')}
   }
 
-  function handleSidebarNav(v){
-    if(v==='new') handleNew();
+  function handleSidebarNav(k){
+    if(k==='new') handleNew();
     else setView('dashboard');
   }
 
   return (
     <div style={{display:'flex',height:'100vh',overflow:'hidden'}}>
-      <Sidebar view={view} setView={handleSidebarNav} lang={lang} setLang={setLang}/>
-      <main style={{flex:1,marginLeft:60,height:'100%',overflow:'hidden',
+      <Sidebar view={view} onNav={handleSidebarNav} lang={lang} setLang={setLang}/>
+      <main style={{flex:1,marginLeft:58,height:'100%',overflow:'hidden',
         display:'flex',flexDirection:'column'}}>
+
         {view==='dashboard'&&(
           <div style={{flex:1,overflowY:'auto'}}>
             <Dashboard reports={reports} lang={lang}
               onNew={handleNew} onOpen={handleOpen} onDelete={handleDelete}/>
           </div>
         )}
+
         {(view==='form'||view==='preview')&&current&&(
           <>
-            {/* Top bar */}
-            <div style={{display:'flex',alignItems:'center',gap:12,padding:'12px 20px',
-              borderBottom:'1px solid var(--border)',background:'var(--surface)',flexShrink:0}}>
-              <button onClick={()=>setView('dashboard')} className="btn-ghost"
-                style={{padding:'6px 12px',fontSize:12,display:'flex',alignItems:'center',gap:6}}>
-                ← Dashboard
+            {/* Sub-topbar */}
+            <div style={{display:'flex',alignItems:'center',gap:10,
+              padding:'10px 18px',borderBottom:'1px solid var(--border)',
+              background:'var(--surface)',flexShrink:0}}>
+              <button className="btn-ghost" style={{padding:'6px 12px',fontSize:12}}
+                onClick={()=>setView('dashboard')}>
+                &larr; Dashboard
               </button>
-              <div style={{width:1,height:20,background:'var(--border)'}}/>
-              <div style={{flex:1}}>
-                <div style={{fontFamily:"'Outfit',sans-serif",fontWeight:700,fontSize:14}}>
-                  {current.playerName||'Nuevo Reporte'}
+              <div style={{width:1,height:18,background:'var(--border)'}}/>
+              <div style={{flex:1,minWidth:0}}>
+                <div style={{fontSize:14,fontWeight:700,
+                  overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>
+                  {current.playerName||(lang==='es'?'Nuevo Reporte':'New Report')}
                 </div>
                 {current.position&&<div style={{fontSize:11,color:'var(--muted)'}}>{current.position}</div>}
               </div>
               {/* Mode toggle */}
-              <div style={{display:'flex',gap:2,padding:3,borderRadius:8,
+              <div style={{display:'flex',gap:1,padding:2,borderRadius:7,
                 background:'var(--surface2)',border:'1px solid var(--border)'}}>
-                {[{k:'form',icon:'✏',l:'Editar'},{k:'preview',icon:'👁',l:'Preview'}].map(m=>(
+                {[
+                  {k:'form',   l:lang==='es'?'Editar':'Edit'},
+                  {k:'preview',l:lang==='es'?'Preview':'Preview'},
+                ].map(m=>(
                   <button key={m.k} onClick={()=>setView(m.k)}
-                    style={{display:'flex',alignItems:'center',gap:5,padding:'6px 10px',
-                      borderRadius:6,border:'none',cursor:'pointer',fontSize:12,fontWeight:500,
-                      transition:'all .2s',
+                    style={{padding:'5px 12px',borderRadius:5,border:'none',cursor:'pointer',
+                      fontSize:12,fontWeight:600,fontFamily:'var(--font)',transition:'all .15s',
                       background:view===m.k?'var(--surface3)':'transparent',
                       color:view===m.k?'var(--text)':'var(--muted)'}}>
-                    {m.icon} {m.l}
+                    {m.l}
                   </button>
                 ))}
               </div>
             </div>
+
             <div style={{flex:1,overflow:'hidden'}}>
               {view==='form'
-                ? <ReportForm report={current} onUpdate={handleUpdate}
-                    onPreview={()=>setView('preview')} onBack={()=>setView('dashboard')} lang={lang}/>
+                ? <ReportForm report={current} onUpdate={upsert}
+                    onPreview={()=>setView('preview')}
+                    onBack={()=>setView('dashboard')}
+                    lang={lang}/>
                 : <ReportPreview report={current} lang={lang} onEdit={()=>setView('form')}/>
               }
             </div>

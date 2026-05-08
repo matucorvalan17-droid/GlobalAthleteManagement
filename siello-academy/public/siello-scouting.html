@@ -770,24 +770,41 @@ function ReportPreview({report,lang,onEdit}){
     setExporting(true);
     try{
       const el=document.getElementById('pdf-layout');
-      // scale 3 for high quality, especially photos
+
+      // Wait for every <img> in the layout to be fully decoded
+      await Promise.all(Array.from(el.querySelectorAll('img')).map(img=>
+        img.complete && img.naturalWidth>0
+          ? Promise.resolve()
+          : new Promise(res=>{ img.onload=res; img.onerror=res; })
+      ));
+      // Give layout a frame to settle after image loads
+      await new Promise(res=>setTimeout(res,250));
+
       const canvas=await html2canvas(el,{
-        scale:3,
+        scale:2,
         useCORS:true,
         allowTaint:true,
         backgroundColor:'#080808',
         logging:false,
         width:el.scrollWidth,
         height:el.scrollHeight,
-        windowWidth:el.scrollWidth,
-        windowHeight:el.scrollHeight,
-        imageTimeout:15000,
+        // Use actual viewport so CSS resolves correctly
+        windowWidth:window.innerWidth,
+        windowHeight:window.innerHeight,
+        imageTimeout:20000,
+        onclone:(_doc,clonedEl)=>{
+          // Ensure images inside the clone are also loaded before capture
+          return Promise.all(Array.from(clonedEl.querySelectorAll('img')).map(img=>
+            img.complete && img.naturalWidth>0
+              ? Promise.resolve()
+              : new Promise(res=>{ img.onload=res; img.onerror=res; })
+          ));
+        },
       });
       const {jsPDF}=window.jspdf;
-      const w=canvas.width/3, h=canvas.height/3;
-      const pdf=new jsPDF({orientation:'portrait',unit:'px',format:[w,h],compress:false});
-      // PNG for better image quality
-      pdf.addImage(canvas.toDataURL('image/png'),'PNG',0,0,w,h);
+      const w=canvas.width/2, h=canvas.height/2;
+      const pdf=new jsPDF({orientation:'portrait',unit:'px',format:[w,h],compress:true});
+      pdf.addImage(canvas.toDataURL('image/jpeg',0.95),'JPEG',0,0,w,h);
       const name=(report.playerName||'report').replace(/\s+/g,'_');
       pdf.save(`Siello_${name}_Performance_Report.pdf`);
     }finally{setExporting(false)}

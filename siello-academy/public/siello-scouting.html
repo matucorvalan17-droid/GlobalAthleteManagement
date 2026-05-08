@@ -1,0 +1,1302 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Siello Academy — Scouting Platform</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --gold:#F5A623;--gold-dark:#D4880A;--gold-light:#FFC85C;
+  --bg:#080808;--surface:#111114;--surface2:#18181C;--surface3:#222228;
+  --border:#2A2A32;--borderl:#3A3A44;
+  --teal:#14B8A6;--red:#EF4444;--indigo:#818CF8;--yellow:#FCD34D;
+  --text:#F4F4F5;--muted:#71717A;--dim:#3F3F46;
+}
+html,body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;-webkit-font-smoothing:antialiased;overflow-x:hidden;height:100%}
+#root{height:100%}
+::-webkit-scrollbar{width:4px;height:4px}
+::-webkit-scrollbar-track{background:var(--surface)}
+::-webkit-scrollbar-thumb{background:var(--borderl);border-radius:2px}
+input,select,textarea{font-family:'Inter',sans-serif;font-size:13px;color:var(--text)}
+input:focus,select:focus,textarea:focus{outline:2px solid rgba(245,166,35,0.4)}
+textarea{resize:none}
+input[type=range]{-webkit-appearance:none;appearance:none;background:transparent;cursor:pointer;width:100%}
+input[type=range]::-webkit-slider-track{background:var(--surface3);height:4px;border-radius:2px}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;background:var(--gold);height:16px;width:16px;border-radius:50%;margin-top:-6px;box-shadow:0 0 8px rgba(245,166,35,.4)}
+.gold-gradient{background:linear-gradient(135deg,#FFC85C,#F5A623);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.grid-bg{background-image:linear-gradient(rgba(245,166,35,.02) 1px,transparent 1px),linear-gradient(90deg,rgba(245,166,35,.02) 1px,transparent 1px);background-size:32px 32px}
+.btn-gold{background:linear-gradient(135deg,var(--gold),var(--gold-dark));color:#000;border:none;cursor:pointer;font-family:'Inter',sans-serif;font-weight:600;border-radius:8px;transition:opacity .2s,transform .1s}
+.btn-gold:hover{opacity:.9}
+.btn-gold:active{transform:scale(.97)}
+.btn-ghost{background:var(--surface2);border:1px solid var(--border);color:var(--muted);cursor:pointer;font-family:'Inter',sans-serif;border-radius:8px;transition:all .2s}
+.btn-ghost:hover{border-color:var(--borderl);color:var(--text)}
+.input-field{background:var(--surface3);border:1px solid var(--border);color:var(--text);border-radius:8px;padding:10px 12px;width:100%;transition:border-color .2s}
+.input-field:focus{border-color:rgba(245,166,35,.4);outline:none;box-shadow:0 0 0 2px rgba(245,166,35,.08)}
+.card{background:var(--surface2);border:1px solid var(--border);border-radius:12px}
+.section-header{display:flex;align-items:center;gap:12px;margin-bottom:16px}
+.section-header::before,.section-header::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,rgba(245,166,35,.4),transparent)}
+.section-header::before{background:linear-gradient(90deg,transparent,rgba(245,166,35,.4))}
+.section-label{font-size:9px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);white-space:nowrap}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
+</style>
+</head>
+<body>
+<div id="root"></div>
+
+<script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+<script type="text/babel">
+const {useState, useEffect, useRef, useCallback} = React;
+
+// ─── TRANSLATIONS ────────────────────────────────────────────────
+const T = {
+  es:{
+    dashboard:'Dashboard',newReport:'Nuevo Reporte',history:'Historial',
+    welcomeSub:'Scouting Intelligence Platform',
+    totalReports:'Reportes Totales',elitePlayers:'Potencial Elite',followList:'En Seguimiento',
+    recentActivity:'Actividad Reciente',noReports:'No hay reportes aún',
+    noReportsDesc:'Creá tu primer reporte de scouting',createFirst:'Crear Reporte',
+    playerInfo:'Datos del Jugador',evaluation:'Evaluación',
+    textSections:'Observaciones',teamSuggestions:'Equipos',preview:'Vista Previa',
+    fullName:'Nombre Completo',dateOfBirth:'Fecha de Nacimiento',nationality:'Nacionalidad',
+    position:'Posición',dominantFoot:'Pie Dominante',height:'Altura (cm)',weight:'Peso (kg)',
+    currentClub:'Club Actual',evaluationDate:'Fecha Evaluación',
+    playerPhoto:'Foto del Jugador',clubLogo:'Logo del Club',
+    scoutingStatus:'Estado del Scouting',overallScore:'Score General',
+    coreMatrix:'Core Matrix',
+    tecnica:'Técnica',tactica:'Táctica',fisico:'Físico',mentalidad:'Mentalidad',
+    intensidad:'Intensidad',tomaDecisiones:'Decisiones',potencial:'Potencial',
+    adaptabilidad:'Adaptabilidad',juegoSinBalon:'Sin Balón',juegoConBalon:'Con Balón',
+    velocidad:'Velocidad',potencia:'Potencia',resistencia:'Resistencia',aceleracion:'Aceleración',
+    saltoCabeceo:'Salto/Cabeceo',controlPase:'Control y Pase',tecnicaDominio:'Dominio',
+    regate:'Regate',finalizacion:'Finalización',centros:'Centros',
+    liderazgo:'Liderazgo',presionTrasPerdida:'Presión',concienciaEspacial:'Espacial',
+    lecturaJuego:'Lectura de Juego',personalidad:'Personalidad',tomaDedecisiones:'Decisiones',
+    posicionamiento:'Posicionamiento',equilibrioDefensivo:'Equilibrio',
+    transiciones:'Transiciones',presionAlta:'Presión Alta',coberturas:'Coberturas',lecturaEspacios:'Espacios',
+    executiveSummary:'Executive Summary',playerContext:'Contexto del Jugador',
+    technicalObservations:'Observaciones Técnicas',tacticalObservations:'Observaciones Tácticas',
+    physicalObservations:'Observaciones Físicas',mentalityBehavior:'Mentalidad y Comportamiento',
+    roleFit:'Role Fit',finalConclusion:'Conclusión Final',finalRecommendation:'Recomendación Final',
+    suggestedTeams:'Posibles Equipos en España',club:'Club',category:'Categoría',
+    observations:'Observaciones',estimatedLevel:'Nivel Estimado',addTeam:'Añadir Club',
+    exportPDF:'Exportar PDF',save:'Guardar',next:'Siguiente',back:'Atrás',
+    edit:'Editar',delete:'Eliminar',cancel:'Cancelar',
+    uploadPhoto:'Subir Foto',uploadLogo:'Subir Logo',
+    ELITE_POTENTIAL:'ELITE POTENTIAL',FOLLOW:'FOLLOW',PASS:'PASS',
+    SIGN_NOW:'SIGN NOW',INITIAL_FILTER:'INITIAL FILTER',PENDING:'PENDING',
+    performanceDashboard:'Performance Dashboard',coreVsSnapshot:'Core VS Snapshot',
+    quickAssessment:'Quick Assessment',physicalAttr:'Atributos Físicos',
+    technicalAttr:'Atributos Técnicos',mentalAttr:'Atributos Mentales',tacticalAttr:'Atributos Tácticos',
+  },
+  en:{
+    dashboard:'Dashboard',newReport:'New Report',history:'History',
+    welcomeSub:'Scouting Intelligence Platform',
+    totalReports:'Total Reports',elitePlayers:'Elite Potential',followList:'Follow List',
+    recentActivity:'Recent Activity',noReports:'No reports yet',
+    noReportsDesc:'Create your first scouting report',createFirst:'Create Report',
+    playerInfo:'Player Data',evaluation:'Evaluation',
+    textSections:'Observations',teamSuggestions:'Teams',preview:'Preview',
+    fullName:'Full Name',dateOfBirth:'Date of Birth',nationality:'Nationality',
+    position:'Position',dominantFoot:'Dominant Foot',height:'Height (cm)',weight:'Weight (kg)',
+    currentClub:'Current Club',evaluationDate:'Evaluation Date',
+    playerPhoto:'Player Photo',clubLogo:'Club Logo',
+    scoutingStatus:'Scouting Status',overallScore:'Overall Score',
+    coreMatrix:'Core Matrix',
+    tecnica:'Technical',tactica:'Tactical',fisico:'Physical',mentalidad:'Mentality',
+    intensidad:'Intensity',tomaDecisiones:'Decisions',potencial:'Potential',
+    adaptabilidad:'Adaptability',juegoSinBalon:'Off Ball',juegoConBalon:'On Ball',
+    velocidad:'Speed',potencia:'Power',resistencia:'Endurance',aceleracion:'Acceleration',
+    saltoCabeceo:'Jump/Header',controlPase:'Control & Pass',tecnicaDominio:'Ball Mastery',
+    regate:'Dribbling',finalizacion:'Finishing',centros:'Crosses',
+    liderazgo:'Leadership',presionTrasPerdida:'Press',concienciaEspacial:'Spatial',
+    lecturaJuego:'Game Reading',personalidad:'Personality',tomaDedecisiones:'Decisions',
+    posicionamiento:'Positioning',equilibrioDefensivo:'Balance',
+    transiciones:'Transitions',presionAlta:'High Press',coberturas:'Cover Shadows',lecturaEspacios:'Spaces',
+    executiveSummary:'Executive Summary',playerContext:'Player Context',
+    technicalObservations:'Technical Observations',tacticalObservations:'Tactical Observations',
+    physicalObservations:'Physical Observations',mentalityBehavior:'Mentality & Behavior',
+    roleFit:'Role Fit',finalConclusion:'Final Conclusion',finalRecommendation:'Final Recommendation',
+    suggestedTeams:'Possible Teams in Spain',club:'Club',category:'Category',
+    observations:'Observations',estimatedLevel:'Estimated Level',addTeam:'Add Club',
+    exportPDF:'Export PDF',save:'Save',next:'Next',back:'Back',
+    edit:'Edit',delete:'Delete',cancel:'Cancel',
+    uploadPhoto:'Upload Photo',uploadLogo:'Upload Logo',
+    ELITE_POTENTIAL:'ELITE POTENTIAL',FOLLOW:'FOLLOW',PASS:'PASS',
+    SIGN_NOW:'SIGN NOW',INITIAL_FILTER:'INITIAL FILTER',PENDING:'PENDING',
+    performanceDashboard:'Performance Dashboard',coreVsSnapshot:'Core VS Snapshot',
+    quickAssessment:'Quick Assessment',physicalAttr:'Physical Attributes',
+    technicalAttr:'Technical Attributes',mentalAttr:'Mental Attributes',tacticalAttr:'Tactical Attributes',
+  }
+};
+const t = (lang,key) => T[lang][key] || key;
+
+// ─── CONSTANTS ────────────────────────────────────────────────────
+const STATUS_CFG = {
+  ELITE_POTENTIAL:{bg:'rgba(245,166,35,.1)',color:'#F5A623',border:'rgba(245,166,35,.3)'},
+  SIGN_NOW:{bg:'rgba(20,184,166,.1)',color:'#14B8A6',border:'rgba(20,184,166,.3)'},
+  FOLLOW:{bg:'rgba(129,140,248,.1)',color:'#818CF8',border:'rgba(129,140,248,.3)'},
+  INITIAL_FILTER:{bg:'rgba(252,211,77,.08)',color:'#FCD34D',border:'rgba(252,211,77,.25)'},
+  PASS:{bg:'rgba(239,68,68,.08)',color:'#F87171',border:'rgba(239,68,68,.2)'},
+  PENDING:{bg:'rgba(113,113,122,.1)',color:'#A1A1AA',border:'rgba(113,113,122,.2)'},
+};
+
+const POSITIONS = ['Portero','Defensa Central','Lateral Derecho','Lateral Izquierdo',
+  'Mediocentro Defensivo','Mediocentro','Mediocentro Ofensivo',
+  'Extremo Derecho','Extremo Izquierdo','Delantero Centro','Segunda Punta'];
+
+const CORE_KEYS = ['tecnica','tactica','fisico','mentalidad','intensidad',
+  'tomaDecisiones','potencial','adaptabilidad','juegoSinBalon','juegoConBalon'];
+
+const ATTR_GROUPS = {
+  physicalAttr:['velocidad','potencia','resistencia','aceleracion','saltoCabeceo'],
+  technicalAttr:['controlPase','tecnicaDominio','regate','finalizacion','centros'],
+  mentalAttr:['liderazgo','presionTrasPerdida','concienciaEspacial','lecturaJuego','personalidad'],
+  tacticalAttr:['posicionamiento','equilibrioDefensivo','transiciones','presionAlta','coberturas'],
+};
+
+const TEXT_FIELDS = ['executiveSummary','playerContext','technicalObservations',
+  'tacticalObservations','physicalObservations','mentalityBehavior',
+  'roleFit','finalConclusion','finalRecommendation'];
+
+function defaultCoreScores(){
+  return Object.fromEntries(CORE_KEYS.map(k=>[k,5]));
+}
+function defaultAttrs(){
+  return Object.fromEntries(
+    Object.values(ATTR_GROUPS).flat().map(k=>[k,5])
+  );
+}
+function newReport(){
+  const id = Math.random().toString(36).slice(2);
+  return {
+    id, createdAt:new Date().toISOString(), updatedAt:new Date().toISOString(),
+    playerName:'',dateOfBirth:'',nationality:'',position:'',
+    dominantFoot:'Diestro',height:'',weight:'',currentClub:'',
+    evaluationDate:new Date().toISOString().split('T')[0],
+    playerPhoto:'',clubLogo:'',
+    overallScore:0,scoutingStatus:'PENDING',
+    coreScores:defaultCoreScores(),attributes:defaultAttrs(),
+    executiveSummary:'',playerContext:'',technicalObservations:'',
+    tacticalObservations:'',physicalObservations:'',mentalityBehavior:'',
+    roleFit:'',finalConclusion:'',finalRecommendation:'',
+    suggestedTeams:[],
+  };
+}
+
+// ─── STORAGE ──────────────────────────────────────────────────────
+const STORE_KEY = 'siello_reports_v2';
+function loadReports(){try{return JSON.parse(localStorage.getItem(STORE_KEY)||'[]')}catch{return[]}}
+function saveReports(r){localStorage.setItem(STORE_KEY,JSON.stringify(r))}
+
+// ─── HELPERS ──────────────────────────────────────────────────────
+function barColor(v){
+  if(v>=8) return '#14B8A6';
+  if(v>=6.5) return '#F5A623';
+  if(v>=4.5) return '#FCD34D';
+  return '#F87171';
+}
+function calcAge(dob){
+  if(!dob) return null;
+  const b=new Date(dob), now=new Date();
+  let age=now.getFullYear()-b.getFullYear();
+  if(now.getMonth()-b.getMonth()<0||(now.getMonth()-b.getMonth()===0&&now.getDate()<b.getDate())) age--;
+  return age;
+}
+function fmtDate(iso,lang){
+  try{return new Intl.DateTimeFormat(lang==='es'?'es-ES':'en-US',{day:'2-digit',month:'short',year:'numeric'}).format(new Date(iso))}
+  catch{return iso}
+}
+
+// ─── UI ATOMS ─────────────────────────────────────────────────────
+function StatusBadge({status,lang,size='md'}){
+  const cfg = STATUS_CFG[status] || STATUS_CFG.PENDING;
+  const pad = size==='sm'?'3px 8px':size==='lg'?'6px 14px':'4px 10px';
+  const fs = size==='lg'?11:9;
+  return (
+    <span style={{display:'inline-flex',alignItems:'center',gap:6,padding:pad,
+      borderRadius:20,background:cfg.bg,border:`1px solid ${cfg.border}`,
+      color:cfg.color,fontSize:fs,fontWeight:700,letterSpacing:'0.12em',textTransform:'uppercase'}}>
+      <span style={{width:5,height:5,borderRadius:'50%',background:cfg.color,flexShrink:0,
+        animation:'pulse 2s infinite'}}/>
+      {t(lang,status)}
+    </span>
+  );
+}
+
+function ScorePill({score,size='md'}){
+  const c=barColor(score);
+  const s = size==='sm'?32:size==='lg'?64:48;
+  const fs = size==='sm'?12:size==='lg'?24:16;
+  return (
+    <div style={{width:s,height:s,borderRadius:'50%',display:'flex',alignItems:'center',
+      justifyContent:'center',fontFamily:"'Outfit',sans-serif",fontWeight:900,fontSize:fs,
+      color:c,border:`2px solid ${c}`,background:`radial-gradient(circle,${c}22 0%,transparent 70%)`,
+      boxShadow:`0 0 14px ${c}40`,flexShrink:0}}>
+      {score.toFixed(1)}
+    </div>
+  );
+}
+
+function FormField({label,children}){
+  return (
+    <div>
+      <label style={{display:'block',fontSize:11,fontWeight:500,color:'var(--muted)',marginBottom:6}}>{label}</label>
+      {children}
+    </div>
+  );
+}
+
+function PhotoUpload({value,onChange,label,placeholder}){
+  const ref = useRef();
+  function handleFile(e){
+    const f=e.target.files?.[0]; if(!f) return;
+    const r=new FileReader(); r.onload=ev=>onChange(ev.target.result); r.readAsDataURL(f);
+  }
+  return (
+    <div onClick={()=>ref.current?.click()} style={{
+      position:'relative',width:'100%',aspectRatio:'4/3',borderRadius:10,
+      background:'var(--surface3)',border:'2px dashed var(--border)',
+      display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',
+      cursor:'pointer',overflow:'hidden',transition:'border-color .2s'}}
+      onMouseEnter={e=>e.currentTarget.style.borderColor='rgba(245,166,35,.4)'}
+      onMouseLeave={e=>e.currentTarget.style.borderColor='var(--border)'}>
+      <input ref={ref} type="file" accept="image/*" style={{display:'none'}} onChange={handleFile}/>
+      {value
+        ? <img src={value} style={{position:'absolute',inset:0,width:'100%',height:'100%',objectFit:'cover'}}/>
+        : <div style={{textAlign:'center',padding:12}}>
+            <div style={{width:36,height:36,borderRadius:8,background:'rgba(245,166,35,.08)',
+              display:'flex',alignItems:'center',justifyContent:'center',margin:'0 auto 8px',fontSize:18}}>📷</div>
+            <div style={{fontSize:11,color:'var(--muted)'}}>{label}</div>
+          </div>
+      }
+    </div>
+  );
+}
+
+// ─── RADAR CHART ──────────────────────────────────────────────────
+function RadarChart({scores,lang,size=220}){
+  const center=size/2, radius=size*0.35;
+  const keys = CORE_KEYS;
+  const n = keys.length;
+  function pt(score,i,frac=1){
+    const a=(i*2*Math.PI/n)-Math.PI/2;
+    const r=(score/10)*radius*frac;
+    return {x:center+r*Math.cos(a),y:center+r*Math.sin(a)};
+  }
+  function axPt(i,frac=1){
+    const a=(i*2*Math.PI/n)-Math.PI/2;
+    return {x:center+frac*radius*Math.cos(a),y:center+frac*radius*Math.sin(a)};
+  }
+  const scorePts = keys.map((k,i)=>pt(scores[k],i));
+  const polygon = scorePts.map(p=>`${p.x},${p.y}`).join(' ');
+  const gridLevels=[2,4,6,8,10];
+  return (
+    <svg width={size} height={size} style={{overflow:'visible'}}>
+      {gridLevels.map(lv=>(
+        <polygon key={lv}
+          points={keys.map((_,i)=>{const p=axPt(i,lv/10);return `${p.x},${p.y}`}).join(' ')}
+          fill="none" stroke="#1E1E2E" strokeWidth="1"/>
+      ))}
+      {keys.map((_,i)=>{const p=axPt(i);return(
+        <line key={i} x1={center} y1={center} x2={p.x} y2={p.y} stroke="#1E1E2E" strokeWidth="1"/>
+      )})}
+      <polygon points={polygon} fill="rgba(245,166,35,.12)" stroke="#F5A623" strokeWidth="1.5"/>
+      {scorePts.map((p,i)=>(
+        <circle key={i} cx={p.x} cy={p.y} r="3" fill="#F5A623"/>
+      ))}
+      {keys.map((k,i)=>{
+        const lp=axPt(i,1.22);
+        const anchor = lp.x<center-5?'end':lp.x>center+5?'start':'middle';
+        return(
+          <text key={k} x={lp.x} y={lp.y} textAnchor={anchor} dominantBaseline="middle"
+            fill="#6B7280" fontSize="8" fontFamily="Inter">
+            {t(lang,k)}
+          </text>
+        );
+      })}
+    </svg>
+  );
+}
+
+// ─── HORIZONTAL BAR ───────────────────────────────────────────────
+function HBar({label,value,max=10}){
+  const c=barColor(value), pct=(value/max)*100;
+  return (
+    <div style={{display:'flex',alignItems:'center',gap:10}}>
+      <span style={{fontSize:10,width:90,textAlign:'right',flexShrink:0,color:'#9CA3AF'}}>{label}</span>
+      <div style={{flex:1,height:5,borderRadius:3,background:'#1F1F28',position:'relative'}}>
+        <div style={{position:'absolute',left:0,top:0,height:'100%',borderRadius:3,
+          width:`${pct}%`,background:`linear-gradient(90deg,${c}70,${c})`,
+          boxShadow:`0 0 6px ${c}60`,transition:'width .4s ease'}}/>
+      </div>
+      <span style={{fontSize:10,fontWeight:700,width:28,flexShrink:0,color:c}}>{value.toFixed(1)}</span>
+    </div>
+  );
+}
+
+// ─── SIDEBAR ──────────────────────────────────────────────────────
+function Sidebar({view,setView,lang,setLang}){
+  const navItems=[
+    {key:'dashboard',icon:'⊞',label:t(lang,'dashboard')},
+    {key:'new',icon:'+',label:t(lang,'newReport')},
+  ];
+  return (
+    <aside style={{position:'fixed',left:0,top:0,height:'100%',width:60,
+      background:'var(--surface)',borderRight:'1px solid var(--border)',
+      display:'flex',flexDirection:'column',zIndex:50}}>
+      {/* Logo */}
+      <div style={{padding:'18px 12px',borderBottom:'1px solid var(--border)',
+        display:'flex',justifyContent:'center'}}>
+        <div style={{width:36,height:36,borderRadius:8,
+          background:'linear-gradient(135deg,#F5A623,#D4880A)',
+          display:'flex',alignItems:'center',justifyContent:'center',
+          fontFamily:"'Outfit',sans-serif",fontWeight:900,fontSize:18,color:'#000'}}>
+          S
+        </div>
+      </div>
+      {/* Nav */}
+      <nav style={{flex:1,padding:'12px 8px',display:'flex',flexDirection:'column',gap:4}}>
+        {navItems.map(item=>{
+          const active = view===item.key||(item.key==='dashboard'&&view==='report');
+          return (
+            <button key={item.key} onClick={()=>setView(item.key)}
+              title={item.label}
+              style={{width:'100%',padding:'10px 0',borderRadius:8,border:'none',cursor:'pointer',
+                background:active?'rgba(245,166,35,.08)':'transparent',
+                color:active?'var(--gold)':'var(--muted)',fontSize:16,
+                transition:'all .2s',display:'flex',alignItems:'center',justifyContent:'center'}}>
+              {item.icon}
+            </button>
+          );
+        })}
+      </nav>
+      {/* Lang */}
+      <div style={{padding:'12px 8px',borderTop:'1px solid var(--border)',
+        display:'flex',flexDirection:'column',gap:4}}>
+        {['es','en'].map(l=>(
+          <button key={l} onClick={()=>setLang(l)}
+            style={{padding:'5px 0',borderRadius:6,border:'none',cursor:'pointer',
+              fontSize:9,fontWeight:700,letterSpacing:'.1em',textTransform:'uppercase',
+              background:lang===l?'rgba(245,166,35,.1)':'transparent',
+              color:lang===l?'var(--gold)':'var(--dim)',transition:'all .2s'}}>
+            {l}
+          </button>
+        ))}
+      </div>
+    </aside>
+  );
+}
+
+// ─── DASHBOARD ────────────────────────────────────────────────────
+function Dashboard({reports,lang,onNew,onOpen,onDelete}){
+  const stats={
+    total:reports.length,
+    elite:reports.filter(r=>r.scoutingStatus==='ELITE_POTENTIAL').length,
+    follow:reports.filter(r=>r.scoutingStatus==='FOLLOW'||r.scoutingStatus==='SIGN_NOW').length,
+  };
+  return (
+    <div className="grid-bg" style={{minHeight:'100vh',padding:'32px 32px 32px'}}>
+      {/* Header */}
+      <div style={{marginBottom:32}}>
+        <div style={{fontSize:10,fontWeight:600,letterSpacing:'.2em',textTransform:'uppercase',
+          color:'var(--gold)',opacity:.7,marginBottom:4}}>{t(lang,'welcomeSub')}</div>
+        <h1 style={{fontFamily:"'Outfit',sans-serif",fontWeight:900,fontSize:36,color:'#fff',marginBottom:4}}>
+          Siello Academy
+        </h1>
+        <p style={{fontSize:13,color:'var(--muted)'}}>Sistema de generación de reportes premium</p>
+      </div>
+
+      {/* Stats */}
+      <div style={{display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap:16,marginBottom:32}}>
+        {[
+          {label:t(lang,'totalReports'),value:stats.total,color:'var(--gold)'},
+          {label:t(lang,'elitePlayers'),value:stats.elite,color:'var(--teal)'},
+          {label:t(lang,'followList'),value:stats.follow,color:'var(--indigo)'},
+        ].map(s=>(
+          <div key={s.label} className="card" style={{padding:'20px 16px'}}>
+            <div style={{fontFamily:"'Outfit',sans-serif",fontWeight:900,fontSize:32,color:s.color}}>{s.value}</div>
+            <div style={{fontSize:11,color:'var(--muted)',marginTop:4}}>{s.label}</div>
+          </div>
+        ))}
+      </div>
+
+      {/* List */}
+      <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:16}}>
+        <h2 style={{fontFamily:"'Outfit',sans-serif",fontWeight:600,fontSize:15}}>{t(lang,'recentActivity')}</h2>
+        <button className="btn-gold" style={{padding:'8px 16px',fontSize:13,display:'flex',
+          alignItems:'center',gap:6}} onClick={onNew}>
+          + {t(lang,'newReport')}
+        </button>
+      </div>
+
+      {reports.length===0
+        ? <div className="card" style={{padding:64,textAlign:'center'}}>
+            <div style={{fontSize:32,marginBottom:12}}>📋</div>
+            <h3 style={{fontFamily:"'Outfit',sans-serif",fontWeight:600,fontSize:18,marginBottom:8}}>
+              {t(lang,'noReports')}
+            </h3>
+            <p style={{fontSize:13,color:'var(--muted)',marginBottom:24}}>{t(lang,'noReportsDesc')}</p>
+            <button className="btn-gold" style={{padding:'10px 24px',fontSize:13}} onClick={onNew}>
+              {t(lang,'createFirst')}
+            </button>
+          </div>
+        : <div style={{display:'flex',flexDirection:'column',gap:8}}>
+            {reports.map((r,i)=>(
+              <div key={r.id} className="card" onClick={()=>onOpen(r.id)}
+                style={{padding:'14px 16px',cursor:'pointer',display:'flex',
+                  alignItems:'center',gap:14,transition:'border-color .2s'}}
+                onMouseEnter={e=>e.currentTarget.style.borderColor='rgba(245,166,35,.25)'}
+                onMouseLeave={e=>e.currentTarget.style.borderColor='var(--border)'}>
+                {/* Photo */}
+                <div style={{width:44,height:44,borderRadius:10,overflow:'hidden',
+                  background:'var(--surface3)',border:'1px solid var(--border)',flexShrink:0,
+                  display:'flex',alignItems:'center',justifyContent:'center'}}>
+                  {r.playerPhoto
+                    ? <img src={r.playerPhoto} style={{width:'100%',height:'100%',objectFit:'cover'}}/>
+                    : <span style={{fontFamily:"'Outfit',sans-serif",fontWeight:700,color:'var(--gold)',fontSize:16}}>
+                        {r.playerName?.charAt(0)?.toUpperCase()||'?'}
+                      </span>
+                  }
+                </div>
+                {/* Info */}
+                <div style={{flex:1,minWidth:0}}>
+                  <div style={{display:'flex',alignItems:'center',gap:8,marginBottom:3}}>
+                    <span style={{fontWeight:600,fontSize:14,
+                      overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>
+                      {r.playerName||'Sin nombre'}
+                    </span>
+                    <StatusBadge status={r.scoutingStatus} lang={lang} size="sm"/>
+                  </div>
+                  <div style={{fontSize:11,color:'var(--muted)',
+                    overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>
+                    {[r.position,r.currentClub,fmtDate(r.updatedAt,lang)].filter(Boolean).join(' · ')}
+                  </div>
+                </div>
+                <ScorePill score={r.overallScore||0} size="sm"/>
+                <button onClick={e=>{e.stopPropagation();if(confirm('¿Eliminar?'))onDelete(r.id)}}
+                  style={{background:'none',border:'none',cursor:'pointer',color:'var(--dim)',
+                    fontSize:14,padding:'4px 8px',borderRadius:6,transition:'color .2s'}}
+                  onMouseEnter={e=>e.currentTarget.style.color='#F87171'}
+                  onMouseLeave={e=>e.currentTarget.style.color='var(--dim)'}>
+                  ✕
+                </button>
+              </div>
+            ))}
+          </div>
+      }
+    </div>
+  );
+}
+
+// ─── STEP 1: PLAYER INFO ──────────────────────────────────────────
+function Step1_PlayerInfo({report,onChange,lang}){
+  const u = f => e => onChange({[f]:e.target.value});
+  const STATUSES=['ELITE_POTENTIAL','SIGN_NOW','FOLLOW','INITIAL_FILTER','PASS','PENDING'];
+  return (
+    <div style={{display:'flex',flexDirection:'column',gap:24}}>
+      {/* Photos */}
+      <div>
+        <div style={{fontSize:10,fontWeight:700,letterSpacing:'.15em',textTransform:'uppercase',
+          color:'var(--muted)',marginBottom:12}}>IMÁGENES</div>
+        <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:12}}>
+          <FormField label={t(lang,'playerPhoto')}>
+            <PhotoUpload value={report.playerPhoto}
+              onChange={v=>onChange({playerPhoto:v})} label={t(lang,'uploadPhoto')}/>
+          </FormField>
+          <FormField label={t(lang,'clubLogo')}>
+            <PhotoUpload value={report.clubLogo}
+              onChange={v=>onChange({clubLogo:v})} label={t(lang,'uploadLogo')}/>
+          </FormField>
+        </div>
+      </div>
+      {/* Data */}
+      <div>
+        <div style={{fontSize:10,fontWeight:700,letterSpacing:'.15em',textTransform:'uppercase',
+          color:'var(--muted)',marginBottom:12}}>DATOS DEL JUGADOR</div>
+        <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:12}}>
+          <FormField label={t(lang,'fullName')}>
+            <input className="input-field" value={report.playerName} onChange={u('playerName')} placeholder="Carlos García"/>
+          </FormField>
+          <FormField label={t(lang,'dateOfBirth')}>
+            <input type="date" className="input-field" value={report.dateOfBirth} onChange={u('dateOfBirth')}/>
+          </FormField>
+          <FormField label={t(lang,'nationality')}>
+            <input className="input-field" value={report.nationality} onChange={u('nationality')} placeholder="Argentino"/>
+          </FormField>
+          <FormField label={t(lang,'position')}>
+            <select className="input-field" value={report.position} onChange={u('position')}>
+              <option value="">Seleccionar...</option>
+              {POSITIONS.map(p=><option key={p} value={p}>{p}</option>)}
+            </select>
+          </FormField>
+          <FormField label={t(lang,'dominantFoot')}>
+            <select className="input-field" value={report.dominantFoot} onChange={u('dominantFoot')}>
+              {['Diestro','Zurdo','Ambidiestro'].map(f=><option key={f} value={f}>{f}</option>)}
+            </select>
+          </FormField>
+          <FormField label={t(lang,'currentClub')}>
+            <input className="input-field" value={report.currentClub} onChange={u('currentClub')} placeholder="Club Atlético XYZ"/>
+          </FormField>
+          <FormField label={t(lang,'height')}>
+            <input type="number" className="input-field" value={report.height} onChange={u('height')} placeholder="176"/>
+          </FormField>
+          <FormField label={t(lang,'weight')}>
+            <input type="number" className="input-field" value={report.weight} onChange={u('weight')} placeholder="72"/>
+          </FormField>
+          <FormField label={t(lang,'evaluationDate')}>
+            <input type="date" className="input-field" value={report.evaluationDate} onChange={u('evaluationDate')}/>
+          </FormField>
+        </div>
+      </div>
+      {/* Status + Score */}
+      <div>
+        <div style={{fontSize:10,fontWeight:700,letterSpacing:'.15em',textTransform:'uppercase',
+          color:'var(--muted)',marginBottom:12}}>EVALUACIÓN GLOBAL</div>
+        <div style={{display:'flex',flexWrap:'wrap',gap:8,marginBottom:16}}>
+          {STATUSES.map(s=>(
+            <button key={s} onClick={()=>onChange({scoutingStatus:s})}
+              style={{opacity:report.scoutingStatus===s?1:.4,background:'none',border:'none',cursor:'pointer',
+                transition:'opacity .2s',padding:0}}>
+              <StatusBadge status={s} lang={lang}/>
+            </button>
+          ))}
+        </div>
+        <FormField label={`${t(lang,'overallScore')} — ${report.overallScore.toFixed(1)}/10`}>
+          <div style={{display:'flex',alignItems:'center',gap:12,marginTop:8}}>
+            <input type="range" min={0} max={10} step={.1} value={report.overallScore}
+              onChange={e=>onChange({overallScore:parseFloat(e.target.value)})}
+              style={{flex:1}}/>
+            <span style={{fontFamily:"'Outfit',sans-serif",fontWeight:900,fontSize:22,
+              color:barColor(report.overallScore),width:40,textAlign:'right'}}>
+              {report.overallScore.toFixed(1)}
+            </span>
+          </div>
+        </FormField>
+      </div>
+    </div>
+  );
+}
+
+// ─── STEP 2: EVALUATION ───────────────────────────────────────────
+function CoreSlider({label,value,onChange}){
+  const c=barColor(value), pct=(value/10)*100;
+  return (
+    <div className="card" style={{padding:'14px 16px'}}>
+      <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:10}}>
+        <span style={{fontSize:11,fontWeight:600,textTransform:'uppercase',letterSpacing:'.1em',color:'var(--muted)'}}>
+          {label}
+        </span>
+        <span style={{fontFamily:"'Outfit',sans-serif",fontWeight:900,fontSize:20,color:c}}>
+          {value.toFixed(1)}
+        </span>
+      </div>
+      <div style={{height:6,borderRadius:3,background:'var(--surface)',marginBottom:8,position:'relative'}}>
+        <div style={{position:'absolute',left:0,top:0,height:'100%',borderRadius:3,
+          width:`${pct}%`,background:`linear-gradient(90deg,${c}60,${c})`,
+          boxShadow:`0 0 8px ${c}60`,transition:'width .3s'}}/>
+      </div>
+      <input type="range" min={0} max={10} step={.1} value={value}
+        onChange={e=>onChange(parseFloat(e.target.value))}/>
+    </div>
+  );
+}
+
+function AttrSlider({label,value,onChange}){
+  const c=barColor(value), pct=(value/10)*100;
+  return (
+    <div>
+      <div style={{display:'flex',justifyContent:'space-between',marginBottom:4}}>
+        <span style={{fontSize:11,color:'var(--muted)'}}>{label}</span>
+        <span style={{fontSize:11,fontWeight:700,color:c}}>{value.toFixed(1)}</span>
+      </div>
+      <div style={{height:4,borderRadius:2,background:'var(--surface3)',marginBottom:4,position:'relative'}}>
+        <div style={{position:'absolute',left:0,top:0,height:'100%',borderRadius:2,
+          width:`${pct}%`,background:`linear-gradient(90deg,${c}70,${c})`}}/>
+      </div>
+      <input type="range" min={0} max={10} step={.1} value={value}
+        onChange={e=>onChange(parseFloat(e.target.value))}/>
+    </div>
+  );
+}
+
+function Step2_Evaluation({report,onChange,lang}){
+  const uc = (key,val) => onChange({coreScores:{...report.coreScores,[key]:val}});
+  const ua = (key,val) => onChange({attributes:{...report.attributes,[key]:val}});
+  return (
+    <div style={{display:'flex',flexDirection:'column',gap:24}}>
+      {/* Core Matrix */}
+      <div>
+        <div style={{display:'flex',alignItems:'center',gap:8,marginBottom:16}}>
+          <div style={{width:3,height:18,borderRadius:2,background:'var(--gold)'}}/>
+          <span style={{fontFamily:"'Outfit',sans-serif",fontWeight:700,fontSize:14,
+            textTransform:'uppercase',letterSpacing:'.1em'}}>
+            {t(lang,'coreMatrix')}
+          </span>
+        </div>
+        <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:10}}>
+          {CORE_KEYS.map(k=>(
+            <CoreSlider key={k} label={t(lang,k)} value={report.coreScores[k]}
+              onChange={v=>uc(k,v)}/>
+          ))}
+        </div>
+      </div>
+      {/* Attribute groups */}
+      {Object.entries(ATTR_GROUPS).map(([gKey,keys])=>(
+        <div key={gKey}>
+          <div style={{display:'flex',alignItems:'center',gap:8,marginBottom:12}}>
+            <div style={{width:3,height:14,borderRadius:2,background:'rgba(245,166,35,.4)'}}/>
+            <span style={{fontSize:11,fontWeight:600,textTransform:'uppercase',
+              letterSpacing:'.1em',color:'var(--muted)'}}>
+              {t(lang,gKey)}
+            </span>
+          </div>
+          <div className="card" style={{padding:'16px',display:'flex',flexDirection:'column',gap:14}}>
+            {keys.map(k=>(
+              <AttrSlider key={k} label={t(lang,k)} value={report.attributes[k]}
+                onChange={v=>ua(k,v)}/>
+            ))}
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+// ─── STEP 3: TEXT SECTIONS ────────────────────────────────────────
+function Step3_Text({report,onChange,lang}){
+  return (
+    <div style={{display:'flex',flexDirection:'column',gap:16}}>
+      {TEXT_FIELDS.map(f=>(
+        <div key={f}>
+          <label style={{display:'block',fontSize:10,fontWeight:700,letterSpacing:'.15em',
+            textTransform:'uppercase',color:'var(--muted)',marginBottom:8}}>
+            {t(lang,f)}
+          </label>
+          <textarea rows={f==='executiveSummary'?4:3}
+            value={report[f]}
+            onChange={e=>onChange({[f]:e.target.value})}
+            placeholder={`${t(lang,f)}...`}
+            className="input-field"
+            style={{display:'block',lineHeight:1.7}}/>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+// ─── STEP 4: TEAMS ────────────────────────────────────────────────
+function Step4_Teams({report,onChange,lang}){
+  const add=()=>onChange({suggestedTeams:[...report.suggestedTeams,{club:'',category:'',observations:'',estimatedLevel:''}]});
+  const upd=(i,u)=>onChange({suggestedTeams:report.suggestedTeams.map((t,j)=>j===i?{...t,...u}:t)});
+  const rem=i=>onChange({suggestedTeams:report.suggestedTeams.filter((_,j)=>j!==i)});
+  return (
+    <div style={{display:'flex',flexDirection:'column',gap:12}}>
+      <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:8}}>
+        <div>
+          <h3 style={{fontFamily:"'Outfit',sans-serif",fontWeight:700,fontSize:15,marginBottom:4}}>
+            {t(lang,'suggestedTeams')}
+          </h3>
+          <p style={{fontSize:12,color:'var(--muted)'}}>
+            {lang==='es'?'Clubes españoles donde podría encajar':'Spanish clubs where player could fit'}
+          </p>
+        </div>
+        <button className="btn-gold" style={{padding:'8px 14px',fontSize:12}} onClick={add}>
+          + {t(lang,'addTeam')}
+        </button>
+      </div>
+      {report.suggestedTeams.length===0&&(
+        <div className="card" style={{padding:40,textAlign:'center'}}>
+          <div style={{fontSize:28,marginBottom:8}}>🏟️</div>
+          <p style={{fontSize:13,color:'var(--muted)'}}>
+            {lang==='es'?'No hay clubes aún. Añadí el primero.':'No clubs yet. Add the first one.'}
+          </p>
+        </div>
+      )}
+      {report.suggestedTeams.map((team,i)=>(
+        <div key={i} className="card" style={{padding:16,display:'flex',flexDirection:'column',gap:10}}>
+          <div style={{display:'flex',alignItems:'center',justifyContent:'space-between'}}>
+            <div style={{display:'flex',alignItems:'center',gap:8}}>
+              <div style={{width:24,height:24,borderRadius:6,background:'rgba(245,166,35,.1)',
+                display:'flex',alignItems:'center',justifyContent:'center',
+                fontSize:12,fontWeight:700,color:'var(--gold)'}}>
+                {i+1}
+              </div>
+              <span style={{fontSize:14,fontWeight:600}}>{team.club||'Club sin nombre'}</span>
+            </div>
+            <button onClick={()=>rem(i)} style={{background:'none',border:'none',cursor:'pointer',
+              color:'var(--dim)',fontSize:16,padding:'2px 8px',borderRadius:4,transition:'color .2s'}}
+              onMouseEnter={e=>e.currentTarget.style.color='#F87171'}
+              onMouseLeave={e=>e.currentTarget.style.color='var(--dim)'}>×</button>
+          </div>
+          <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:10}}>
+            <FormField label={t(lang,'club')}>
+              <input className="input-field" value={team.club} onChange={e=>upd(i,{club:e.target.value})} placeholder="CF Rayo Vallecano"/>
+            </FormField>
+            <FormField label={t(lang,'category')}>
+              <input className="input-field" value={team.category} onChange={e=>upd(i,{category:e.target.value})} placeholder="Segunda División B"/>
+            </FormField>
+            <FormField label={t(lang,'estimatedLevel')}>
+              <input className="input-field" value={team.estimatedLevel} onChange={e=>upd(i,{estimatedLevel:e.target.value})} placeholder="Alta probabilidad"/>
+            </FormField>
+            <FormField label={t(lang,'observations')}>
+              <input className="input-field" value={team.observations} onChange={e=>upd(i,{observations:e.target.value})} placeholder="Observaciones..."/>
+            </FormField>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+// ─── REPORT FORM WRAPPER ──────────────────────────────────────────
+function ReportForm({report,onUpdate,onPreview,onBack,lang}){
+  const [step,setStep]=useState(0);
+  const [saved,setSaved]=useState(false);
+  const STEPS=[
+    {key:'playerInfo',label:t(lang,'playerInfo')},
+    {key:'evaluation',label:t(lang,'evaluation')},
+    {key:'textSections',label:t(lang,'textSections')},
+    {key:'teamSuggestions',label:t(lang,'teamSuggestions')},
+  ];
+  function handleSave(){onUpdate(report);setSaved(true);setTimeout(()=>setSaved(false),2000)}
+  function handleNext(){handleSave();if(step<STEPS.length-1)setStep(s=>s+1)}
+  return (
+    <div style={{display:'flex',flexDirection:'column',height:'100%'}}>
+      {/* Steps */}
+      <div style={{padding:'20px 24px 16px',borderBottom:'1px solid var(--border)',flexShrink:0}}>
+        <div style={{display:'flex',alignItems:'center',gap:6}}>
+          {STEPS.map((s,i)=>(
+            <React.Fragment key={s.key}>
+              <button onClick={()=>setStep(i)} style={{display:'flex',alignItems:'center',gap:6,
+                background:'none',border:'none',cursor:'pointer'}}>
+                <div style={{width:22,height:22,borderRadius:'50%',display:'flex',
+                  alignItems:'center',justifyContent:'center',fontSize:10,fontWeight:700,
+                  transition:'all .2s',flexShrink:0,
+                  background:i===step?'var(--gold)':i<step?'rgba(245,166,35,.3)':'var(--surface3)',
+                  color:i===step?'#000':i<step?'var(--gold)':'var(--muted)'}}>
+                  {i<step?'✓':i+1}
+                </div>
+                <span style={{fontSize:11,fontWeight:500,
+                  color:i===step?'var(--text)':'var(--muted)',whiteSpace:'nowrap'}}>
+                  {s.label}
+                </span>
+              </button>
+              {i<STEPS.length-1&&(
+                <div style={{flex:1,height:1,background:i<step?'var(--gold)':'var(--border)',minWidth:16}}/>
+              )}
+            </React.Fragment>
+          ))}
+        </div>
+      </div>
+      {/* Content */}
+      <div style={{flex:1,overflowY:'auto',padding:'24px'}}>
+        {step===0&&<Step1_PlayerInfo report={report} onChange={onUpdate} lang={lang}/>}
+        {step===1&&<Step2_Evaluation report={report} onChange={onUpdate} lang={lang}/>}
+        {step===2&&<Step3_Text report={report} onChange={onUpdate} lang={lang}/>}
+        {step===3&&<Step4_Teams report={report} onChange={onUpdate} lang={lang}/>}
+      </div>
+      {/* Footer */}
+      <div style={{padding:'16px 24px',borderTop:'1px solid var(--border)',background:'var(--surface)',
+        display:'flex',alignItems:'center',justifyContent:'space-between',gap:8,flexShrink:0}}>
+        <button className="btn-ghost" style={{padding:'8px 14px',fontSize:13,display:'flex',alignItems:'center',gap:6}}
+          onClick={step===0?onBack:()=>setStep(s=>s-1)}>
+          ← {step===0?'Dashboard':t(lang,'back')}
+        </button>
+        <div style={{display:'flex',gap:8}}>
+          <button className="btn-ghost" style={{padding:'8px 14px',fontSize:13,
+            color:saved?'var(--teal)':'var(--muted)',
+            borderColor:saved?'rgba(20,184,166,.3)':'var(--border)'}}
+            onClick={handleSave}>
+            {saved?'✓ Guardado':'💾 '+t(lang,'save')}
+          </button>
+          <button className="btn-ghost" style={{padding:'8px 14px',fontSize:13,
+            color:'var(--gold)',borderColor:'rgba(245,166,35,.2)'}} onClick={onPreview}>
+            👁 {t(lang,'preview')}
+          </button>
+          {step<STEPS.length-1
+            ? <button className="btn-gold" style={{padding:'8px 16px',fontSize:13}}
+                onClick={handleNext}>
+                {t(lang,'next')} →
+              </button>
+            : <button className="btn-gold" style={{padding:'8px 16px',fontSize:13}}
+                onClick={()=>{handleSave();onPreview()}}>
+                👁 {t(lang,'preview')}
+              </button>
+          }
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ─── PDF SECTION HEADER ───────────────────────────────────────────
+function PDFSectionHeader({label}){
+  return (
+    <div style={{display:'flex',alignItems:'center',gap:12,marginBottom:14}}>
+      <div style={{flex:1,height:1,background:'linear-gradient(90deg,transparent,rgba(245,166,35,.4))'}}/>
+      <span style={{fontSize:8,fontWeight:700,letterSpacing:'.2em',textTransform:'uppercase',
+        color:'#F5A623',whiteSpace:'nowrap'}}>{label}</span>
+      <div style={{flex:1,height:1,background:'linear-gradient(90deg,rgba(245,166,35,.4),transparent)'}}/>
+    </div>
+  );
+}
+
+// ─── REPORT PREVIEW (PDF LAYOUT) ─────────────────────────────────
+function ReportPreview({report,lang,onEdit}){
+  const [exporting,setExporting]=useState(false);
+  const age=calcAge(report.dateOfBirth);
+
+  async function handleExport(){
+    setExporting(true);
+    try{
+      const el=document.getElementById('pdf-layout');
+      const canvas=await html2canvas(el,{
+        scale:2,useCORS:true,allowTaint:true,
+        backgroundColor:'#080810',logging:false,
+        width:el.scrollWidth,height:el.scrollHeight,
+        windowWidth:el.scrollWidth,windowHeight:el.scrollHeight,
+      });
+      const {jsPDF}=window.jspdf;
+      const pdf=new jsPDF({orientation:'portrait',unit:'px',
+        format:[canvas.width/2,canvas.height/2],compress:true});
+      pdf.addImage(canvas.toDataURL('image/jpeg',.95),'JPEG',0,0,canvas.width/2,canvas.height/2);
+      const name=(report.playerName||'report').replace(/\s+/g,'_');
+      pdf.save(`Siello_${name}_Report.pdf`);
+    }finally{setExporting(false)}
+  }
+
+  const coreData=CORE_KEYS.map(k=>({key:k,label:t(lang,k),value:report.coreScores[k]}));
+  const physKeys=['velocidad','potencia','resistencia','aceleracion','saltoCabeceo'];
+  const techKeys=['controlPase','tecnicaDominio','regate','finalizacion','centros'];
+  const mentKeys=['liderazgo','presionTrasPerdida','concienciaEspacial','lecturaJuego','personalidad'];
+  const tactKeys=['posicionamiento','equilibrioDefensivo','transiciones','presionAlta','coberturas'];
+
+  const pdCardStyle={padding:'12px 14px',borderRadius:8,background:'#0E0E18'};
+  const metricColor=['var(--gold)','var(--indigo)','var(--teal)','var(--gold)'];
+
+  return (
+    <div style={{display:'flex',flexDirection:'column',height:'100%'}}>
+      {/* Top bar */}
+      <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',
+        padding:'16px 24px',borderBottom:'1px solid var(--border)',background:'var(--surface)',flexShrink:0}}>
+        <div>
+          <h2 style={{fontFamily:"'Outfit',sans-serif",fontWeight:700,fontSize:15}}>
+            {t(lang,'preview')}
+          </h2>
+          <p style={{fontSize:11,color:'var(--muted)',marginTop:2}}>
+            {lang==='es'?'Vista previa premium':'Premium report preview'}
+          </p>
+        </div>
+        <div style={{display:'flex',gap:8}}>
+          <button className="btn-ghost" style={{padding:'9px 16px',fontSize:13}} onClick={onEdit}>
+            ✏ {t(lang,'edit')}
+          </button>
+          <button className="btn-gold" style={{padding:'9px 18px',fontSize:13,
+            display:'flex',alignItems:'center',gap:6,opacity:exporting?.7:1}}
+            onClick={handleExport} disabled={exporting}>
+            {exporting
+              ? <><span style={{animation:'spin 1s linear infinite',display:'inline-block'}}>⟳</span> Generando...</>
+              : <><span>⬇</span> {t(lang,'exportPDF')}</>
+            }
+          </button>
+        </div>
+      </div>
+
+      {/* Scrollable PDF layout */}
+      <div style={{flex:1,overflowY:'auto',padding:'24px',background:'var(--bg)'}}>
+        <div id="pdf-layout" style={{maxWidth:900,margin:'0 auto',
+          background:'#080810',borderRadius:16,overflow:'hidden',
+          border:'1px solid #1E1E28',fontFamily:"'Inter',sans-serif"}}>
+
+          {/* ══ HERO ══ */}
+          <div style={{position:'relative',overflow:'hidden'}}>
+            <div style={{position:'absolute',inset:0,
+              background:'linear-gradient(135deg,#0A0A12,#0D0D18 60%,#111120)'}}/>
+            <div style={{position:'absolute',top:0,left:0,right:0,height:2,
+              background:'linear-gradient(90deg,transparent,#F5A623,transparent)'}}/>
+            <div style={{position:'relative',display:'flex',alignItems:'stretch',minHeight:260}}>
+              {/* Left */}
+              <div style={{flex:1,padding:'28px 28px 24px'}}>
+                {/* Header row */}
+                <div style={{display:'flex',alignItems:'center',gap:10,marginBottom:16}}>
+                  <div style={{width:32,height:32,borderRadius:7,
+                    background:'linear-gradient(135deg,#F5A623,#D4880A)',
+                    display:'flex',alignItems:'center',justifyContent:'center',
+                    fontFamily:"'Outfit',sans-serif",fontWeight:900,fontSize:16,color:'#000'}}>S</div>
+                  {report.clubLogo&&(
+                    <img src={report.clubLogo} style={{width:28,height:28,objectFit:'contain',borderRadius:5}}/>
+                  )}
+                  <div style={{flex:1}}/>
+                  <div style={{padding:'3px 8px',borderRadius:4,
+                    background:'rgba(245,166,35,.08)',border:'1px solid rgba(245,166,35,.2)',
+                    fontSize:8,fontWeight:700,letterSpacing:'.15em',color:'#F5A623',textTransform:'uppercase'}}>
+                    SCOUTING REPORT · SIELLO ACADEMY
+                  </div>
+                </div>
+                <div style={{marginBottom:8}}>
+                  <StatusBadge status={report.scoutingStatus} lang={lang} size="sm"/>
+                </div>
+                <h1 style={{fontFamily:"'Outfit',sans-serif",fontSize:34,fontWeight:900,
+                  color:'#fff',lineHeight:1.1,marginBottom:12,letterSpacing:'-.02em'}}>
+                  {report.playerName||'Nombre del Jugador'}
+                </h1>
+                <div style={{display:'flex',flexWrap:'wrap',gap:6,marginBottom:16}}>
+                  {[
+                    age?`${age} años`:null,
+                    report.position,report.nationality,report.dominantFoot,
+                    report.height?`${report.height} cm`:null,
+                    report.weight?`${report.weight} kg`:null,
+                  ].filter(Boolean).map((tag,i)=>(
+                    <span key={i} style={{padding:'3px 9px',borderRadius:20,
+                      background:'rgba(255,255,255,.05)',border:'1px solid rgba(255,255,255,.08)',
+                      fontSize:11,color:'#D1D5DB'}}>{tag}</span>
+                  ))}
+                </div>
+                <div style={{display:'flex',gap:14,alignItems:'center'}}>
+                  {report.currentClub&&(
+                    <div style={{fontSize:11,color:'#6B7280'}}>
+                      <span style={{color:'#F5A623',marginRight:5}}>●</span>{report.currentClub}
+                    </div>
+                  )}
+                  {report.evaluationDate&&(
+                    <div style={{fontSize:11,color:'#6B7280'}}>
+                      📅 {fmtDate(report.evaluationDate,lang)}
+                    </div>
+                  )}
+                </div>
+              </div>
+              {/* Right: Photo */}
+              <div style={{width:210,flexShrink:0,position:'relative',
+                background:'linear-gradient(135deg,#0F0F1A,#1A1A28)'}}>
+                {report.playerPhoto
+                  ? <img src={report.playerPhoto} style={{width:'100%',height:'100%',
+                      objectFit:'cover',objectPosition:'top',position:'absolute',inset:0}}/>
+                  : <div style={{width:'100%',height:'100%',minHeight:260,
+                      display:'flex',alignItems:'center',justifyContent:'center'}}>
+                      <div style={{width:64,height:64,borderRadius:'50%',
+                        background:'rgba(245,166,35,.1)',border:'2px solid rgba(245,166,35,.2)',
+                        display:'flex',alignItems:'center',justifyContent:'center',
+                        fontFamily:"'Outfit',sans-serif",fontWeight:900,fontSize:28,color:'#F5A623'}}>
+                        {report.playerName?.charAt(0)?.toUpperCase()||'?'}
+                      </div>
+                    </div>
+                }
+                {/* Score overlay */}
+                <div style={{position:'absolute',bottom:12,right:12,
+                  background:'rgba(8,8,16,.9)',border:'1px solid rgba(245,166,35,.3)',
+                  borderRadius:10,padding:'6px 10px',
+                  display:'flex',flexDirection:'column',alignItems:'center'}}>
+                  <span style={{fontFamily:"'Outfit',sans-serif",fontWeight:900,fontSize:22,
+                    color:barColor(report.overallScore),lineHeight:1}}>
+                    {report.overallScore.toFixed(1)}
+                  </span>
+                  <span style={{fontSize:7,color:'#6B7280',letterSpacing:'.1em',marginTop:2}}>OVERALL</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* ══ CONTENT ══ */}
+          <div style={{padding:'28px 28px 36px'}}>
+
+            {/* Executive Summary */}
+            {report.executiveSummary&&(
+              <div style={{marginBottom:28}}>
+                <PDFSectionHeader label={t(lang,'executiveSummary')}/>
+                <div style={{padding:'14px 18px',borderRadius:10,background:'#0E0E18',
+                  border:'1px solid #1A1A28',borderLeft:'3px solid #F5A623'}}>
+                  <p style={{fontSize:12,color:'#D1D5DB',lineHeight:1.8,margin:0}}>
+                    {report.executiveSummary}
+                  </p>
+                </div>
+              </div>
+            )}
+
+            {/* Performance Dashboard */}
+            <div style={{marginBottom:28}}>
+              <PDFSectionHeader label={t(lang,'performanceDashboard')}/>
+              <div style={{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:10}}>
+                {[
+                  {label:'SIELLO INDEX',value:report.overallScore.toFixed(1),sub:'Score general',c:barColor(report.overallScore)},
+                  {label:t(lang,'position').toUpperCase(),value:report.position||'—',sub:report.dominantFoot,c:'#818CF8'},
+                  {label:'CLUB',value:report.currentClub||'—',sub:report.nationality,c:'#14B8A6'},
+                  {label:'STATUS',value:t(lang,report.scoutingStatus),sub:report.evaluationDate,c:'#F5A623'},
+                ].map(card=>(
+                  <div key={card.label} style={{padding:'12px 14px',borderRadius:8,
+                    background:'#0E0E18',border:`1px solid ${card.c}20`}}>
+                    <div style={{fontSize:7,fontWeight:700,letterSpacing:'.15em',
+                      color:card.c,marginBottom:5,textTransform:'uppercase'}}>{card.label}</div>
+                    <div style={{fontFamily:"'Outfit',sans-serif",fontWeight:800,fontSize:16,
+                      color:card.c,lineHeight:1.1,wordBreak:'break-word'}}>{card.value}</div>
+                    {card.sub&&<div style={{fontSize:9,color:'#4B5563',marginTop:3}}>{card.sub}</div>}
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Core Matrix */}
+            <div style={{marginBottom:28}}>
+              <PDFSectionHeader label={t(lang,'coreMatrix')}/>
+              <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:20,
+                background:'#0C0C16',border:'1px solid #1A1A26',borderRadius:12,padding:'20px'}}>
+                {/* Radar */}
+                <div style={{display:'flex',justifyContent:'center'}}>
+                  <RadarChart scores={report.coreScores} lang={lang} size={200}/>
+                </div>
+                {/* Horizontal bars */}
+                <div style={{display:'flex',flexDirection:'column',gap:10,justifyContent:'center'}}>
+                  {coreData.map(d=>(
+                    <HBar key={d.key} label={d.label} value={d.value}/>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {/* Core VS Snapshot */}
+            <div style={{marginBottom:28}}>
+              <PDFSectionHeader label={t(lang,'coreVsSnapshot')}/>
+              <div style={{background:'#0C0C16',border:'1px solid #1A1A26',borderRadius:12,
+                padding:'18px 20px',display:'grid',gridTemplateColumns:'1fr 1fr',gap:'8px 28px'}}>
+                {coreData.map(d=>(
+                  <HBar key={d.key} label={d.label} value={d.value}/>
+                ))}
+              </div>
+            </div>
+
+            {/* Quick Assessment */}
+            {(report.playerContext||report.technicalObservations||report.tacticalObservations||report.physicalObservations)&&(
+              <div style={{marginBottom:28}}>
+                <PDFSectionHeader label={t(lang,'quickAssessment')}/>
+                <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:10}}>
+                  {[
+                    {f:'playerContext'},{f:'technicalObservations'},
+                    {f:'tacticalObservations'},{f:'physicalObservations'},{f:'mentalityBehavior'},
+                  ].filter(({f})=>report[f]).map(({f})=>(
+                    <div key={f} style={{padding:'14px 16px',borderRadius:10,
+                      background:'#13131A',border:'1px solid #1E1E28'}}>
+                      <div style={{fontSize:8,fontWeight:700,letterSpacing:'.15em',textTransform:'uppercase',
+                        color:'#F5A623',marginBottom:8}}>{t(lang,f)}</div>
+                      <p style={{fontSize:11,color:'#D1D5DB',lineHeight:1.7,margin:0}}>{report[f]}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Role Fit + Conclusion */}
+            {(report.roleFit||report.finalConclusion)&&(
+              <div style={{marginBottom:28}}>
+                <PDFSectionHeader label={`${t(lang,'roleFit')} & ${t(lang,'finalConclusion')}`}/>
+                <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:10}}>
+                  {[{f:'roleFit'},{f:'finalConclusion'}].filter(({f})=>report[f]).map(({f})=>(
+                    <div key={f} style={{padding:'14px 16px',borderRadius:10,
+                      background:'#13131A',border:'1px solid #1E1E28'}}>
+                      <div style={{fontSize:8,fontWeight:700,letterSpacing:'.15em',textTransform:'uppercase',
+                        color:'#F5A623',marginBottom:8}}>{t(lang,f)}</div>
+                      <p style={{fontSize:11,color:'#D1D5DB',lineHeight:1.7,margin:0}}>{report[f]}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Final Recommendation */}
+            {report.finalRecommendation&&(
+              <div style={{marginBottom:28}}>
+                <PDFSectionHeader label={t(lang,'finalRecommendation')}/>
+                <div style={{padding:'16px 20px',borderRadius:12,
+                  background:'linear-gradient(135deg,rgba(245,166,35,.06),rgba(245,166,35,.02))',
+                  border:'1px solid rgba(245,166,35,.2)'}}>
+                  <p style={{fontSize:12,color:'#E5E7EB',lineHeight:1.8,margin:0}}>
+                    {report.finalRecommendation}
+                  </p>
+                </div>
+              </div>
+            )}
+
+            {/* Detailed Attributes */}
+            <div style={{marginBottom:28}}>
+              <PDFSectionHeader label={lang==='es'?'ATRIBUTOS DETALLADOS':'DETAILED ATTRIBUTES'}/>
+              <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:14}}>
+                {[
+                  {label:lang==='es'?'FÍSICO':'PHYSICAL',keys:physKeys},
+                  {label:lang==='es'?'TÉCNICO':'TECHNICAL',keys:techKeys},
+                  {label:lang==='es'?'MENTAL':'MENTAL',keys:mentKeys},
+                  {label:lang==='es'?'TÁCTICO':'TACTICAL',keys:tactKeys},
+                ].map(g=>(
+                  <div key={g.label} style={{padding:'14px 16px',borderRadius:10,
+                    background:'#0C0C16',border:'1px solid #1A1A26'}}>
+                    <div style={{fontSize:8,fontWeight:700,letterSpacing:'.15em',
+                      color:'#F5A623',marginBottom:10,textTransform:'uppercase'}}>{g.label}</div>
+                    <div style={{display:'flex',flexDirection:'column',gap:7}}>
+                      {g.keys.map(k=>(
+                        <HBar key={k} label={t(lang,k)} value={report.attributes[k]||5}/>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Teams */}
+            {report.suggestedTeams.length>0&&(
+              <div style={{marginBottom:28}}>
+                <PDFSectionHeader label={t(lang,'suggestedTeams')}/>
+                <div style={{borderRadius:12,overflow:'hidden',border:'1px solid #1A1A26'}}>
+                  <div style={{display:'grid',gridTemplateColumns:'2fr 1.5fr 1fr 2fr',
+                    padding:'9px 16px',background:'#0E0E18',borderBottom:'1px solid #1A1A26'}}>
+                    {[t(lang,'club'),t(lang,'category'),t(lang,'estimatedLevel'),t(lang,'observations')].map(h=>(
+                      <div key={h} style={{fontSize:7,fontWeight:700,letterSpacing:'.15em',
+                        color:'#F5A623',textTransform:'uppercase'}}>{h}</div>
+                    ))}
+                  </div>
+                  {report.suggestedTeams.map((team,i)=>(
+                    <div key={i} style={{display:'grid',gridTemplateColumns:'2fr 1.5fr 1fr 2fr',
+                      padding:'9px 16px',background:i%2===0?'#0A0A14':'#0C0C18',
+                      borderBottom:i<report.suggestedTeams.length-1?'1px solid #151520':'none'}}>
+                      <div style={{fontSize:11,color:'#E5E7EB',fontWeight:500}}>{team.club||'—'}</div>
+                      <div style={{fontSize:11,color:'#9CA3AF'}}>{team.category||'—'}</div>
+                      <div style={{fontSize:11,color:'#14B8A6',fontWeight:600}}>{team.estimatedLevel||'—'}</div>
+                      <div style={{fontSize:10,color:'#6B7280'}}>{team.observations||'—'}</div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Footer */}
+            <div style={{marginTop:32,paddingTop:18,borderTop:'1px solid #1A1A26',
+              display:'flex',alignItems:'center',justifyContent:'space-between'}}>
+              <div style={{display:'flex',alignItems:'center',gap:10}}>
+                <div style={{width:26,height:26,borderRadius:6,
+                  background:'linear-gradient(135deg,#F5A623,#D4880A)',
+                  display:'flex',alignItems:'center',justifyContent:'center',
+                  fontFamily:"'Outfit',sans-serif",fontWeight:900,fontSize:14,color:'#000'}}>S</div>
+                <div>
+                  <div style={{fontFamily:"'Outfit',sans-serif",fontWeight:700,fontSize:10,
+                    color:'#F5A623'}}>SIELLO ACADEMY</div>
+                  <div style={{fontSize:8,color:'#4B5563'}}>Siello Football Group</div>
+                </div>
+              </div>
+              <div style={{fontSize:8,color:'#374151',textAlign:'right'}}>
+                <div>Confidential — Scouting Report</div>
+                <div>{new Date().getFullYear()} · siellofootball.com</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ─── ROOT APP ─────────────────────────────────────────────────────
+function App(){
+  const [lang,setLang]=useState('es');
+  const [view,setView]=useState('dashboard'); // dashboard | form | preview
+  const [reports,setReports]=useState(()=>loadReports());
+  const [currentId,setCurrentId]=useState(null);
+
+  const current = reports.find(r=>r.id===currentId)||null;
+
+  function handleUpdate(updated){
+    const next=reports.map(r=>r.id===updated.id?{...updated,updatedAt:new Date().toISOString()}:r);
+    setReports(next);
+    saveReports(next);
+  }
+
+  function handleNew(){
+    const r=newReport();
+    const next=[r,...reports];
+    setReports(next);
+    saveReports(next);
+    setCurrentId(r.id);
+    setView('form');
+  }
+
+  function handleOpen(id){
+    setCurrentId(id);
+    setView('form');
+  }
+
+  function handleDelete(id){
+    const next=reports.filter(r=>r.id!==id);
+    setReports(next);
+    saveReports(next);
+    if(currentId===id){setCurrentId(null);setView('dashboard')}
+  }
+
+  function handleSidebarNav(v){
+    if(v==='new') handleNew();
+    else setView('dashboard');
+  }
+
+  return (
+    <div style={{display:'flex',height:'100vh',overflow:'hidden'}}>
+      <Sidebar view={view} setView={handleSidebarNav} lang={lang} setLang={setLang}/>
+      <main style={{flex:1,marginLeft:60,height:'100%',overflow:'hidden',
+        display:'flex',flexDirection:'column'}}>
+        {view==='dashboard'&&(
+          <div style={{flex:1,overflowY:'auto'}}>
+            <Dashboard reports={reports} lang={lang}
+              onNew={handleNew} onOpen={handleOpen} onDelete={handleDelete}/>
+          </div>
+        )}
+        {(view==='form'||view==='preview')&&current&&(
+          <>
+            {/* Top bar */}
+            <div style={{display:'flex',alignItems:'center',gap:12,padding:'12px 20px',
+              borderBottom:'1px solid var(--border)',background:'var(--surface)',flexShrink:0}}>
+              <button onClick={()=>setView('dashboard')} className="btn-ghost"
+                style={{padding:'6px 12px',fontSize:12,display:'flex',alignItems:'center',gap:6}}>
+                ← Dashboard
+              </button>
+              <div style={{width:1,height:20,background:'var(--border)'}}/>
+              <div style={{flex:1}}>
+                <div style={{fontFamily:"'Outfit',sans-serif",fontWeight:700,fontSize:14}}>
+                  {current.playerName||'Nuevo Reporte'}
+                </div>
+                {current.position&&<div style={{fontSize:11,color:'var(--muted)'}}>{current.position}</div>}
+              </div>
+              {/* Mode toggle */}
+              <div style={{display:'flex',gap:2,padding:3,borderRadius:8,
+                background:'var(--surface2)',border:'1px solid var(--border)'}}>
+                {[{k:'form',icon:'✏',l:'Editar'},{k:'preview',icon:'👁',l:'Preview'}].map(m=>(
+                  <button key={m.k} onClick={()=>setView(m.k)}
+                    style={{display:'flex',alignItems:'center',gap:5,padding:'6px 10px',
+                      borderRadius:6,border:'none',cursor:'pointer',fontSize:12,fontWeight:500,
+                      transition:'all .2s',
+                      background:view===m.k?'var(--surface3)':'transparent',
+                      color:view===m.k?'var(--text)':'var(--muted)'}}>
+                    {m.icon} {m.l}
+                  </button>
+                ))}
+              </div>
+            </div>
+            <div style={{flex:1,overflow:'hidden'}}>
+              {view==='form'
+                ? <ReportForm report={current} onUpdate={handleUpdate}
+                    onPreview={()=>setView('preview')} onBack={()=>setView('dashboard')} lang={lang}/>
+                : <ReportPreview report={current} lang={lang} onEdit={()=>setView('form')}/>
+              }
+            </div>
+          </>
+        )}
+      </main>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+</script>
+</body>
+</html>

@@ -340,9 +340,10 @@ function Dashboard({reports,lang,onNew,onOpen,onDelete}){
           {label:L.elite,value:stats.elite,color:'var(--teal)'},
           {label:L.follow,value:stats.follow,color:'var(--indigo)'},
         ].map(s=>(
-          <div key={s.label} className="card" style={{padding:'16px'}}>
-            <div style={{fontSize:28,fontWeight:900,color:s.color}}>{s.value}</div>
-            <div style={{fontSize:11,color:'var(--muted)',marginTop:3}}>{s.label}</div>
+          <div key={s.label} className="card" style={{padding:'16px 18px',
+            borderLeft:`3px solid ${s.color}`}}>
+            <div style={{fontSize:32,fontWeight:900,color:s.color,lineHeight:1}}>{s.value}</div>
+            <div style={{fontSize:11,color:'var(--muted)',marginTop:5,fontWeight:600}}>{s.label}</div>
           </div>
         ))}
       </div>
@@ -396,10 +397,11 @@ function Dashboard({reports,lang,onNew,onOpen,onDelete}){
                       fmtDateNum(r.updatedAt?.split('T')[0])].filter(Boolean).join(' · ')}
                   </div>
                 </div>
-                <div style={{width:34,height:34,borderRadius:'50%',flexShrink:0,
+                <div style={{width:38,height:38,borderRadius:'50%',flexShrink:0,
                   display:'flex',alignItems:'center',justifyContent:'center',
                   fontWeight:900,fontSize:12,
                   color:barColor(r.overallScore||0),
+                  background:`${barColor(r.overallScore||0)}14`,
                   border:`2px solid ${barColor(r.overallScore||0)}`}}>
                   {(r.overallScore||0).toFixed(1)}
                 </div>
@@ -751,11 +753,13 @@ function ReportForm({report,onUpdate,onPreview,onBack,lang}){
 // ─── PDF DIVIDER ──────────────────────────────────────────────────
 function PdfDiv({label}){
   return(
-    <div style={{display:'flex',alignItems:'center',gap:10,marginBottom:13}}>
-      <div style={{width:22,height:2,background:'#F5A623',borderRadius:1,flexShrink:0}}/>
-      <span style={{fontSize:8,fontWeight:900,letterSpacing:'.25em',textTransform:'uppercase',
-        color:'#F4F4F5',whiteSpace:'nowrap',fontFamily:'Helvetica,Arial,sans-serif'}}>{label}</span>
-      <div style={{flex:1,height:1,background:'#2A2A32'}}/>
+    <div style={{display:'flex',alignItems:'center',gap:10,marginBottom:15}}>
+      <div style={{width:3,height:14,borderRadius:2,flexShrink:0,
+        background:'linear-gradient(180deg,#F5A623 0%,#D4880A 100%)'}}/>
+      <span style={{fontSize:7.5,fontWeight:900,letterSpacing:'.28em',textTransform:'uppercase',
+        color:'#F5A623',whiteSpace:'nowrap',fontFamily:'Helvetica,Arial,sans-serif'}}>{label}</span>
+      <div style={{flex:1,height:1,
+        background:'linear-gradient(90deg,rgba(245,166,35,.3) 0%,rgba(42,42,50,0) 100%)'}}/>
     </div>
   );
 }
@@ -792,8 +796,40 @@ function ReportPreview({report,lang,onEdit}){
         windowWidth:window.innerWidth,
         windowHeight:window.innerHeight,
         imageTimeout:20000,
-        onclone:(_doc,clonedEl)=>{
-          // Ensure images inside the clone are also loaded before capture
+        onclone:(clonedDoc,clonedEl)=>{
+          // FIX A: objectFit:cover — html2canvas doesn't support it; image renders
+          // uncropped/stretched. Replace cover <img> with a background-image div.
+          Array.from(clonedEl.querySelectorAll('img')).forEach(img=>{
+            if(img.style.objectFit==='cover'){
+              const div=clonedDoc.createElement('div');
+              div.style.position=img.style.position||'absolute';
+              div.style.top='0'; div.style.left='0';
+              div.style.right='0'; div.style.bottom='0';
+              div.style.width=img.style.width||'100%';
+              div.style.height=img.style.height||'100%';
+              div.style.backgroundImage=`url("${img.src}")`;
+              div.style.backgroundSize='cover';
+              div.style.backgroundPosition=img.style.objectPosition||'top center';
+              div.style.backgroundRepeat='no-repeat';
+              img.parentNode.replaceChild(div,img);
+            }
+          });
+          // FIX B: CSS filter on <img> — html2canvas support inconsistent.
+          // Pre-draw filtered image onto a <canvas> in the clone.
+          Array.from(clonedEl.querySelectorAll('img')).forEach(img=>{
+            if(!img.style.filter) return;
+            const c=clonedDoc.createElement('canvas');
+            const iw=img.naturalWidth||200, ih=img.naturalHeight||60;
+            c.width=iw; c.height=ih;
+            c.style.height=img.style.height;
+            c.style.objectFit=img.style.objectFit||'contain';
+            c.style.verticalAlign='middle';
+            const ctx=c.getContext('2d');
+            ctx.filter=img.style.filter;
+            ctx.drawImage(img,0,0,iw,ih);
+            img.parentNode.replaceChild(c,img);
+          });
+          // Wait for any remaining <img> in the clone to finish loading
           return Promise.all(Array.from(clonedEl.querySelectorAll('img')).map(img=>
             img.complete && img.naturalWidth>0
               ? Promise.resolve()
@@ -866,7 +902,8 @@ function ReportPreview({report,lang,onEdit}){
           {/* ═══ HERO (dark) ═══ */}
           <div style={{position:'relative',overflow:'hidden',background:'#0A0A0E'}}>
             {/* Gold stripe top */}
-            <div style={{position:'absolute',top:0,left:0,right:0,height:3,background:'#F5A623'}}/>
+            <div style={{position:'absolute',top:0,left:0,right:0,height:4,
+              background:'linear-gradient(90deg,#F5A623 0%,#FFD77A 50%,#D4880A 100%)'}}/>
             <div style={{position:'relative',display:'flex',minHeight:240}}>
               {/* Left */}
               <div style={{flex:1,padding:'26px 28px 22px'}}>
@@ -912,19 +949,35 @@ function ReportPreview({report,lang,onEdit}){
                 </div>
                 {/* Date */}
                 {report.evaluationDate&&(
-                  <div style={{fontSize:11,color:'#4A5060',fontFamily:'Helvetica,Arial,sans-serif'}}>
+                  <div style={{fontSize:11,color:'#4A5060',fontFamily:'Helvetica,Arial,sans-serif',marginBottom:14}}>
                     {lang==='es'?'Evaluación: ':'Evaluation: '}
                     <span style={{color:'#6A7080'}}>{fmtDateNum(report.evaluationDate)}</span>
                   </div>
                 )}
+                {/* Score + Status row */}
+                <div style={{display:'flex',alignItems:'center',gap:12,marginTop:'auto',paddingTop:4}}>
+                  <div style={{display:'flex',alignItems:'baseline',gap:4}}>
+                    <span style={{fontFamily:'Helvetica,Arial,sans-serif',fontSize:36,fontWeight:900,
+                      color:barColor(report.overallScore||0),lineHeight:1}}>
+                      {(report.overallScore||0).toFixed(1)}
+                    </span>
+                    <span style={{fontFamily:'Helvetica,Arial,sans-serif',fontSize:11,
+                      color:'rgba(255,255,255,0.3)',fontWeight:700}}>/10</span>
+                  </div>
+                  <StatusBadge status={report.scoutingStatus} lang={lang}/>
+                </div>
               </div>
               {/* Photo */}
               <div style={{width:190,flexShrink:0,position:'relative',
                 background:'#131320'}}>
                 {report.playerPhoto
-                  ? <img src={report.playerPhoto}
-                      style={{position:'absolute',inset:0,width:'100%',height:'100%',
-                        objectFit:'cover',objectPosition:'top'}}/>
+                  ? <>
+                      <img src={report.playerPhoto}
+                        style={{position:'absolute',inset:0,width:'100%',height:'100%',
+                          objectFit:'cover',objectPosition:'top'}}/>
+                      <div style={{position:'absolute',inset:0,pointerEvents:'none',
+                        background:'linear-gradient(180deg,rgba(10,10,14,0.15) 0%,rgba(10,10,14,0.55) 100%)'}}/>
+                    </>
                   : <div style={{width:'100%',height:'100%',minHeight:240,
                       display:'flex',alignItems:'center',justifyContent:'center'}}>
                       <div style={{width:56,height:56,borderRadius:'50%',
@@ -962,7 +1015,8 @@ function ReportPreview({report,lang,onEdit}){
                     c:STATUS_CFG[report.scoutingStatus]?.color||P.gold},
                 ].map(card=>(
                   <div key={card.label} style={{padding:'11px 13px',borderRadius:7,
-                    background:P.surface,border:`1px solid ${P.border}`}}>
+                    background:P.surface,border:`1px solid ${P.border}`,
+                    borderTop:`2px solid ${card.c}`}}>
                     <div style={{fontSize:7,fontWeight:700,letterSpacing:'.18em',
                       color:card.c,marginBottom:5,textTransform:'uppercase',
                       fontFamily:'Helvetica,Arial,sans-serif'}}>{card.label}</div>
@@ -1019,8 +1073,8 @@ function ReportPreview({report,lang,onEdit}){
                               {label.replace('\n',' ')}
                             </span>
                             <div style={{flex:1,height:4,borderRadius:2,background:P.line}}>
-                              <div style={{height:'100%',borderRadius:2,
-                                width:`${pct}%`,background:P.gold}}/>
+                              <div style={{height:'100%',borderRadius:2,width:`${pct}%`,
+                                background:'linear-gradient(90deg,#D4880A,#F5A623)'}}/>
                             </div>
                             <span style={{fontSize:9,fontWeight:900,width:22,flexShrink:0,
                               textAlign:'right',color:P.text,

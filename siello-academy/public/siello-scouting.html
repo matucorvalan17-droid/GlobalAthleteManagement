@@ -145,7 +145,7 @@ const ATTR_GROUPS=[
       {key:'aceleracion',label:'ACELERACIÓN'},
       {key:'equilibrioAD',label:'EQUILIBRIO\nATAQUE-DEFENSA'},
     ]},
-  {id:'tecnicos',color:'#111111',
+  {id:'tecnicos',color:'#14B8A6',
     label:{es:'VALORES TÉCNICOS',en:'TECHNICAL VALUES'},
     attrs:[
       {key:'controlPase',label:'CONTROL Y PASE'},
@@ -164,7 +164,7 @@ const ATTR_GROUPS=[
       {key:'respuestaPresion',label:'RESPUESTA\nBAJO PRESIÓN'},
       {key:'autocontrol',label:'AUTOCONTROL'},
     ]},
-  {id:'tacticos',color:'#111111',
+  {id:'tacticos',color:'#14B8A6',
     label:{es:'VALORES TÁCTICOS',en:'TACTICAL VALUES'},
     attrs:[
       {key:'concienciaEsp',label:'CONCIENCIA\nESPACIAL'},
@@ -234,18 +234,18 @@ function HexChart({attrs,values,color,size=200}){
       {grid.map(lv=>(
         <polygon key={lv}
           points={attrs.map((_,i)=>{const p=pt(i,lv/10);return`${p.x.toFixed(1)},${p.y.toFixed(1)}`}).join(' ')}
-          fill="none" stroke="#DDDDDD" strokeWidth={lv===10?1.5:1}/>
+          fill="none" stroke="rgba(255,255,255,0.14)" strokeWidth={lv===10?1.5:1}/>
       ))}
       {attrs.map((_,i)=>{
         const p=pt(i);
         return<line key={i} x1={cx.toFixed(1)} y1={cy.toFixed(1)}
-          x2={p.x.toFixed(1)} y2={p.y.toFixed(1)} stroke="#DDDDDD" strokeWidth="1"/>;
+          x2={p.x.toFixed(1)} y2={p.y.toFixed(1)} stroke="rgba(255,255,255,0.1)" strokeWidth="1"/>;
       })}
-      <polygon points={scoreStr} fill={color==='#111111'?'rgba(0,0,0,0.08)':'rgba(245,166,35,0.2)'}
+      <polygon points={scoreStr} fill={color==='#F5A623'?'rgba(245,166,35,0.18)':'rgba(20,184,166,0.18)'}
         stroke={color} strokeWidth="2"/>
       {scorePoly.map((p,i)=>(
         <circle key={i} cx={p.x.toFixed(1)} cy={p.y.toFixed(1)} r="4"
-          fill={color} stroke="#FFFFFF" strokeWidth="1.5"/>
+          fill={color} stroke="rgba(255,255,255,0.3)" strokeWidth="1.5"/>
       ))}
       {attrs.map(({key,label},i)=>{
         const{x,y,a}=pt(i,1);
@@ -258,7 +258,7 @@ function HexChart({attrs,values,color,size=200}){
         return(
           <text key={i} textAnchor={anchor}
             fontFamily="Helvetica,Arial,sans-serif" fontSize="7.5" fontWeight="700"
-            fill="#444444" letterSpacing=".03em">
+            fill="rgba(255,255,255,0.65)" letterSpacing=".03em">
             {parts.map((part,j)=>(
               <tspan key={j} x={lx.toFixed(1)} y={(ly+yOff+j*lh).toFixed(1)}>{part}</tspan>
             ))}
@@ -754,8 +754,8 @@ function PdfDiv({label}){
     <div style={{display:'flex',alignItems:'center',gap:10,marginBottom:13}}>
       <div style={{width:22,height:2,background:'#F5A623',borderRadius:1,flexShrink:0}}/>
       <span style={{fontSize:8,fontWeight:900,letterSpacing:'.25em',textTransform:'uppercase',
-        color:'#111111',whiteSpace:'nowrap',fontFamily:'Helvetica,Arial,sans-serif'}}>{label}</span>
-      <div style={{flex:1,height:1,background:'#E0E0E0'}}/>
+        color:'#F4F4F5',whiteSpace:'nowrap',fontFamily:'Helvetica,Arial,sans-serif'}}>{label}</span>
+      <div style={{flex:1,height:1,background:'#2A2A32'}}/>
     </div>
   );
 }
@@ -775,7 +775,7 @@ function ReportPreview({report,lang,onEdit}){
         scale:3,
         useCORS:true,
         allowTaint:true,
-        backgroundColor:'#FFFFFF',
+        backgroundColor:'#080808',
         logging:false,
         width:el.scrollWidth,
         height:el.scrollHeight,
@@ -795,16 +795,16 @@ function ReportPreview({report,lang,onEdit}){
 
   // ── PDF color tokens ──
   const P={
-    bg:'#FFFFFF',        // page background
-    surface:'#F7F6F3',   // card background
-    border:'#E8E5DF',    // borders
-    text:'#0A0A0A',      // main text
-    muted:'#555555',     // secondary text
-    faint:'#888888',     // faint text
-    gold:'#F5A623',      // gold accent
-    goldBg:'#FFF8EC',    // gold tint bg
-    black:'#111111',     // near-black
-    line:'#E0DDD8',      // divider lines
+    bg:'#080808',
+    surface:'#111114',
+    border:'#2A2A32',
+    text:'#F0F0F2',
+    muted:'#71717A',
+    faint:'#52525B',
+    gold:'#F5A623',
+    goldBg:'rgba(245,166,35,.08)',
+    black:'#F0F0F2',
+    line:'#2A2A32',
   };
 
   return(
@@ -839,7 +839,7 @@ function ReportPreview({report,lang,onEdit}){
       </div>
 
       {/* PDF scroll area */}
-      <div style={{flex:1,overflowY:'auto',padding:'24px',background:'#ECEAE5'}}>
+      <div style={{flex:1,overflowY:'auto',padding:'24px',background:'#030303'}}>
         <div id="pdf-layout" style={{
           maxWidth:860,margin:'0 auto',background:P.bg,
           borderRadius:0,overflow:'hidden',
@@ -854,10 +854,9 @@ function ReportPreview({report,lang,onEdit}){
               {/* Left */}
               <div style={{flex:1,padding:'26px 28px 22px'}}>
                 {/* Logo row */}
-                <div style={{display:'flex',alignItems:'center',gap:14,marginBottom:16}}>
+                <div style={{display:'flex',alignItems:'center',gap:8,marginBottom:16}}>
                   <img src={SIELLO_URL} style={{height:30,objectFit:'contain'}}/>
-                  <div style={{width:1,height:20,background:'rgba(255,255,255,0.12)'}}/>
-                  <img src={NIKE_URL} style={{height:20,objectFit:'contain'}}/>
+                  <img src={NIKE_URL} style={{height:26,objectFit:'contain',filter:'brightness(0) invert(1)'}}/>
                   {report.clubLogo&&(
                     <>
                       <div style={{width:1,height:20,background:'rgba(255,255,255,0.12)'}}/>
@@ -924,7 +923,7 @@ function ReportPreview({report,lang,onEdit}){
             </div>
           </div>
 
-          {/* ═══ BODY (white) ═══ */}
+          {/* ═══ BODY (dark) ═══ */}
           <div style={{padding:'26px 28px 36px',background:P.bg}}>
 
             {/* Performance Dashboard */}
@@ -937,10 +936,10 @@ function ReportPreview({report,lang,onEdit}){
                     c:P.gold},
                   {label:lang==='es'?'POSICIÓN':'POSITION',
                     value:report.position||'—',
-                    c:P.black},
+                    c:P.muted},
                   {label:lang==='es'?'NACIONALIDAD':'NATIONALITY',
                     value:(flag?flag+' ':'')+( report.nationality||'—'),
-                    c:P.black},
+                    c:P.muted},
                   {label:'STATUS',
                     value:STATUS_L[lang][report.scoutingStatus]||report.scoutingStatus,
                     c:STATUS_CFG[report.scoutingStatus]?.color||P.gold},
@@ -1069,10 +1068,9 @@ function ReportPreview({report,lang,onEdit}){
             <div style={{marginTop:28,paddingTop:16,
               borderTop:`1px solid ${P.border}`,
               display:'flex',alignItems:'center',justifyContent:'space-between'}}>
-              <div style={{display:'flex',alignItems:'center',gap:12}}>
+              <div style={{display:'flex',alignItems:'center',gap:8}}>
                 <img src={SIELLO_URL} style={{height:22,objectFit:'contain'}}/>
-                <div style={{width:1,height:16,background:P.border}}/>
-                <img src={NIKE_URL} style={{height:14,objectFit:'contain'}}/>
+                <img src={NIKE_URL} style={{height:18,objectFit:'contain',filter:'brightness(0) invert(1)'}}/>
               </div>
               <div style={{fontSize:8,color:P.line,textAlign:'right',
                 fontFamily:'Helvetica,Arial,sans-serif',letterSpacing:'.06em'}}>

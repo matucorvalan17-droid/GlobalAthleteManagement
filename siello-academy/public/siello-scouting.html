@@ -259,40 +259,40 @@ const ATTR_GROUPS=[
   {id:'fisicos',color:'#F5A623',
     label:{es:'VALORES FÍSICOS',en:'PHYSICAL VALUES'},
     attrs:[
-      {key:'velocidad',label:'VELOCIDAD'},
-      {key:'potencia',label:'POTENCIA'},
-      {key:'agresividad',label:'AGRESIVIDAD'},
-      {key:'resistencia',label:'RESISTENCIA\nLARGA DISTANCIA'},
-      {key:'aceleracion',label:'ACELERACIÓN'},
-      {key:'equilibrioAD',label:'EQUILIBRIO\nATAQUE-DEFENSA'},
+      {key:'velocidad',      label:{es:'VELOCIDAD',             en:'SPEED'}},
+      {key:'potencia',       label:{es:'POTENCIA',              en:'STRENGTH'}},
+      {key:'agresividad',    label:{es:'AGRESIVIDAD',           en:'AGGRESSIVENESS'}},
+      {key:'resistencia',    label:{es:'RESISTENCIA\nLARGA DISTANCIA', en:'LONG DISTANCE\nSTAMINA'}},
+      {key:'aceleracion',    label:{es:'ACELERACIÓN',           en:'ACCELERATION'}},
+      {key:'equilibrioAD',   label:{es:'EQUILIBRIO\nATAQUE-DEFENSA',  en:'ATTACK-DEFENSE\nBALANCE'}},
     ]},
   {id:'tecnicos',color:'#14B8A6',
     label:{es:'VALORES TÉCNICOS',en:'TECHNICAL VALUES'},
     attrs:[
-      {key:'controlPase',label:'CONTROL Y PASE'},
-      {key:'tecnicaPieND',label:'TÉCNICA PIE\nNO DOMINANTE'},
-      {key:'desmarque',label:'DESMARQUE'},
-      {key:'finalizacion',label:'FINALIZACIÓN'},
-      {key:'regate',label:'REGATE'},
-      {key:'movEspacio',label:'MOVIMIENTO\nAL ESPACIO'},
+      {key:'controlPase',    label:{es:'CONTROL Y PASE',        en:'BALL CONTROL\n& PASSING'}},
+      {key:'tecnicaPieND',   label:{es:'TÉCNICA PIE\nNO DOMINANTE', en:'WEAK FOOT'}},
+      {key:'desmarque',      label:{es:'DESMARQUE',             en:'OFF-THE-BALL\nMOVEMENT'}},
+      {key:'finalizacion',   label:{es:'FINALIZACIÓN',          en:'FINISHING'}},
+      {key:'regate',         label:{es:'REGATE',                en:'DRIBBLING'}},
+      {key:'movEspacio',     label:{es:'MOVIMIENTO\nAL ESPACIO', en:'MOVEMENT\nINTO SPACE'}},
     ]},
   {id:'mentales',color:'#F5A623',
     label:{es:'VALORES MENTALES',en:'MENTAL VALUES'},
     attrs:[
-      {key:'liderazgo',label:'LIDERAZGO'},
-      {key:'personalidad',label:'PERSONALIDAD'},
-      {key:'tomaDecisiones',label:'TOMA DE\nDECISIONES'},
-      {key:'respuestaPresion',label:'RESPUESTA\nBAJO PRESIÓN'},
-      {key:'autocontrol',label:'AUTOCONTROL'},
+      {key:'liderazgo',       label:{es:'LIDERAZGO',            en:'LEADERSHIP'}},
+      {key:'personalidad',    label:{es:'PERSONALIDAD',         en:'PERSONALITY'}},
+      {key:'tomaDecisiones',  label:{es:'TOMA DE\nDECISIONES',  en:'DECISION\nMAKING'}},
+      {key:'respuestaPresion',label:{es:'RESPUESTA\nBAJO PRESIÓN', en:'RESPONSE UNDER\nPRESSURE'}},
+      {key:'autocontrol',     label:{es:'AUTOCONTROL',          en:'SELF-CONTROL'}},
     ]},
   {id:'tacticos',color:'#14B8A6',
     label:{es:'VALORES TÁCTICOS',en:'TACTICAL VALUES'},
     attrs:[
-      {key:'concienciaEsp',label:'CONCIENCIA\nESPACIAL'},
-      {key:'transiciones',label:'TRANSICIONES'},
-      {key:'presionTrasP',label:'PRESIÓN TRAS\nPÉRDIDA'},
-      {key:'temporizacion',label:'TEMPORIZACIÓN'},
-      {key:'lecturaJuego',label:'LECTURA\nDE JUEGO'},
+      {key:'concienciaEsp',   label:{es:'CONCIENCIA\nESPACIAL', en:'SPATIAL\nAWARENESS'}},
+      {key:'transiciones',    label:{es:'TRANSICIONES',          en:'TRANSITIONS'}},
+      {key:'presionTrasP',    label:{es:'PRESIÓN TRAS\nPÉRDIDA', en:'COUNTER-\nPRESSING'}},
+      {key:'temporizacion',   label:{es:'TEMPORIZACIÓN',         en:'TIMING'}},
+      {key:'lecturaJuego',    label:{es:'LECTURA\nDE JUEGO',    en:'GAME\nREADING'}},
     ]},
 ];
 const ALL_KEYS=ATTR_GROUPS.flatMap(g=>g.attrs.map(a=>a.key));
@@ -341,7 +341,7 @@ function StatusBadge({status,lang,size='md'}){
 }
 
 // ─── HEXAGON CHART (black/white/gold) ─────────────────────────────
-function HexChart({attrs,values,color,size=200}){
+function HexChart({attrs,values,color,size=200,lang='es'}){
   const n=attrs.length, cx=size/2, cy=size/2, R=size*0.31, Rl=size*0.47;
   function pt(i,frac=1){
     const a=(i*2*Math.PI/n)-Math.PI/2;
@@ -373,7 +373,8 @@ function HexChart({attrs,values,color,size=200}){
         const lx=cx+(Rl)*Math.cos(a), ly=cy+(Rl)*Math.sin(a);
         const cos=Math.cos(a),sin=Math.sin(a);
         const anchor=cos>0.25?'start':cos<-0.25?'end':'middle';
-        const parts=label.split('\n');
+        const lStr=typeof label==='object'?(label[lang]||label.es):label;
+        const parts=lStr.split('\n');
         const lh=9;
         const yOff=sin<-0.2?-(parts.length*lh):sin>0.2?0:-(parts.length*lh/2);
         return(
@@ -739,11 +740,12 @@ function Step2({report,onChange,lang}){
             {g.attrs.map(({key,label})=>{
               const v=report.attributes[key]||5;
               const pct=(v/10)*100;
+              const lStr=typeof label==='object'?(label[lang]||label.es):label;
               return(
                 <div key={key}>
                   <div style={{display:'flex',justifyContent:'space-between',marginBottom:4}}>
                     <span style={{fontSize:11,fontWeight:600,color:'var(--muted)'}}>
-                      {label.replace('\n',' ')}
+                      {lStr.replace('\n',' ')}
                     </span>
                     <span style={{fontSize:11,fontWeight:700,color:'var(--gold)'}}>{v.toFixed(1)}</span>
                   </div>
@@ -925,6 +927,86 @@ function ReportForm({report,onUpdate,onPreview,onBack,lang}){
               </button>
           }
         </div>
+      </div>
+    </div>
+  );
+}
+
+// ─── FOOT HELPERS ─────────────────────────────────────────────
+function translateFoot(lang,val){
+  const M={
+    Diestro:   {es:'Diestro',   en:'Right'},
+    Zurdo:     {es:'Zurdo',     en:'Left'},
+    Ambidiestro:{es:'Ambidiestro',en:'Both'},
+  };
+  return M[val]?.[lang]||val||'—';
+}
+/* FIFA/FC-style soccer boot silhouette (side view, toe→right).
+   flip=true mirrors horizontally for the left boot. */
+function FootVisual({dominantFoot,lang,compact=false}){
+  const isRight=dominantFoot==='Diestro';
+  const isLeft=dominantFoot==='Zurdo';
+  const isBoth=dominantFoot==='Ambidiestro';
+  const rActive=isRight||isBoth;
+  const lActive=isLeft||isBoth;
+  const GOLD='#F5A623';
+  const GOLD_DIM='rgba(245,166,35,0.18)';
+  const DIM_FILL='rgba(26,26,34,0.9)';
+  const DIM_STROKE='#3A3A4A';
+  const GOLD_STROKE='rgba(245,166,35,0.35)';
+  const sw=compact?52:60;
+  const sh=compact?38:44;
+  /* Boot path: toe→right, viewBox 0 0 72 52 */
+  const BOOT='M4,40 Q4,28,14,21 L42,13 Q56,10,60,18 Q64,25,57,30 L57,36 Q57,42,46,44 L14,44 Q4,44,4,40Z';
+  const SOLE_Y=44;
+  function Boot({active,flip}){
+    const f=active?GOLD:DIM_FILL;
+    const sk=active?GOLD:DIM_STROKE;
+    const sk2=active?'#D4880A':DIM_STROKE;
+    const studC=active?'#C97D0A':DIM_STROKE;
+    return(
+      <svg width={sw} height={sh} viewBox="0 0 72 52"
+        style={{display:'block',flexShrink:0}}>
+        <g transform={flip?`scale(-1,1) translate(-72,0)`:undefined}>
+          {/* Glow behind active boot */}
+          {active&&<ellipse cx="35" cy="40" rx="28" ry="6"
+            fill="rgba(245,166,35,0.12)"/>}
+          {/* Boot body */}
+          <path d={BOOT} fill={f} fillOpacity={active?0.92:0.7}
+            stroke={sk} strokeWidth={active?1.8:1.2} strokeLinejoin="round"/>
+          {/* Ankle collar curve */}
+          <path d="M57,18 Q64,11,60,8 Q56,5,50,10"
+            fill="none" stroke={active?GOLD_STROKE:DIM_STROKE} strokeWidth="1"/>
+          {/* Lace detail */}
+          {active&&<>
+            <line x1="32" y1="21" x2="34" y2="17" stroke="rgba(255,255,255,0.35)" strokeWidth="1.2" strokeLinecap="round"/>
+            <line x1="39" y1="19" x2="41" y2="15" stroke="rgba(255,255,255,0.25)" strokeWidth="1.2" strokeLinecap="round"/>
+            <line x1="46" y1="16" x2="48" y2="13" stroke="rgba(255,255,255,0.18)" strokeWidth="1" strokeLinecap="round"/>
+          </>}
+          {/* Studs */}
+          <circle cx="18" cy={SOLE_Y+3} r="3" fill={studC}/>
+          <circle cx="30" cy={SOLE_Y+3} r="3" fill={studC}/>
+          <circle cx="42" cy={SOLE_Y+3} r="3" fill={studC}/>
+          <circle cx="52" cy={SOLE_Y+3} r="2.5" fill={studC}/>
+        </g>
+      </svg>
+    );
+  }
+  const rLbl=lang==='es'?'DER':'RIGHT';
+  const lLbl=lang==='es'?'IZQ':'LEFT';
+  const fs=compact?6:7;
+  const gap=compact?6:8;
+  return(
+    <div style={{display:'flex',gap,alignItems:'flex-end',justifyContent:'center',paddingTop:2}}>
+      <div style={{display:'flex',flexDirection:'column',alignItems:'center',gap:3}}>
+        <Boot active={lActive} flip={true}/>
+        <span style={{fontSize:fs,fontWeight:800,letterSpacing:'.1em',
+          color:lActive?GOLD:'#52525B',fontFamily:'Helvetica,Arial,sans-serif'}}>{lLbl}</span>
+      </div>
+      <div style={{display:'flex',flexDirection:'column',alignItems:'center',gap:3}}>
+        <Boot active={rActive} flip={false}/>
+        <span style={{fontSize:fs,fontWeight:800,letterSpacing:'.1em',
+          color:rActive?GOLD:'#52525B',fontFamily:'Helvetica,Arial,sans-serif'}}>{rLbl}</span>
       </div>
     </div>
   );
@@ -1254,9 +1336,6 @@ function ReportPreview({report,lang,onEdit}){
                     value:report.nationality||'—',
                     flagCode:getFlagCode(report.nationality),
                     c:P.muted},
-                  {label:i(lang,'pdfFoot'),
-                    value:report.dominantFoot||'—',
-                    c:P.muted},
                 ].map(card=>(
                   <div key={card.label} style={{padding:'11px 13px',borderRadius:7,
                     background:P.surface,border:`1px solid ${P.border}`,
@@ -1272,6 +1351,20 @@ function ReportPreview({report,lang,onEdit}){
                     </div>
                   </div>
                 ))}
+                {/* Dominant Foot - visual boot card */}
+                <div style={{padding:'11px 13px',borderRadius:7,
+                  background:P.surface,border:`1px solid ${P.border}`,
+                  borderTop:`2px solid ${P.muted}`}}>
+                  <div style={{fontSize:7,fontWeight:700,letterSpacing:'.18em',
+                    color:P.muted,marginBottom:4,textTransform:'uppercase',
+                    fontFamily:'Helvetica,Arial,sans-serif'}}>{i(lang,'pdfFoot')}</div>
+                  <FootVisual dominantFoot={report.dominantFoot||'Diestro'} lang={lang} compact={true}/>
+                  <div style={{textAlign:'center',fontSize:9,fontWeight:700,
+                    color:'#F5A623',fontFamily:'Helvetica,Arial,sans-serif',
+                    marginTop:4,letterSpacing:'.04em'}}>
+                    {translateFoot(lang,report.dominantFoot)}
+                  </div>
+                </div>
               </div>
             </div>
 
@@ -1304,19 +1397,20 @@ function ReportPreview({report,lang,onEdit}){
                     {/* Chart */}
                     <div style={{display:'flex',justifyContent:'center',marginBottom:12}}>
                       <HexChart attrs={g.attrs} values={report.attributes}
-                        color={g.color} size={190}/>
+                        color={g.color} size={190} lang={lang}/>
                     </div>
                     {/* Score bars */}
                     <div style={{display:'flex',flexDirection:'column',gap:5}}>
                       {g.attrs.map(({key,label})=>{
                         const v=report.attributes[key]||0;
                         const pct=(v/10)*100;
+                        const lStr=typeof label==='object'?(label[lang]||label.es):label;
                         return(
                           <div key={key} style={{display:'flex',alignItems:'center',gap:7}}>
                             <span style={{fontSize:8.5,width:88,textAlign:'right',
                               flexShrink:0,color:P.muted,fontFamily:'Helvetica,Arial,sans-serif',
                               fontWeight:600,lineHeight:1.2}}>
-                              {label.replace('\n',' ')}
+                              {lStr.replace('\n',' ')}
                             </span>
                             <div style={{flex:1,height:4,borderRadius:2,background:P.line}}>
                               <div style={{height:'100%',borderRadius:2,width:`${pct}%`,

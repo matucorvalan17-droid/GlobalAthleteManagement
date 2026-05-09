@@ -1130,25 +1130,30 @@ function ReportPreview({report,lang,onEdit}){
         background:'var(--surface)',flexShrink:0}}>
         <div>
           <h2 style={{fontSize:14,fontWeight:700}}>
-            {lang==='es'?'Vista Previa':'Preview'}
+            {i(lang,'preview')}
           </h2>
           <p style={{fontSize:11,color:'var(--muted)',marginTop:1}}>
-            {lang==='es'?'PDF listo para exportar':'PDF ready to export'}
+            {i(lang,'pdfReady')}
           </p>
         </div>
         <div style={{display:'flex',gap:8}}>
           <button className="btn-ghost" style={{padding:'7px 13px',fontSize:12}} onClick={onEdit}>
-            {lang==='es'?'Editar':'Edit'}
+            {i(lang,'edit')}
           </button>
           <button className="btn-gold"
             style={{padding:'8px 18px',fontSize:12,display:'flex',alignItems:'center',gap:6,
               opacity:exporting?.7:1}}
-            onClick={handleExport} disabled={exporting}>
+            onClick={()=>handleExport('pdf')} disabled={exporting}>
             {exporting
               ? <><span style={{animation:'spin 1s linear infinite',display:'inline-block'}}>&#8635;</span>
-                  {lang==='es'?'Generando...':'Generating...'}</>
-              : lang==='es'?'Exportar PDF':'Export PDF'
+                  {i(lang,'exporting')}</>
+              : i(lang,'exportBtn')
             }
+          </button>
+          <button className="btn-ghost"
+            style={{padding:'8px 14px',fontSize:12,opacity:exporting?.7:1}}
+            onClick={()=>handleExport('jpg')} disabled={exporting}>
+            JPG
           </button>
         </div>
       </div>
@@ -1182,18 +1187,18 @@ function ReportPreview({report,lang,onEdit}){
                 {/* PERFORMANCE REPORT label */}
                 <div style={{fontSize:8,fontWeight:900,letterSpacing:'.32em',textTransform:'uppercase',
                   color:'#F5A623',fontFamily:'Helvetica,Arial,sans-serif'}}>
-                  PERFORMANCE REPORT
+                  {i(lang,'pdfTitle')}
                 </div>
                 {/* Player name */}
                 <h1 style={{fontFamily:'Helvetica,Arial,sans-serif',fontSize:36,fontWeight:900,
                   color:'#FFFFFF',lineHeight:1.05,letterSpacing:'-.02em',margin:0}}>
-                  {report.playerName||(lang==='es'?'Nombre del Jugador':'Player Name')}
+                  {report.playerName||i(lang,'playerNamePh')}
                 </h1>
                 {/* Evaluation date */}
                 {report.evaluationDate&&(
                   <div style={{fontSize:11,color:'rgba(255,255,255,0.4)',
                     fontFamily:'Helvetica,Arial,sans-serif',letterSpacing:'.04em'}}>
-                    {lang==='es'?'EVALUACIÓN':'EVALUATION'} — {fmtDateNum(report.evaluationDate)}
+                    {i(lang,'pdfEvalLabel')} — {fmtDateNum(report.evaluationDate)}
                   </div>
                 )}
               </div>
@@ -1231,20 +1236,20 @@ function ReportPreview({report,lang,onEdit}){
 
             {/* Player Information */}
             <div style={{marginBottom:24}}>
-              <PdfDiv label={lang==='es'?'INFORMACIÓN DEL JUGADOR':'PLAYER INFORMATION'}/>
+              <PdfDiv label={i(lang,'pdfPlayerInfo')}/>
               <div style={{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:8}}>
                 {[
-                  {label:lang==='es'?'FECHA DE NACIMIENTO':'DATE OF BIRTH',
+                  {label:i(lang,'pdfDob'),
                     value:fmtDateNum(report.dateOfBirth)||'—',
                     c:P.gold},
-                  {label:lang==='es'?'POSICIÓN':'POSITION',
+                  {label:i(lang,'pdfPos'),
                     value:report.position||'—',
                     c:P.muted},
-                  {label:lang==='es'?'NACIONALIDAD':'NATIONALITY',
+                  {label:i(lang,'pdfNat'),
                     value:report.nationality||'—',
                     flagCode:getFlagCode(report.nationality),
                     c:P.muted},
-                  {label:lang==='es'?'PIE HÁBIL':'DOMINANT FOOT',
+                  {label:i(lang,'pdfFoot'),
                     value:report.dominantFoot||'—',
                     c:P.muted},
                 ].map(card=>(
@@ -1268,7 +1273,7 @@ function ReportPreview({report,lang,onEdit}){
             {/* Executive Summary */}
             {report.executiveSummary&&(
               <div style={{marginBottom:24}}>
-                <PdfDiv label="EXECUTIVE SUMMARY"/>
+                <PdfDiv label={i(lang,'pdfSummary')}/>
                 <div style={{padding:'14px 16px',borderRadius:8,background:P.surface,
                   border:`1px solid ${P.border}`,borderLeft:`3px solid ${P.gold}`}}>
                   <p style={{fontSize:12,color:P.text,lineHeight:1.8,margin:0,
@@ -1279,7 +1284,7 @@ function ReportPreview({report,lang,onEdit}){
 
             {/* 4 Hexagon charts */}
             <div style={{marginBottom:24}}>
-              <PdfDiv label={lang==='es'?'ANÁLISIS POR CATEGORÍA':'CATEGORY ANALYSIS'}/>
+              <PdfDiv label={i(lang,'pdfAnalysis')}/>
               <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:14}}>
                 {ATTR_GROUPS.map(g=>(
                   <div key={g.id} style={{padding:'16px 14px 14px',borderRadius:9,
@@ -1329,14 +1334,14 @@ function ReportPreview({report,lang,onEdit}){
             {/* Teams */}
             {report.suggestedTeams?.length>0&&(
               <div style={{marginBottom:24}}>
-                <PdfDiv label={lang==='es'?'POSIBLES EQUIPOS EN ESPAÑA':'POSSIBLE TEAMS IN SPAIN'}/>
+                <PdfDiv label={i(lang,'pdfTeams')}/>
                 <div style={{borderRadius:8,overflow:'hidden',
                   border:`1px solid ${P.border}`}}>
                   <div style={{display:'grid',gridTemplateColumns:'2fr 1.5fr 1fr 2fr',
                     padding:'8px 14px',background:P.surface,
                     borderBottom:`1px solid ${P.border}`}}>
-                    {[lang==='es'?'CLUB':'CLUB',lang==='es'?'CATEGORÍA':'CATEGORY',
-                      lang==='es'?'NIVEL':'LEVEL',lang==='es'?'OBSERVACIONES':'OBSERVATIONS'].map(h=>(
+                    {[i(lang,'teamsClub').toUpperCase(),i(lang,'teamsCat').toUpperCase(),
+                      i(lang,'teamsLevel').toUpperCase(),i(lang,'teamsObs').toUpperCase()].map(h=>(
                       <div key={h} style={{fontSize:7,fontWeight:700,letterSpacing:'.18em',
                         color:P.faint,textTransform:'uppercase',
                         fontFamily:'Helvetica,Arial,sans-serif'}}>{h}</div>
@@ -1361,7 +1366,7 @@ function ReportPreview({report,lang,onEdit}){
             {/* Conclusión / Notas */}
             {report.conclusionNotas&&(
               <div style={{marginBottom:8}}>
-                <PdfDiv label={lang==='es'?'CONCLUSIÓN / NOTAS':'CONCLUSION / NOTES'}/>
+                <PdfDiv label={i(lang,'pdfConclusion')}/>
                 <div style={{padding:'14px 16px',borderRadius:8,
                   background:P.goldBg,border:`1px solid rgba(245,166,35,.25)`,
                   borderLeft:`3px solid ${P.gold}`}}>
@@ -1381,7 +1386,7 @@ function ReportPreview({report,lang,onEdit}){
               </div>
               <div style={{fontSize:8,color:P.line,textAlign:'right',
                 fontFamily:'Helvetica,Arial,sans-serif',letterSpacing:'.06em'}}>
-                <div>CONFIDENTIAL — PERFORMANCE REPORT</div>
+                <div>{i(lang,'pdfConfidential')}</div>
                 <div>{new Date().getFullYear()}</div>
               </div>
             </div>

@@ -682,10 +682,10 @@ function Step1({report,onChange,lang}){
             <Lbl text={L.foot}/>
             <div style={{display:'flex',gap:6,marginTop:4}}>
               {[
-                {val:'Diestro',label:lang==='es'?'Derecho':'Right',
+                {val:'Diestro',label:lang==='es'?'Diestro':'Right',
                   icon:<svg width="22" height="28" viewBox="0 0 22 28" fill="currentColor"><path d="M11 2C8.5 2 7 3.8 7 6v8.5l-3.5-2C2.2 11.8 1 12.8 1 14c0 .8.4 1.5 1 2l5 4v4c0 1.1.9 2 2 2h6c1.1 0 2-.9 2-2v-5l2-1.5c.6-.5 1-1.2 1-2 0-1.2-1.2-2.2-2.5-1.5L14 15.5V6c0-2.2-1.5-4-3-4z"/></svg>
                 },
-                {val:'Zurdo',label:lang==='es'?'Izquierdo':'Left',
+                {val:'Zurdo',label:lang==='es'?'Zurdo':'Left',
                   icon:<svg width="22" height="28" viewBox="0 0 22 28" fill="currentColor" style={{transform:'scaleX(-1)'}}><path d="M11 2C8.5 2 7 3.8 7 6v8.5l-3.5-2C2.2 11.8 1 12.8 1 14c0 .8.4 1.5 1 2l5 4v4c0 1.1.9 2 2 2h6c1.1 0 2-.9 2-2v-5l2-1.5c.6-.5 1-1.2 1-2 0-1.2-1.2-2.2-2.5-1.5L14 15.5V6c0-2.2-1.5-4-3-4z"/></svg>
                 },
                 {val:'Ambidiestro',label:lang==='es'?'Ambos':'Both',
@@ -753,7 +753,7 @@ function Step2({report,onChange,lang}){
                     <div style={{position:'absolute',left:0,top:0,height:'100%',borderRadius:2,
                       width:`${pct}%`,background:'linear-gradient(90deg,rgba(245,166,35,.5),var(--gold))'}}/>
                   </div>
-                  <input type="range" min={0} max={10} step={.1} value={v}
+                  <input type="range" min={0} max={10} step={.5} value={v}
                     onChange={e=>upd(key,parseFloat(e.target.value))}/>
                 </div>
               );
@@ -1356,12 +1356,10 @@ function ReportPreview({report,lang,onEdit}){
                   background:P.surface,border:`1px solid ${P.border}`,
                   borderTop:`2px solid ${P.muted}`}}>
                   <div style={{fontSize:7,fontWeight:700,letterSpacing:'.18em',
-                    color:P.muted,marginBottom:4,textTransform:'uppercase',
+                    color:P.muted,marginBottom:5,textTransform:'uppercase',
                     fontFamily:'Helvetica,Arial,sans-serif'}}>{i(lang,'pdfFoot')}</div>
-                  <FootVisual dominantFoot={report.dominantFoot||'Diestro'} lang={lang} compact={true}/>
-                  <div style={{textAlign:'center',fontSize:9,fontWeight:700,
-                    color:'#F5A623',fontFamily:'Helvetica,Arial,sans-serif',
-                    marginTop:4,letterSpacing:'.04em'}}>
+                  <div style={{fontFamily:'Helvetica,Arial,sans-serif',fontWeight:900,
+                    fontSize:14,color:P.text,lineHeight:1.1}}>
                     {translateFoot(lang,report.dominantFoot)}
                   </div>
                 </div>

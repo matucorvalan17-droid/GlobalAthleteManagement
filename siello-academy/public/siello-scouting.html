@@ -923,143 +923,166 @@ function ReportPreview({report,lang,onEdit}){
 
   async function handleExport(format='pdf'){
     setExporting(true);
-    const el=document.getElementById('pdf-layout');
+    const sourceEl=document.getElementById('pdf-layout');
     const name=(report.playerName||'report').replace(/\s+/g,'_');
+    const sleep=ms=>new Promise(r=>setTimeout(r,ms));
 
-    // Helper: fetch external image as data URI (for CORS flags etc)
     async function toDataUri(url){
       try{
         const r=await fetch(url,{mode:'cors'});
         const b=await r.blob();
-        return new Promise(res=>{
-          const fr=new FileReader();
-          fr.onload=()=>res(fr.result);
-          fr.readAsDataURL(b);
-        });
+        return new Promise(res=>{const fr=new FileReader();fr.onload=()=>res(fr.result);fr.readAsDataURL(b);});
       }catch{return null;}
     }
 
-    // Helper: sleep
-    const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+    // ── KEY FIX: clone into an off-screen fixed container at left:0 ──
+    // pdf-layout has margin:0 auto inside a wide container — capturing it
+    // in-place captures the surrounding whitespace too. Cloning off-screen
+    // at a fixed position eliminates all parent-container offset noise.
+    const wrap=document.createElement('div');
+    wrap.style.cssText='position:fixed;top:-99999px;left:0;width:860px;'+
+      'overflow:visible;z-index:-1;pointer-events:none;background:#080808;';
+    document.body.appendChild(wrap);
+
+    const el=sourceEl.cloneNode(true);
+    el.style.margin='0';
+    el.style.maxWidth='860px';
+    el.style.width='860px';
+    el.style.boxShadow='none';
+    el.removeAttribute('id'); // avoid duplicate IDs
+    wrap.appendChild(el);
 
     try{
-      // 1. Wait for fonts to be ready
+      // 1. Wait for fonts
       await document.fonts.ready;
 
-      // 2. Pre-fetch all external images and replace with data URIs
-      const externalImgs=Array.from(el.querySelectorAll('img')).filter(
-        img=>img.src&&!img.src.startsWith('data:')
-      );
-      await Promise.all(externalImgs.map(async img=>{
-        const dataUri=await toDataUri(img.src);
-        if(dataUri) img.src=dataUri;
+      // 2. Replace external image URLs with data URIs (flags, etc.)
+      await Promise.all(Array.from(el.querySelectorAll('img')).map(async img=>{
+        if(img.src&&!img.src.startsWith('data:')){
+          const uri=await toDataUri(img.src);
+          if(uri) img.src=uri;
+        }
       }));
 
-      // 3. Wait for ALL images (including now-replaced data URIs)
+      // 3. Fix objectFit:cover → background-image div (html2canvas/html-to-image don't support it)
+      Array.from(el.querySelectorAll('img')).forEach(img=>{
+        if(img.style.objectFit==='cover'){
+          const div=document.createElement('div');
+          div.style.position=img.style.position||'absolute';
+          div.style.top='0';div.style.left='0';div.style.right='0';div.style.bottom='0';
+          div.style.width=img.style.width||'100%';div.style.height=img.style.height||'100%';
+          div.style.backgroundImage=`url("${img.src}")`;
+          div.style.backgroundSize='cover';
+          div.style.backgroundPosition=img.style.objectPosition||'top center';
+          div.style.backgroundRepeat='no-repeat';
+          img.parentNode.replaceChild(div,img);
+        }
+      });
+
+      // 4. Fix CSS filter on images → pre-draw to canvas
+      Array.from(el.querySelectorAll('img')).forEach(img=>{
+        if(!img.style.filter) return;
+        const c=document.createElement('canvas');
+        const iw=img.naturalWidth||200,ih=img.naturalHeight||60;
+        c.width=iw;c.height=ih;
+        c.style.height=img.style.height;
+        c.style.objectFit=img.style.objectFit||'contain';
+        c.style.verticalAlign='middle';
+        const ctx=c.getContext('2d');
+        ctx.filter=img.style.filter;
+        ctx.drawImage(img,0,0,iw,ih);
+        img.parentNode.replaceChild(c,img);
+      });
+
+      // 5. Wait for all remaining images in clone
       await Promise.all(Array.from(el.querySelectorAll('img')).map(img=>
         img.complete&&img.naturalWidth>0
           ?Promise.resolve()
           :new Promise(res=>{img.onload=res;img.onerror=res;})
       ));
 
-      // 4. Let layout settle
-      await sleep(400);
+      // 6. Settle
+      await sleep(350);
 
-      // 5. Try html-to-image first (better quality), fallback to html2canvas
-      const W=el.scrollWidth;
+      const W=860;          // explicit — no container-width noise
       const H=el.scrollHeight;
-      const PIXEL_RATIO=3; // ultra-sharp: 3x device pixels
-
+      const PIXEL_RATIO=3;  // 3× → ultra-sharp on any screen
       let imgDataUrl=null;
       let usedFormat='png';
 
-      // Try html-to-image (modern, SVG-based, better CSS support)
+      // 7a. Primary: html-to-image (SVG-based, best CSS support)
       if(window.htmlToImage){
         try{
           imgDataUrl=await window.htmlToImage.toPng(el,{
             pixelRatio:PIXEL_RATIO,
-            width:W,
-            height:H,
-            style:{
-              transform:'none',
-              webkitTransform:'none',
-            },
-            filter:node=>{
-              // Skip script tags
-              if(node.tagName==='SCRIPT') return false;
-              return true;
-            },
+            width:W,height:H,
+            backgroundColor:'#080808',
+            style:{transform:'none'},
+            filter:node=>node.tagName!=='SCRIPT',
           });
           usedFormat='png';
         }catch(e1){
           console.warn('html-to-image PNG failed, trying JPEG:',e1);
           try{
             imgDataUrl=await window.htmlToImage.toJpeg(el,{
-              pixelRatio:PIXEL_RATIO,
-              quality:0.97,
-              width:W,
-              height:H,
+              pixelRatio:PIXEL_RATIO,quality:0.97,
+              width:W,height:H,backgroundColor:'#080808',
             });
             usedFormat='jpeg';
-          }catch(e2){
-            console.warn('html-to-image JPEG also failed:',e2);
-          }
+          }catch(e2){console.warn('html-to-image JPEG failed:',e2);}
         }
       }
 
-      // Fallback to html2canvas if html-to-image failed
+      // 7b. Fallback: html2canvas
       if(!imgDataUrl){
-        console.log('Falling back to html2canvas...');
         const canvas=await html2canvas(el,{
-          scale:PIXEL_RATIO,
-          useCORS:true,
-          allowTaint:true,
-          backgroundColor:'#080808',
-          logging:false,
-          width:W,
-          height:H,
-          windowWidth:window.innerWidth,
-          windowHeight:window.innerHeight,
-          imageTimeout:30000,
-          onclone:(clonedDoc,clonedEl)=>{
-            Array.from(clonedEl.querySelectorAll('img')).forEach(img=>{
-              if(img.style.objectFit==='cover'){
-                const div=clonedDoc.createElement('div');
-                div.style.position=img.style.position||'absolute';
-                div.style.top='0';div.style.left='0';
-                div.style.right='0';div.style.bottom='0';
-                div.style.width=img.style.width||'100%';
-                div.style.height=img.style.height||'100%';
-                div.style.backgroundImage=`url("${img.src}")`;
-                div.style.backgroundSize='cover';
-                div.style.backgroundPosition=img.style.objectPosition||'top center';
-                div.style.backgroundRepeat='no-repeat';
-                img.parentNode.replaceChild(div,img);
-              }
-            });
-            Array.from(clonedEl.querySelectorAll('img')).forEach(img=>{
-              if(!img.style.filter) return;
-              const c=clonedDoc.createElement('canvas');
-              const iw=img.naturalWidth||200,ih=img.naturalHeight||60;
-              c.width=iw;c.height=ih;
-              c.style.height=img.style.height;
-              c.style.objectFit=img.style.objectFit||'contain';
-              c.style.verticalAlign='middle';
-              const ctx=c.getContext('2d');
-              ctx.filter=img.style.filter;
-              ctx.drawImage(img,0,0,iw,ih);
-              img.parentNode.replaceChild(c,img);
-            });
-            return Promise.all(Array.from(clonedEl.querySelectorAll('img')).map(img=>
-              img.complete&&img.naturalWidth>0
-                ?Promise.resolve()
-                :new Promise(res=>{img.onload=res;img.onerror=res;})
-            ));
-          },
+          scale:PIXEL_RATIO,useCORS:true,allowTaint:true,
+          backgroundColor:'#080808',logging:false,
+          width:W,height:H,windowWidth:W,windowHeight:H,imageTimeout:30000,
         });
         imgDataUrl=canvas.toDataURL('image/png');
         usedFormat='png';
       }
+
+      // 8. JPG-only export → direct image download
+      if(format==='jpg'){
+        const a=document.createElement('a');
+        a.href=imgDataUrl;
+        a.download=`Siello_${name}_Report.jpg`;
+        a.click();
+        return;
+      }
+
+      // 9. Build PDF
+      const{jsPDF}=window.jspdf;
+      const pdf=new jsPDF({
+        orientation:'portrait',unit:'px',format:[W,H],
+        compress:true,hotfixes:['px_scaling'],
+      });
+      pdf.addImage(imgDataUrl,usedFormat==='png'?'PNG':'JPEG',0,0,W,H,undefined,'FAST');
+      pdf.save(`Siello_${name}_Performance_Report.pdf`);
+
+    }catch(err){
+      console.error('Export failed:',err);
+      alert(i(lang,'exportFail'));
+      try{
+        let jpgUrl;
+        if(window.htmlToImage){
+          jpgUrl=await window.htmlToImage.toJpeg(el,{pixelRatio:2,quality:0.95,backgroundColor:'#080808'});
+        }else{
+          const c=await html2canvas(el,{scale:2,useCORS:true,backgroundColor:'#080808'});
+          jpgUrl=c.toDataURL('image/jpeg',0.95);
+        }
+        const a=document.createElement('a');
+        a.href=jpgUrl;
+        a.download=`Siello_${name}_Report.jpg`;
+        a.click();
+      }catch(e2){console.error('JPG fallback also failed:',e2);}
+    }finally{
+      document.body.removeChild(wrap); // always clean up off-screen clone
+      setExporting(false);
+    }
+  }
 
       // 6. If JPG-only export requested, download image directly
       if(format==='jpg'){

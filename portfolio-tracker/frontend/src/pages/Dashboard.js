@@ -46,10 +46,22 @@ function CustomTooltipArea({ active, payload, label }) {
   );
 }
 
+function CustomTooltipMax({ active, payload, label }) {
+  if (!active || !payload?.length) return null;
+  return (
+    <div className="chart-tooltip">
+      <div className="tooltip-label">{label}</div>
+      <div className="tooltip-value" style={{ color: '#00c853' }}>{formatUSD(payload[0].value)}</div>
+      <div className="tooltip-pct">Máximo histórico alcanzado</div>
+    </div>
+  );
+}
+
 export default function Dashboard() {
   const { user } = useAuth();
   const [portfolio, setPortfolio] = useState(null);
   const [history, setHistory] = useState([]);
+  const [maxHistory, setMaxHistory] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
@@ -67,6 +79,13 @@ export default function Dashboard() {
         value: parseFloat(h.total_value),
       }));
       setHistory(historyData);
+
+      let runningMax = 0;
+      const maxData = historyData.map(({ date, value }) => {
+        runningMax = Math.max(runningMax, value);
+        return { date, max: runningMax };
+      });
+      setMaxHistory(maxData);
     } catch {
       setError('Error al cargar el portafolio');
     } finally {
@@ -94,6 +113,9 @@ export default function Dashboard() {
   const topGainers = [...(portfolio?.assets || [])]
     .sort((a, b) => b.pnlPercent - a.pnlPercent)
     .slice(0, 5);
+
+  const allTimeHigh = maxHistory.length > 0 ? maxHistory[maxHistory.length - 1].max : 0;
+  const athDrawdown = allTimeHigh > 0 ? ((totalValue - allTimeHigh) / allTimeHigh) * 100 : 0;
 
   return (
     <div className="dashboard">
@@ -134,6 +156,12 @@ export default function Dashboard() {
               value={topGainers[0]?.symbol || '—'}
               sub={topGainers[0] ? formatChange(topGainers[0].pnlPercent) : ''}
               positive={topGainers[0]?.pnlPercent >= 0}
+            />
+            <StatCard
+              label="Máximo Histórico (ATH)"
+              value={formatUSD(allTimeHigh)}
+              sub={athDrawdown < 0 ? `${formatChange(athDrawdown)} desde el ATH` : 'En máximo histórico'}
+              positive={athDrawdown >= -0.01}
             />
           </div>
 
@@ -184,6 +212,36 @@ export default function Dashboard() {
               </div>
             )}
           </div>
+
+          {maxHistory.length > 1 && (
+            <div className="card chart-card">
+              <div className="max-chart-header">
+                <div>
+                  <h3 className="chart-title" style={{ marginBottom: 2 }}>Rendimiento Máximo Alcanzado</h3>
+                  <p className="page-subtitle">Valor pico de tu cartera en cada momento del tiempo</p>
+                </div>
+                <div className="ath-badge">
+                  <span className="ath-label">ATH</span>
+                  <span className="ath-value">{formatUSD(allTimeHigh)}</span>
+                </div>
+              </div>
+              <ResponsiveContainer width="100%" height={240}>
+                <AreaChart data={maxHistory} margin={{ top: 10, right: 10, bottom: 0, left: 0 }}>
+                  <defs>
+                    <linearGradient id="colorMax" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="#00c853" stopOpacity={0.25} />
+                      <stop offset="95%" stopColor="#00c853" stopOpacity={0} />
+                    </linearGradient>
+                  </defs>
+                  <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
+                  <XAxis dataKey="date" tick={{ fill: '#8b8fa8', fontSize: 11 }} axisLine={false} tickLine={false} />
+                  <YAxis tickFormatter={v => `$${(v / 1000).toFixed(0)}k`} tick={{ fill: '#8b8fa8', fontSize: 11 }} axisLine={false} tickLine={false} />
+                  <Tooltip content={<CustomTooltipMax />} />
+                  <Area type="monotone" dataKey="max" stroke="#00c853" strokeWidth={2} fill="url(#colorMax)" dot={false} />
+                </AreaChart>
+              </ResponsiveContainer>
+            </div>
+          )}
 
           <div className="card">
             <h3 className="chart-title">Rendimiento por Activo</h3>

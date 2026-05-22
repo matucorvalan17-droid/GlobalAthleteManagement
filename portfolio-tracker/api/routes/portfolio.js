@@ -6,10 +6,8 @@ const authMiddleware = require('../middleware/auth');
 const router = express.Router();
 router.use(authMiddleware);
 
-// GET /api/portfolio - Full portfolio summary with live prices
 router.get('/', async (req, res) => {
   try {
-    // Get all assets with aggregated transaction data
     const result = await pool.query(
       `SELECT
         a.id, a.symbol, a.name, a.asset_type,
@@ -68,7 +66,6 @@ router.get('/', async (req, res) => {
     const totalPnL = totalValue - totalInvested;
     const totalPnLPercent = totalInvested > 0 ? (totalPnL / totalInvested) * 100 : 0;
 
-    // Save snapshot
     await pool.query(
       `INSERT INTO portfolio_snapshots (user_id, total_value, snapshot_date)
        VALUES ($1, $2, CURRENT_DATE)
@@ -83,7 +80,6 @@ router.get('/', async (req, res) => {
   }
 });
 
-// GET /api/portfolio/history - Portfolio value over time
 router.get('/history', async (req, res) => {
   try {
     const result = await pool.query(
@@ -99,7 +95,6 @@ router.get('/history', async (req, res) => {
   }
 });
 
-// GET /api/portfolio/assets - List all assets
 router.get('/assets', async (req, res) => {
   try {
     const result = await pool.query(

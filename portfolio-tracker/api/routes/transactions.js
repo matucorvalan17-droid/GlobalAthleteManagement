@@ -8,7 +8,6 @@ const router = express.Router();
 const upload = multer({ storage: multer.memoryStorage(), limits: { fileSize: 5 * 1024 * 1024 } });
 router.use(authMiddleware);
 
-// GET /api/transactions - List all transactions
 router.get('/', async (req, res) => {
   try {
     const result = await pool.query(
@@ -25,7 +24,6 @@ router.get('/', async (req, res) => {
   }
 });
 
-// GET /api/transactions/:assetId - Transactions for a specific asset
 router.get('/asset/:assetId', async (req, res) => {
   try {
     const result = await pool.query(
@@ -42,25 +40,17 @@ router.get('/asset/:assetId', async (req, res) => {
   }
 });
 
-// POST /api/transactions - Add a transaction
 router.post('/', async (req, res) => {
   const { symbol, name, assetType, type, quantity, pricePerUnit, fee = 0, date, notes } = req.body;
 
   if (!symbol || !assetType || !type || !quantity || !pricePerUnit || !date) {
     return res.status(400).json({ error: 'Missing required fields' });
   }
-  if (!['buy', 'sell'].includes(type)) {
-    return res.status(400).json({ error: 'Type must be buy or sell' });
-  }
-  if (!['crypto', 'stock'].includes(assetType)) {
-    return res.status(400).json({ error: 'assetType must be crypto or stock' });
-  }
 
   const client = await pool.connect();
   try {
     await client.query('BEGIN');
 
-    // Upsert asset
     const assetResult = await client.query(
       `INSERT INTO assets (user_id, symbol, name, asset_type)
        VALUES ($1, $2, $3, $4)
@@ -69,8 +59,8 @@ router.post('/', async (req, res) => {
       [req.userId, symbol.toUpperCase(), name || symbol.toUpperCase(), assetType]
     );
     const assetId = assetResult.rows[0].id;
-
     const totalAmount = parseFloat(quantity) * parseFloat(pricePerUnit);
+
     const result = await client.query(
       `INSERT INTO transactions (user_id, asset_id, type, quantity, price_per_unit, total_amount, fee, date, notes)
        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING *`,
@@ -81,14 +71,12 @@ router.post('/', async (req, res) => {
     res.status(201).json(result.rows[0]);
   } catch (err) {
     await client.query('ROLLBACK');
-    console.error(err);
     res.status(500).json({ error: 'Server error' });
   } finally {
     client.release();
   }
 });
 
-// DELETE /api/transactions/:id - Delete a transaction
 router.delete('/:id', async (req, res) => {
   try {
     const result = await pool.query(
@@ -102,7 +90,6 @@ router.delete('/:id', async (req, res) => {
   }
 });
 
-// POST /api/transactions/import-csv - Import from CSV
 router.post('/import-csv', upload.single('file'), async (req, res) => {
   if (!req.file) return res.status(400).json({ error: 'No file uploaded' });
 
@@ -113,7 +100,6 @@ router.post('/import-csv', upload.single('file'), async (req, res) => {
       trim: true,
     });
 
-    // Expected CSV columns: symbol, name, asset_type, type, quantity, price_per_unit, fee, date, notes
     const required = ['symbol', 'asset_type', 'type', 'quantity', 'price_per_unit', 'date'];
     const firstRow = records[0];
     if (firstRow) {
@@ -160,7 +146,6 @@ router.post('/import-csv', upload.single('file'), async (req, res) => {
 
     res.json({ imported, errors: errors.length > 0 ? errors : undefined });
   } catch (err) {
-    console.error(err);
     res.status(500).json({ error: 'Failed to parse CSV' });
   }
 });

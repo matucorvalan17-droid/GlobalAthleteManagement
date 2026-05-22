@@ -5,7 +5,6 @@ const authMiddleware = require('../middleware/auth');
 const router = express.Router();
 router.use(authMiddleware);
 
-// GET /api/prices/crypto?symbols=BTC,ETH
 router.get('/crypto', async (req, res) => {
   const symbols = req.query.symbols ? req.query.symbols.split(',') : [];
   if (symbols.length === 0) return res.status(400).json({ error: 'symbols query param required' });
@@ -13,7 +12,6 @@ router.get('/crypto', async (req, res) => {
   res.json(prices);
 });
 
-// GET /api/prices/stocks?symbols=AAPL,TSLA
 router.get('/stocks', async (req, res) => {
   const symbols = req.query.symbols ? req.query.symbols.split(',') : [];
   if (symbols.length === 0) return res.status(400).json({ error: 'symbols query param required' });
@@ -21,7 +19,6 @@ router.get('/stocks', async (req, res) => {
   res.json(prices);
 });
 
-// GET /api/prices/search?q=bitcoin&type=crypto
 router.get('/search', async (req, res) => {
   const { q, type } = req.query;
   if (!q) return res.status(400).json({ error: 'q query param required' });
@@ -54,7 +51,6 @@ router.get('/search', async (req, res) => {
       return res.json(quotes);
     }
   } catch (err) {
-    console.error(err);
     return res.status(500).json({ error: 'Search failed' });
   }
 });

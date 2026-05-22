@@ -55,7 +55,6 @@ async function initDB() {
     );
   `);
   initialized = true;
-  console.log('Database initialized');
 }
 
 module.exports = { pool, initDB };

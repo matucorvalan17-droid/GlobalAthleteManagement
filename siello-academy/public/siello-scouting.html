@@ -255,6 +255,20 @@ const STATUS_L={
 const POSITIONS=['Portero','Defensa Central','Lateral Derecho','Lateral Izquierdo',
   'Mediocentro Defensivo','Mediocentro','Mediocentro Ofensivo',
   'Extremo Derecho','Extremo Izquierdo','Delantero Centro','Segunda Punta'];
+const POSITIONS_EN={
+  'Portero':'Goalkeeper',
+  'Defensa Central':'Centre Back',
+  'Lateral Derecho':'Right Back',
+  'Lateral Izquierdo':'Left Back',
+  'Mediocentro Defensivo':'Defensive Midfielder',
+  'Mediocentro':'Midfielder',
+  'Mediocentro Ofensivo':'Attacking Midfielder',
+  'Extremo Derecho':'Right Winger',
+  'Extremo Izquierdo':'Left Winger',
+  'Delantero Centro':'Centre Forward',
+  'Segunda Punta':'Second Striker',
+};
+function translatePos(lang,val){return lang==='en'&&POSITIONS_EN[val]?POSITIONS_EN[val]:val||'—';}
 
 const ATTR_GROUPS=[
   {id:'fisicos',color:'#F5A623',
@@ -568,7 +582,7 @@ function Dashboard({reports,lang,onNew,onOpen,onDelete}){
                     <div style={{display:'flex',alignItems:'center',gap:5,
                       fontSize:11,color:'var(--muted)',flexWrap:'wrap'}}>
                       {r.position&&(
-                        <span style={{color:'var(--gold)',fontWeight:700}}>{r.position}</span>
+                        <span style={{color:'var(--gold)',fontWeight:700}}>{translatePos(lang,r.position)}</span>
                       )}
                       {r.position&&r.currentClub&&<span style={{color:'var(--dim)'}}>·</span>}
                       {r.currentClub&&<span>{r.currentClub}</span>}
@@ -1321,7 +1335,7 @@ function ReportPreview({report,lang,onEdit}){
                     value:fmtDateNum(report.dateOfBirth)||'—',
                     c:P.gold},
                   {label:i(lang,'pdfPos'),
-                    value:report.position||'—',
+                    value:translatePos(lang,report.position),
                     c:P.muted},
                   {label:i(lang,'pdfNat'),
                     value:report.nationality||'—',
@@ -1568,7 +1582,7 @@ function App(){
                   {current.playerName||(lang==='es'?'Nuevo Reporte':'New Report')}
                 </div>
                 {current.position&&(
-                  <div style={{fontSize:10,color:'var(--muted)'}}>{current.position}</div>
+                  <div style={{fontSize:10,color:'var(--muted)'}}>{translatePos(lang,current.position)}</div>
                 )}
               </div>
               <div style={{display:'flex',gap:1,padding:2,borderRadius:6,
